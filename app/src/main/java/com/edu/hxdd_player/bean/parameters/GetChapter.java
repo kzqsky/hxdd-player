@@ -1,6 +1,6 @@
 package com.edu.hxdd_player.bean.parameters;
 
-public class GetChapter {
+public class GetChapter extends BaseParameters{
     public String businessLineCode;              // 业务线编码
     public String coursewareCode;             // 课件编码(必填)
     public String courseCode;                   // 课程编码
