@@ -33,7 +33,7 @@
     <color name="colorPrimary_alpha_ten">#0cffffff</color>
     <color name="colorPrimary_alpha_fifteen">#26ffffff</color>
 
-    <color name="add_download_info_background">#373d41</color>
+    <color name="add_download_info_background">#88373d41</color>
     <color name="delete_download_info_background">#373d41</color>
     <color name="alivc_color_player_list_item_press">#2d3342</color>
 

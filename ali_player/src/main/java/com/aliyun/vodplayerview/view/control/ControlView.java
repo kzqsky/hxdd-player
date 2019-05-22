@@ -19,7 +19,6 @@ import android.widget.TextView;
 import com.alivc.player.VcPlayerLog;
 import com.aliyun.vodplayer.R;
 import com.aliyun.vodplayer.media.AliyunMediaInfo;
-import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.utils.TimeFormater;
 import com.aliyun.vodplayerview.view.interfaces.ViewAction;
@@ -404,9 +403,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      * 更新下载按钮的显示和隐藏
      */
     public void updateDownloadBtn() {
-        if (mAliyunScreenMode == AliyunScreenMode.Full || "localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+        if (mAliyunScreenMode == AliyunScreenMode.Full) {
             mTitleDownload.setVisibility(GONE);
-        } else if (mAliyunScreenMode == AliyunScreenMode.Small || "vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)){
+        } else if (mAliyunScreenMode == AliyunScreenMode.Small){
             mTitleDownload.setVisibility(VISIBLE);
         }
     }

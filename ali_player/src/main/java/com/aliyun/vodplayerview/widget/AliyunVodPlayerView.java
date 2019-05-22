@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.content.ContextCompat;
@@ -32,7 +31,6 @@ import com.aliyun.vodplayer.media.AliyunVidSts;
 import com.aliyun.vodplayer.media.AliyunVodPlayer;
 import com.aliyun.vodplayer.media.IAliyunVodPlayer;
 import com.aliyun.vodplayer.media.IAliyunVodPlayer.PlayerState;
-import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ImageLoader;
@@ -153,6 +151,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private float currentSpeed;
     private int currentVolume;
     private int currentScreenBrigtness;
+    private boolean isUrlSource = false;
+    private boolean isLocalSource = false;
 
     public AliyunVodPlayerView(Context context) {
         super(context);
@@ -699,10 +699,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             public void onDownloadClick() {
                 //点击下载之后弹出不同清晰度选择下载dialog
                 // 如果当前播放视频时url类型, 不允许下载
-                if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
-                    FixedToastUtils.show(getContext(), getResources().getString(R.string.slivc_not_support_url));
-                    return;
-                }
+//                if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+//                    FixedToastUtils.show(getContext(), getResources().getString(R.string.slivc_not_support_url));
+//                    return;
+//                }
                 if (mOnPlayerViewClickListener != null) {
                     mOnPlayerViewClickListener.onClick(mCurrentScreenMode, PlayViewType.Download);
                 }
@@ -1379,29 +1379,14 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @return
      */
     private boolean isLocalSource() {
-        String scheme = null;
-        if ("vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)) {
-            return false;
-        }
-        if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
-            Uri parse = Uri.parse(PlayParameter.PLAY_PARAM_URL);
-            scheme = parse.getScheme();
-        }
-        return scheme == null;
+        return isLocalSource;
     }
 
     /**
      * 判断是否是Url播放资源
      */
     private boolean isUrlSource(){
-        String scheme = null;
-        if ("vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)) {
-            return false;
-        }else{
-            Uri parse = Uri.parse(PlayParameter.PLAY_PARAM_URL);
-            scheme = parse.getScheme();
-            return scheme != null;
-        }
+        return isUrlSource;
     }
 
 
@@ -1785,7 +1770,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         } else {
             prepareLocalSource(aliyunLocalSource);
         }
-
     }
 
     /**
@@ -2524,5 +2508,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     public void setOnShowMoreClickListener(
         ControlView.OnShowMoreClickListener listener) {
         this.mOutOnShowMoreClickListener = listener;
+    }
+
+    public void setUrlSource(boolean urlSource) {
+        isUrlSource = urlSource;
+    }
+
+    public void setLocalSource(boolean localSource) {
+        isLocalSource = localSource;
     }
 }

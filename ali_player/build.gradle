@@ -33,9 +33,10 @@ dependencies {
     api fileTree(include: ['*.aar'], dir: 'libs')
     implementation "com.android.support:support-v4:$versions.support_v"
     implementation "com.android.support:appcompat-v7:$versions.support_v"
-    implementation 'com.squareup.okhttp3:okhttp:3.4.0'
-    implementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
-    implementation 'com.android.support:recyclerview-v7:27.0.0'
-    implementation 'com.google.code.gson:gson:2.8.0'
-    implementation 'com.aliyun.dpa:oss-android-sdk:+'
+//    implementation 'com.squareup.okhttp3:okhttp:3.4.0'
+//    implementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
+//    implementation 'com.google.code.gson:gson:2.8.0'
+    //图片上传
+//    implementation 'com.aliyun.dpa:oss-android-sdk:+'
 }
