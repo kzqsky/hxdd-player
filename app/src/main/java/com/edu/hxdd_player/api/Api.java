@@ -3,6 +3,7 @@ package com.edu.hxdd_player.api;
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.LearnRecordBean;
+import com.edu.hxdd_player.bean.media.Catalog;
 
 import java.util.List;
 
@@ -18,4 +19,7 @@ public interface Api {
 
     @PUT("/appApi/learnRecords")
     Call<BaseBean<LearnRecordBean>> learnRecords(@Body RequestBody body);
+
+    @POST("/appApi/catalogInfo/{catalogId}")
+    Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body);
 }
