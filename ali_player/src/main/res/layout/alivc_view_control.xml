@@ -22,10 +22,10 @@
             android:id="@+id/alivc_title_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/alivc_titlebar_title_left_margin"
-            android:layout_marginLeft="@dimen/alivc_titlebar_title_left_margin"
-            android:layout_marginRight="@dimen/alivc_titlebar_title_left_margin"
             android:layout_marginStart="@dimen/alivc_titlebar_title_left_margin"
+            android:layout_marginLeft="@dimen/alivc_titlebar_title_left_margin"
+            android:layout_marginEnd="@dimen/alivc_titlebar_title_left_margin"
+            android:layout_marginRight="@dimen/alivc_titlebar_title_left_margin"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
@@ -52,20 +52,20 @@
         android:id="@+id/alivc_screen_lock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="@dimen/alivc_screen_lock_left_margin"
         android:layout_marginStart="@dimen/alivc_screen_lock_left_margin"
+        android:layout_marginLeft="@dimen/alivc_screen_lock_left_margin"
         android:src="@drawable/alivc_screen_unlock" />
 
     <LinearLayout
         android:id="@+id/controlbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/alivc_infobar_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal">
@@ -104,19 +104,18 @@
                     android:textColor="@color/alivc_white"
                     android:textSize="@dimen/alivc_info_text_large_size" />
 
-                <TextView
-                    android:id="@+id/alivc_info_large_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/alivc_info_text_duration"
-                    android:textSize="@dimen/alivc_info_text_large_size" />
-
                 <SeekBar
                     android:id="@+id/alivc_info_large_seekbar"
                     style="@style/alivc_info_seekbar"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/alivc_info_large_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/alivc_white"
+                    android:textSize="@dimen/alivc_info_text_large_size" />
 
                 <Button
                     android:id="@+id/alivc_info_large_rate_btn"
@@ -142,19 +141,19 @@
                     android:textColor="@color/alivc_white"
                     android:textSize="@dimen/alivc_info_text_small_size" />
 
+                <SeekBar
+                    android:id="@+id/alivc_info_small_seekbar"
+                    style="@style/alivc_info_seekbar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content" />
+
                 <TextView
                     android:id="@+id/alivc_info_small_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/alivc_info_text_duration"
+                    android:textColor="@color/alivc_white"
                     android:textSize="@dimen/alivc_info_text_small_size" />
-
-                <SeekBar
-                    android:id="@+id/alivc_info_small_seekbar"
-                    style="@style/alivc_info_seekbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
             </LinearLayout>
 
         </FrameLayout>

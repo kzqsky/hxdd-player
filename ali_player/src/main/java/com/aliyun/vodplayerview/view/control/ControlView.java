@@ -637,10 +637,10 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         } else if (mAliyunScreenMode == AliyunScreenMode.Small) {
             //先设置小屏的info数据
             if (mAliyunMediaInfo != null) {
-                mSmallDurationText.setText("/" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
+                mSmallDurationText.setText("" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
                 mSmallSeekbar.setMax((int) mAliyunMediaInfo.getDuration());
             } else {
-                mSmallDurationText.setText("/" + TimeFormater.formatMs(0));
+                mSmallDurationText.setText("" + TimeFormater.formatMs(0));
                 mSmallSeekbar.setMax(0);
             }
 
@@ -667,10 +667,10 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
             //先更新大屏的info数据
             if (mAliyunMediaInfo != null) {
-                mLargeDurationText.setText("/" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
+                mLargeDurationText.setText("" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
                 mLargeSeekbar.setMax((int) mAliyunMediaInfo.getDuration());
             } else {
-                mLargeDurationText.setText("/" + TimeFormater.formatMs(0));
+                mLargeDurationText.setText("" + TimeFormater.formatMs(0));
                 mLargeSeekbar.setMax(0);
             }
 

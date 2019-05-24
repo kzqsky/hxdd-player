@@ -198,7 +198,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         //初始化手势对话框控制
         initGestureDialogManager();
         //默认为蓝色主题
-        setTheme(Theme.Blue);
+        setTheme(Theme.Orange);
         //先隐藏手势和控制栏，防止在没有prepare的时候做操作。
         hideGestureAndControlViews();
     }
