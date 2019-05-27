@@ -21,6 +21,54 @@
         app:tabSelectedTextColor="@color/colorPrimary"
         app:tabTextColor="@color/text" />
 
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/alivc_blue"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="暂停"
+        android:textColor="@color/alivc_blue"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="恢复"
+        android:textColor="@color/alivc_blue"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="停止"
+        android:textColor="@color/alivc_blue"
+        android:textSize="18dp" />
+
+    <TextView
+        android:id="@+id/text4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="开启"
+        android:textColor="@color/alivc_blue"
+        android:textSize="18dp" />
+
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"

@@ -151,8 +151,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private float currentSpeed;
     private int currentVolume;
     private int currentScreenBrigtness;
-    private boolean isUrlSource = false;
-    private boolean isLocalSource = false;
 
     public AliyunVodPlayerView(Context context) {
         super(context);
@@ -575,14 +573,14 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 isLocalSource()判断不够,有可能是sts播放,也有可能是url播放,还有可能是sd卡的视频播放,
                 如果是后两者,需要走if,否则走else
              */
-            if (isLocalSource() || isUrlSource()) {
+            if (isLocalSource()) {
                 mAliyunVodPlayer.prepareAsync(mAliyunLocalSource);
-            } else {
+            } else if (isVidSts()){
                 mAliyunVodPlayer.prepareAsync(mAliyunVidSts);
+            } else {
+                mAliyunVodPlayer.seekTo(currentPosition);
             }
-            mAliyunVodPlayer.seekTo(currentPosition);
         }
-
     }
 
     /**
@@ -1379,14 +1377,14 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @return
      */
     private boolean isLocalSource() {
-        return isLocalSource;
+        return mAliyunLocalSource != null;
     }
 
     /**
      * 判断是否是Url播放资源
      */
-    private boolean isUrlSource(){
-        return isUrlSource;
+    private boolean isVidSts(){
+        return mAliyunVidSts != null;
     }
 
 
@@ -2508,13 +2506,5 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     public void setOnShowMoreClickListener(
         ControlView.OnShowMoreClickListener listener) {
         this.mOutOnShowMoreClickListener = listener;
-    }
-
-    public void setUrlSource(boolean urlSource) {
-        isUrlSource = urlSource;
-    }
-
-    public void setLocalSource(boolean localSource) {
-        isLocalSource = localSource;
     }
 }

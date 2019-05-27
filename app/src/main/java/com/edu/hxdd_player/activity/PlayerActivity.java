@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.alivc.player.VcPlayerLog;
 import com.aliyun.vodplayer.media.AliyunLocalSource;
@@ -23,10 +24,12 @@ import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.TimeUtil;
 
 public class PlayerActivity extends AppCompatActivity {
     AliyunVodPlayerView mAliyunVodPlayerView;
-
+    TextView textView, textView1, textView2, textView3, textView4;
+    TimeUtil timeUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,20 +37,39 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.player_view);
-        mAliyunVodPlayerView.setLocalSource(true);
+        textView = findViewById(R.id.text);
+        textView1 = findViewById(R.id.text1);
+        textView2 = findViewById(R.id.text2);
+        textView3 = findViewById(R.id.text3);
+        textView4 = findViewById(R.id.text4);
+        textView1.setOnClickListener(v -> timeUtil.pause());
+        textView2.setOnClickListener(v -> timeUtil.resume());
+        textView3.setOnClickListener(v -> timeUtil.stop());
+        textView4.setOnClickListener(v -> timeUtil.start());
+
         String url = "http://vod-download.cn-shanghai.aliyuncs.com/testvideo/file_download_demo.mp4";
         AliyunLocalSource.AliyunLocalSourceBuilder asb = new AliyunLocalSource.AliyunLocalSourceBuilder();
         asb.setSource(url);
         AliyunLocalSource mLocalSource = asb.build();
         mAliyunVodPlayerView.setLocalSource(mLocalSource);
         mAliyunVodPlayerView.setKeepScreenOn(true);
-        mAliyunVodPlayerView.setAutoPlay(true);
+//        mAliyunVodPlayerView.setAutoPlay(true);
         mAliyunVodPlayerView.setOnShowMoreClickListener(new ControlView.OnShowMoreClickListener() {
             @Override
             public void showMore() {
                 PlayerActivity.this.showMore(PlayerActivity.this);
             }
         });
+
+        timeUtil = new TimeUtil();
+        timeUtil.setCallback((long time) -> runOnUiThread(() ->
+                textView.setText(time + "")));
+        timeUtil.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
