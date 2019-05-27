@@ -17,9 +17,11 @@
         android:layout_alignParentBottom="true"
         android:background="@color/white"
         app:tabIndicatorColor="@color/colorPrimary"
-        app:tabIndicatorHeight="4dp"
+        app:tabIndicatorHeight="3dp"
         app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextColor="@color/text" />
+        app:tabTextColor="@color/text"
+        app:tabTextAppearance="@style/TabLayoutTextStyle"
+        />
 
     <TextView
         android:id="@+id/text"

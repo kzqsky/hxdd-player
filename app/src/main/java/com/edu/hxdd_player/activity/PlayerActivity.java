@@ -1,5 +1,7 @@
 package com.edu.hxdd_player.activity;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 
 import com.alivc.player.VcPlayerLog;
 import com.aliyun.vodplayer.media.AliyunLocalSource;
+import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ScreenUtils;
 import com.aliyun.vodplayerview.view.choice.AlivcShowMoreDialog;
@@ -30,6 +34,7 @@ import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
 
 import java.util.ArrayList;
@@ -68,7 +73,7 @@ public class PlayerActivity extends AppCompatActivity {
         AliyunLocalSource mLocalSource = asb.build();
         mAliyunVodPlayerView.setLocalSource(mLocalSource);
         mAliyunVodPlayerView.setKeepScreenOn(true);
-        mAliyunVodPlayerView.setAutoPlay(true);
+//        mAliyunVodPlayerView.setAutoPlay(true);
         mAliyunVodPlayerView.setOnShowMoreClickListener(new ControlView.OnShowMoreClickListener() {
             @Override
             public void showMore() {
@@ -79,7 +84,7 @@ public class PlayerActivity extends AppCompatActivity {
         timeUtil = new TimeUtil();
         timeUtil.setCallback((long time) -> runOnUiThread(() ->
                 textView.setText(time + "")));
-        timeUtil.start();
+//        timeUtil.start();
     }
 
     private void initTab() {
@@ -97,6 +102,34 @@ public class PlayerActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(fragmentAdapter);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.post(new Runnable() {
+
+            @Override
+            //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
+            public void run() {
+                TablayoutUtil.setIndicator(tabLayout, (int)getResources().getDimension(R.dimen.tablayout_textsize) * 4);
+            }
+        });
+    }
+
+    /**
+     * 获取Tab 显示的内容
+     *
+     * @param context
+     * @param
+     * @return
+     */
+    public static View getTabView(Context context, String text) {
+        View view = LayoutInflater.from(context).inflate(R.layout.tab_item_layout, null);
+        TextView tabText = (TextView) view.findViewById(R.id.tab_item_text);
+        View indicator = view.findViewById(R.id.tab_item_indicator);
+        ViewGroup.LayoutParams layoutParams = indicator.getLayoutParams();
+        layoutParams.width = DensityUtil.dip2px(context, 100);
+        layoutParams.height = DensityUtil.dip2px(context, 5);
+        indicator.setLayoutParams(layoutParams);
+        tabText.setTextSize(15);
+        tabText.setText(text);
+        return view;
     }
 
     @Override
