@@ -43,5 +43,5 @@ dependencies {
     implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:$versions.baseRecyclerViewAdapterHelper"
     implementation "me.jessyan:retrofit-url-manager:$versions.retrofit_url_manager"
     implementation "com.blankj:utilcode:$versions.utilcode"
-
+    implementation  "com.android.support:design:$versions.support_v"
 }
