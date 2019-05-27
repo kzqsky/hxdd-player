@@ -44,4 +44,6 @@ dependencies {
     implementation "me.jessyan:retrofit-url-manager:$versions.retrofit_url_manager"
     implementation "com.blankj:utilcode:$versions.utilcode"
     implementation  "com.android.support:design:$versions.support_v"
+
+    implementation "com.android.support.constraint:constraint-layout:1.1.0"
 }

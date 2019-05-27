@@ -4,6 +4,9 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +27,24 @@ import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
+import com.edu.hxdd_player.fragment.ChapterFragment;
+import com.edu.hxdd_player.fragment.JiangyiFragment;
 import com.edu.hxdd_player.utils.TimeUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
     AliyunVodPlayerView mAliyunVodPlayerView;
     TextView textView, textView1, textView2, textView3, textView4;
     TimeUtil timeUtil;
+
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    private List<String> tabTitles = new ArrayList<>();
+    private List<Fragment> fragments = new ArrayList<>();
+    BaseFragmentPagerAdapter fragmentAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,30 +61,42 @@ public class PlayerActivity extends AppCompatActivity {
         textView2.setOnClickListener(v -> timeUtil.resume());
         textView3.setOnClickListener(v -> timeUtil.stop());
         textView4.setOnClickListener(v -> timeUtil.start());
-
+        mAliyunVodPlayerView = findViewById(R.id.player_view);
         String url = "http://vod-download.cn-shanghai.aliyuncs.com/testvideo/file_download_demo.mp4";
         AliyunLocalSource.AliyunLocalSourceBuilder asb = new AliyunLocalSource.AliyunLocalSourceBuilder();
         asb.setSource(url);
         AliyunLocalSource mLocalSource = asb.build();
         mAliyunVodPlayerView.setLocalSource(mLocalSource);
         mAliyunVodPlayerView.setKeepScreenOn(true);
-//        mAliyunVodPlayerView.setAutoPlay(true);
+        mAliyunVodPlayerView.setAutoPlay(true);
         mAliyunVodPlayerView.setOnShowMoreClickListener(new ControlView.OnShowMoreClickListener() {
             @Override
             public void showMore() {
                 PlayerActivity.this.showMore(PlayerActivity.this);
             }
         });
-
+        initTab();
         timeUtil = new TimeUtil();
         timeUtil.setCallback((long time) -> runOnUiThread(() ->
                 textView.setText(time + "")));
         timeUtil.start();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
+    private void initTab() {
+        tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.viewpager);
+
+        tabTitles.add(getString(R.string.tab_1));
+        tabTitles.add(getString(R.string.tab_2));
+
+        fragments.add(ChapterFragment.newInstance());
+        fragments.add(JiangyiFragment.newInstance());
+
+        fragmentAdapter = new BaseFragmentPagerAdapter(getSupportFragmentManager(),
+                tabTitles.toArray(new String[]{}), fragments);
+        viewPager.setOffscreenPageLimit(fragments.size());
+        viewPager.setAdapter(fragmentAdapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
