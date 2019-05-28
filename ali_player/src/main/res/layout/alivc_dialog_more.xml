@@ -17,6 +17,7 @@
             android:weightSum="3"
             android:layout_weight="1"
             android:paddingTop="32dp"
+            android:visibility="gone"
             android:paddingBottom="32dp"
             >
 

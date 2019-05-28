@@ -1,7 +1,9 @@
 package com.edu.hxdd_player.adapter;
 
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -17,8 +19,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     public static final int TYPE_LEVEL_3 = 3;
     public static final int TYPE_LEVEL_4 = 4;
 
-    public int selectIndex = 0;
-    public int lastSelect = 0;
+    public int selectIndex = -1;
+//    public int lastSelect = 0;
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
@@ -54,27 +56,37 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case 8:
             case 9:
             case 10:
-                helper.setText(R.id.txt_title, baseItem.title);
-//                helper.setImageResource(R.id.imageView, baseItem.isExpanded() ? R.mipmap.ic_down : R.mipmap.ic_normal);
-//                helper.setVisible(R.id.imageView, baseItem.haveChildren() ? true : false);
+                helper.setText(R.id.txt_title, baseItem.title).setText(R.id.txt_time, baseItem.getMediaDuration());
+                if (baseItem.isMedia == 0) { //代表沒有媒体
+                    helper.setGone(R.id.txt_time, false);
+                    helper.setGone(R.id.imageView, false);
+                } else {
+                    helper.setGone(R.id.txt_time, true);
+                    helper.setGone(R.id.imageView, true);
+                }
+                ImageView imageView=helper.getView(R.id.imageView);
                 if (helper.getAdapterPosition() == selectIndex) {
-//                    helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.blue));
-//                    helper.setBackgroundColor(R.id.layout_bg, mContext.getResources().getColor(R.color.select));
+                    helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.colorPrimary));
+                    helper.setTextColor(R.id.txt_time, mContext.getResources().getColor(R.color.colorPrimary));
+//                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_p);
+                    imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.colorPrimary));
                 } else {
                     helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.black));
-                    helper.setBackgroundColor(R.id.layout_bg, mContext.getResources().getColor(R.color.white));
+                    helper.setTextColor(R.id.txt_time, mContext.getResources().getColor(R.color.black));
+//                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_n);
+                    imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
                 }
-                helper.getView(R.id.imageView).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int pos = helper.getAdapterPosition();
-                        if (baseItem.isExpanded()) {
-                            collapse(pos);
-                        } else {
-                            expand(pos);
-                        }
-                    }
-                });
+//                helper.getView(R.id.imageView).setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        int pos = helper.getAdapterPosition();
+//                        if (baseItem.isExpanded()) {
+//                            collapse(pos);
+//                        } else {
+//                            expand(pos);
+//                        }
+//                    }
+//                });
                 break;
 
         }

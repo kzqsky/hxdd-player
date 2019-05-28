@@ -406,7 +406,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         if (mAliyunScreenMode == AliyunScreenMode.Full) {
             mTitleDownload.setVisibility(GONE);
         } else if (mAliyunScreenMode == AliyunScreenMode.Small){
-            mTitleDownload.setVisibility(VISIBLE);
+            mTitleDownload.setVisibility(GONE);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.edu.hxdd_player.activity;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 
 import com.alivc.player.VcPlayerLog;
 import com.aliyun.vodplayer.media.AliyunLocalSource;
+import com.aliyun.vodplayer.media.AliyunPlayAuth;
+import com.aliyun.vodplayer.media.IAliyunVodPlayer;
 import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ScreenUtils;
@@ -32,8 +35,10 @@ import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
+import com.edu.hxdd_player.bean.media.Media;
 import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
 
@@ -42,7 +47,7 @@ import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
     AliyunVodPlayerView mAliyunVodPlayerView;
-    TextView textView, textView1, textView2, textView3, textView4;
+
     TimeUtil timeUtil;
 
     TabLayout tabLayout;
@@ -57,21 +62,6 @@ public class PlayerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.player_view);
-        textView = findViewById(R.id.text);
-        textView1 = findViewById(R.id.text1);
-        textView2 = findViewById(R.id.text2);
-        textView3 = findViewById(R.id.text3);
-        textView4 = findViewById(R.id.text4);
-        textView1.setOnClickListener(v -> timeUtil.pause());
-        textView2.setOnClickListener(v -> timeUtil.resume());
-        textView3.setOnClickListener(v -> timeUtil.stop());
-        textView4.setOnClickListener(v -> timeUtil.start());
-        mAliyunVodPlayerView = findViewById(R.id.player_view);
-        String url = "http://vod-download.cn-shanghai.aliyuncs.com/testvideo/file_download_demo.mp4";
-        AliyunLocalSource.AliyunLocalSourceBuilder asb = new AliyunLocalSource.AliyunLocalSourceBuilder();
-        asb.setSource(url);
-        AliyunLocalSource mLocalSource = asb.build();
-        mAliyunVodPlayerView.setLocalSource(mLocalSource);
         mAliyunVodPlayerView.setKeepScreenOn(true);
 //        mAliyunVodPlayerView.setAutoPlay(true);
         mAliyunVodPlayerView.setOnShowMoreClickListener(new ControlView.OnShowMoreClickListener() {
@@ -81,10 +71,8 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
         initTab();
+        initLiveData();
         timeUtil = new TimeUtil();
-        timeUtil.setCallback((long time) -> runOnUiThread(() ->
-                textView.setText(time + "")));
-//        timeUtil.start();
     }
 
     private void initTab() {
@@ -103,33 +91,42 @@ public class PlayerActivity extends AppCompatActivity {
         viewPager.setAdapter(fragmentAdapter);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.post(new Runnable() {
-
             @Override
             //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
             public void run() {
-                TablayoutUtil.setIndicator(tabLayout, (int)getResources().getDimension(R.dimen.tablayout_textsize) * 4);
+                TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4);
             }
         });
     }
 
-    /**
-     * 获取Tab 显示的内容
-     *
-     * @param context
-     * @param
-     * @return
-     */
-    public static View getTabView(Context context, String text) {
-        View view = LayoutInflater.from(context).inflate(R.layout.tab_item_layout, null);
-        TextView tabText = (TextView) view.findViewById(R.id.tab_item_text);
-        View indicator = view.findViewById(R.id.tab_item_indicator);
-        ViewGroup.LayoutParams layoutParams = indicator.getLayoutParams();
-        layoutParams.width = DensityUtil.dip2px(context, 100);
-        layoutParams.height = DensityUtil.dip2px(context, 5);
-        indicator.setLayoutParams(layoutParams);
-        tabText.setTextSize(15);
-        tabText.setText(text);
-        return view;
+    private void initLiveData() {
+        LiveDataBus.get()
+                .with("media", Media.class)
+                .observe(this, new Observer<Media>() {
+                    @Override
+                    public void onChanged(@Nullable Media media) {
+                        setMedia(media);
+                    }
+                });
+    }
+
+    private void setMedia(Media media) {
+
+        if ("aliyunCode".equals(media.serverType)) {
+            AliyunPlayAuth.AliyunPlayAuthBuilder aliyunDataSourceBuilder = new AliyunPlayAuth.AliyunPlayAuthBuilder();
+            aliyunDataSourceBuilder.setPlayAuth(media.playAuth);
+            aliyunDataSourceBuilder.setVid(media.mediaSource);
+            aliyunDataSourceBuilder.setQuality(IAliyunVodPlayer.QualityValue.QUALITY_ORIGINAL);
+            AliyunPlayAuth aliyunPlayAuth = aliyunDataSourceBuilder.build();
+            mAliyunVodPlayerView.setAuthInfo(aliyunPlayAuth);
+        } else {
+            String url = media.serverCluster + "/" + media.mediaSource + "_sd.mp4";
+            AliyunLocalSource.AliyunLocalSourceBuilder asb = new AliyunLocalSource.AliyunLocalSourceBuilder();
+            asb.setSource(url);
+            AliyunLocalSource mLocalSource = asb.build();
+            mAliyunVodPlayerView.setLocalSource(mLocalSource);
+        }
+        mAliyunVodPlayerView.setAutoPlay(true);
     }
 
     @Override

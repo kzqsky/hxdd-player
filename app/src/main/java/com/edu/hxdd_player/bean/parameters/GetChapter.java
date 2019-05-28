@@ -11,4 +11,8 @@ public class GetChapter extends BaseParameters{
     public String lastTime;                     // 上次听课时长(秒)
     public String timestamp;            // 时间戳(必填)
     public String publicKey;// md5加密 校验参数(必填)
+
+    public String validTime;
+
+    public boolean isQuestion; // 默认是true 不需要弹题 改为false
 }

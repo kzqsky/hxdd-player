@@ -21,7 +21,7 @@ public class RetrofitFactory {
     private static OkHttpClient client;
     private static Retrofit retrofit;
 
-        private static final String HOST = "http://47.92.254.206:82";//测试地址
+        private static final String HOST = "http://cws.edu-edu.com";//测试地址
 //    private static final String HOST = "http://dpxapp1.0.entengdz.com";//正式地址
 //    private static final String HOST = BuildConfig.URL;
 

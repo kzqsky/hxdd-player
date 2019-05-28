@@ -10,8 +10,10 @@ import java.util.List;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 public interface Api {
     @POST("/appApi/catalogs")
@@ -21,5 +23,5 @@ public interface Api {
     Call<BaseBean<LearnRecordBean>> learnRecords(@Body RequestBody body);
 
     @POST("/appApi/catalogInfo/{catalogId}")
-    Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body);
+    Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body,  @Path("catalogId") String catalogId );
 }

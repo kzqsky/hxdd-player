@@ -30,8 +30,8 @@ public class Media{
     public Integer     del;                // 是否删除 1：是 0：否
     public String      createdBy;          // 创建人
     public String      updatedBy;          // 更新人
-    public Date        createdAt;          // 创建时间
-    public Timestamp   updatedAt;          // 更新时间
+    public String        createdAt;          // 创建时间
+    public String   updatedAt;          // 更新时间
     public boolean     valid;              // 导入数据使用是否有效
 
     public String      serverType;         // 服务器类型（扩展）

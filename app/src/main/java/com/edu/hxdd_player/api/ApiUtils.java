@@ -6,7 +6,6 @@ import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.api.net.RetrofitFactory;
 import com.edu.hxdd_player.bean.parameters.BaseParameters;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
-import com.edu.hxdd_player.bean.parameters.GetMedia;
 import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
 
 import okhttp3.MediaType;
@@ -40,7 +39,7 @@ public class ApiUtils {
         api.learnRecords(getRequestBody(parameters)).enqueue(apiCall);
     }
 
-    public void getChapterDetail(GetMedia parameters, ApiCall apiCall) {
-        api.catalogInfo(getRequestBody(parameters)).enqueue(apiCall);
+    public void getChapterDetail(GetChapter parameters, String catalogId, ApiCall apiCall) {
+        api.catalogInfo(getRequestBody(parameters), catalogId).enqueue(apiCall);
     }
 }
