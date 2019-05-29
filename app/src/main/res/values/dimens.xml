@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="tablayout_textsize">16dp</dimen>
+
+    <dimen name="exam_textsize">16dp</dimen>
 </resources>

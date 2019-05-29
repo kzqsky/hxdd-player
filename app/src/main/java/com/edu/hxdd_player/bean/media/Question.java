@@ -18,7 +18,7 @@ public class Question {
     public String  examinePoint;              // 试题考核点
     public Integer questionType;              // 题目类型
     public String  questionStem;              // 题干
-    public String  answer;                    // 正确答案
+    public String  answer;                    // 正确答案,
     public String  analysis;                  // 答案解析
     public Integer isEnabled;                 // 是否启用(0无效1有效)
     public Integer isDel;                     // 是否删除(0未删除1删除)
@@ -27,4 +27,5 @@ public class Question {
     public Date    createdAt;                 // 创建时间
     public Date    updatedAt;                 // 更新时间
     public List<QuestionOption> optionList;   // 选项对象
+    public String  userAnswer;                //用来保存用户选择答案
 }

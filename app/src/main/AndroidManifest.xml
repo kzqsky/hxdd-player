@@ -30,6 +30,15 @@
             android:name="com.edu.hxdd_player.activity.PlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+        <activity android:name=".activity.ExamTestActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
