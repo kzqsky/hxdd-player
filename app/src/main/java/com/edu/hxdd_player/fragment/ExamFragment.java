@@ -219,13 +219,25 @@ public class ExamFragment extends AppCompatDialogFragment {
      * 单选答案
      */
     private void buildAnswer() {
-        StringBuilder sb = new StringBuilder();
-        for (QuestionOption choice : mQuestionBean.optionList) {
-            if (choice.correct) {
-                sb.append(choice.quesValue);
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (QuestionOption choice : mQuestionBean.optionList) {
+                if (choice.correct) {
+                    sb.append(choice.quesValue);
+                }
             }
+
+            String answer = sb.toString();
+            if (answer.equals(mQuestionBean.userAnswer)) {
+                mQuestionBean.isPass = true;
+            } else {
+                mQuestionBean.isPass = false;
+            }
+
+            mTxtAnswer.setText(mExamQuestionAnswer.builderAnswer(getContext(), answer, mQuestionBean.userAnswer));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        mTxtAnswer.setText(mExamQuestionAnswer.builderAnswer(getContext(), sb.toString(), mQuestionBean.userAnswer));
     }
 
     /**

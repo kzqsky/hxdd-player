@@ -28,4 +28,5 @@ public class Question {
     public Date    updatedAt;                 // 更新时间
     public List<QuestionOption> optionList;   // 选项对象
     public String  userAnswer;                //用来保存用户选择答案
+    public boolean isPass;                    //考核点是否通过(弹题是否选择正确)
 }

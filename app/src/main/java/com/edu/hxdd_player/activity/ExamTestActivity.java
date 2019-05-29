@@ -82,7 +82,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
     @Override
     public void over(Question question) {
-        Toast.makeText(this, "作答完毕", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "作答完毕-----" + question.isPass, Toast.LENGTH_SHORT).show();
     }
 
     @Override
