@@ -3,18 +3,22 @@ package com.edu.hxdd_player.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
 import com.edu.hxdd_player.fragment.ExamFragment;
+import com.edu.hxdd_player.utils.TimeUtil;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
 public class ExamTestActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
 
+    TextView textView;
+    TimeUtil timeUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,6 +31,38 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.button2).setOnClickListener(v -> {
             ExamFragment examFragment = ExamFragment.newInstance(buildQuestionM());
             examFragment.show(getSupportFragmentManager(), "exam");
+        });
+        textView = findViewById(R.id.text);
+        timeUtil = new TimeUtil();
+        timeUtil.setCallback(new TimeUtil.TimeUtilCallback() {
+            @Override
+            public void time(long time) {
+                textView.setText(time+"");
+            }
+        });
+        findViewById(R.id.button3).setOnClickListener(v -> {
+            timeUtil.start();
+        });
+        findViewById(R.id.button4).setOnClickListener(v -> {
+            timeUtil.setTimeInterval(TimeUtil.ONE_HALFE);
+        });
+        findViewById(R.id.button5).setOnClickListener(v -> {
+            timeUtil.setTimeInterval(TimeUtil.ONE_SEVEN_FIVE);
+        });
+        findViewById(R.id.button6).setOnClickListener(v -> {
+            timeUtil.setTimeInterval(TimeUtil.TWO);
+        });
+        findViewById(R.id.button7).setOnClickListener(v -> {
+            timeUtil.pause();
+        });
+        findViewById(R.id.button8).setOnClickListener(v -> {
+            timeUtil.resume();
+        });
+        findViewById(R.id.button9).setOnClickListener(v -> {
+            timeUtil.stop();
+        });
+        findViewById(R.id.button10).setOnClickListener(v -> {
+            timeUtil.setTimeInterval(TimeUtil.DEFAULT);
         });
     }
 

@@ -1,8 +1,6 @@
 package com.edu.hxdd_player.activity;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,20 +9,17 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.alivc.player.VcPlayerLog;
 import com.aliyun.vodplayer.media.AliyunLocalSource;
 import com.aliyun.vodplayer.media.AliyunPlayAuth;
 import com.aliyun.vodplayer.media.IAliyunVodPlayer;
-import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ScreenUtils;
 import com.aliyun.vodplayerview.view.choice.AlivcShowMoreDialog;
@@ -40,15 +35,12 @@ import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.TablayoutUtil;
-import com.edu.hxdd_player.utils.TimeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerActivity extends AppCompatActivity {
     AliyunVodPlayerView mAliyunVodPlayerView;
-
-    TimeUtil timeUtil;
 
     TabLayout tabLayout;
     ViewPager viewPager;
@@ -72,7 +64,6 @@ public class PlayerActivity extends AppCompatActivity {
         });
         initTab();
         initLiveData();
-        timeUtil = new TimeUtil();
     }
 
     private void initTab() {
