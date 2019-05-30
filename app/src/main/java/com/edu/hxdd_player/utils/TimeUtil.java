@@ -11,14 +11,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY_GROUP;
+import static android.support.annotation.RestrictTo.Scope.LIBRARY;
 
 /**
  * 计时工具类，时间单位为秒
  */
 public class TimeUtil {
     public static final int DEFAULT = 0;
-    public static final int ONE_HALFE = 1;
+    public static final int ONE_HALF = 1;
     public static final int ONE_SEVEN_FIVE = 2;
     public static final int TWO = 3;
 
@@ -26,7 +26,7 @@ public class TimeUtil {
     private volatile long accumulativeTime;//单位秒
     private Thread thread;
     private boolean start;
-    private boolean ispause;
+    private boolean isPause;
     private TimeUtilCallback mCallback;
 
     private int[] timeIntervalArray = {1000, 750, 600, 500};//1000为默认1秒，800为1.5倍速，600为1.75倍速，500为2倍速
@@ -55,13 +55,13 @@ public class TimeUtil {
         try {
             stop();
             start = true;
-            ispause = false;
+            isPause = false;
             accumulativeTime = 0;
             thread = new Thread(() -> {
                 try {
                     while (start || thread.interrupted()) {
                         Thread.sleep(timeInterval);
-                        if (!ispause) {
+                        if (!isPause) {
                             accumulativeTime ++;
                             if (mCallback != null) {
                                 mCallback.time(accumulativeTime);
@@ -87,7 +87,7 @@ public class TimeUtil {
     public void pause() {
         if (thread != null) {
             try {
-                ispause = true;
+                isPause = true;
                 Log.i(tag, "已经是pause状态了");
             } catch (Exception e) {
                 Log.i(tag, e.getMessage());
@@ -99,7 +99,7 @@ public class TimeUtil {
     public void resume() {
         if (thread != null) {
             try {
-                ispause = false;
+                isPause = false;
                 Log.i(tag, "已经是resume状态了");
             } catch (Exception e) {
                 Log.i(tag, e.getMessage());
@@ -110,7 +110,7 @@ public class TimeUtil {
 
     public void stop() {
         start = false;
-        ispause = true;
+        isPause = true;
         if (thread != null) {
             thread.interrupt();
             thread = null;
@@ -119,7 +119,7 @@ public class TimeUtil {
 
     /**
      * public static final int DEFAULT = 0;
-     * public static final int ONE_HALFE = 1;
+     * public static final int ONE_HALF = 1;
      * public static final int ONE_SEVEN_FIVE = 2;
      * public static final int TWO = 3;
      * 只能传这4个值
@@ -130,9 +130,9 @@ public class TimeUtil {
     }
 
 
-    @RestrictTo(LIBRARY_GROUP)
+    @RestrictTo(LIBRARY)
     @Target(ElementType.PARAMETER)
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {DEFAULT, ONE_HALFE, ONE_SEVEN_FIVE,TWO})
+    @IntDef(value = {DEFAULT, ONE_HALF, ONE_SEVEN_FIVE,TWO})
     public @interface TimeType {}
 }

@@ -44,7 +44,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             timeUtil.start();
         });
         findViewById(R.id.button4).setOnClickListener(v -> {
-            timeUtil.setTimeInterval(TimeUtil.ONE_HALFE);
+            timeUtil.setTimeInterval(TimeUtil.ONE_HALF);
         });
         findViewById(R.id.button5).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.ONE_SEVEN_FIVE);
