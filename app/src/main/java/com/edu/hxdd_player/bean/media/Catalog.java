@@ -1,6 +1,5 @@
 package com.edu.hxdd_player.bean.media;
 
-import java.util.Date;
 import java.util.List;
 
 
@@ -9,7 +8,7 @@ import java.util.List;
  */
 
 public class Catalog {
-    public Long    id;                 // 主键 ID
+    public String    id;                 // 主键 ID
  
     public String  coursewareCode;     // 课件编码
     public String  title;              // 章节目录名称

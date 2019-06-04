@@ -1,5 +1,7 @@
 package com.edu.hxdd_player.bean.media;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 import java.util.List;
 
@@ -24,9 +26,14 @@ public class Question {
     public Integer isDel;                     // 是否删除(0未删除1删除)
     public String  createdBy;                 // 创建人
     public String  updatedBy;                 // 操作人
-    public Date    createdAt;                 // 创建时间
-    public Date    updatedAt;                 // 更新时间
+    public String    createdAt;                 // 创建时间
+    public String    updatedAt;                 // 更新时间
     public List<QuestionOption> optionList;   // 选项对象
     public String  userAnswer;                //用来保存用户选择答案
     public boolean isPass;                    //考核点是否通过(弹题是否选择正确)
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+    }
 }

@@ -25,8 +25,8 @@ public class LearnRecord  {
     public Long   catalogId;           // 章节 ID
     public Long   videoTime;           // 视频时长(单位秒)
     public Long   validTime;           // 有效学习时长(单位秒)
-    public Date   createdAt;           // 创建时间/开始学习时间
-    public Date   synchronizedAt;      // 同步学习时间
+    public String   createdAt;           // 创建时间/开始学习时间
+    public String   synchronizedAt;      // 同步学习时间
  
     public Long   lastTime;            // 最后一次播放时间点
    

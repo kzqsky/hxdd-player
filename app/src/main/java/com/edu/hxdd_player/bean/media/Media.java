@@ -1,8 +1,5 @@
 package com.edu.hxdd_player.bean.media;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 /**
  * 说明：Media bean
  *

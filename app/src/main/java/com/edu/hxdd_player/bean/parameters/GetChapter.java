@@ -15,4 +15,5 @@ public class GetChapter extends BaseParameters{
     public String validTime;
 
     public boolean isQuestion; // 默认是true 不需要弹题 改为false
+
 }

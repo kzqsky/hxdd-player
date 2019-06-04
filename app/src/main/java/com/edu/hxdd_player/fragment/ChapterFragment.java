@@ -18,7 +18,6 @@ import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.media.Catalog;
-import com.edu.hxdd_player.bean.media.Media;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.utils.LiveDataBus;
 
@@ -28,11 +27,23 @@ import java.util.List;
 public class ChapterFragment extends Fragment {
     private RecyclerView recyclerView;
     ChapterAdapter chapterAdapter;
-    GetChapter getChapter = new GetChapter();
+    GetChapter getChapter;
 
-    public static ChapterFragment newInstance() {
+    public static ChapterFragment newInstance(GetChapter getChapter) {
         ChapterFragment fragment = new ChapterFragment();
+        Bundle args = new Bundle();
+        args.putSerializable("getChapter", getChapter);
+        fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            getChapter = (GetChapter) args.getSerializable("getChapter");
+        }
     }
 
     @Nullable
@@ -62,18 +73,6 @@ public class ChapterFragment extends Fragment {
                 getMedia(chapterBean.id);
             }
         });
-
-        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
-        getChapter.timestamp = "1559012862459";
-        getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "2216_ept";
-        getChapter.courseCode = "04732";
-        getChapter.catalogId = "314972266083385344";
-        getChapter.clientCode = "123456";
-        getChapter.userId = "123456654";
-        getChapter.userName = "李亚飞测试";
-        getChapter.validTime = "0";
-        getChapter.lastTime = "0";
     }
 
     private void setLast(int index) {
@@ -98,7 +97,7 @@ public class ChapterFragment extends Fragment {
         ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
-                LiveDataBus.get().with("media").setValue(data.media);
+                LiveDataBus.get().with("Catalog").setValue(data);
             }
         });
     }

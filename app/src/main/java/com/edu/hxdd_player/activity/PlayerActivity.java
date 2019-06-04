@@ -1,6 +1,5 @@
 package com.edu.hxdd_player.activity;
 
-import android.arch.lifecycle.Observer;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -9,11 +8,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
 
 import com.alivc.player.VcPlayerLog;
@@ -23,23 +22,33 @@ import com.aliyun.vodplayer.media.IAliyunVodPlayer;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ScreenUtils;
 import com.aliyun.vodplayerview.view.choice.AlivcShowMoreDialog;
-import com.aliyun.vodplayerview.view.control.ControlView;
 import com.aliyun.vodplayerview.view.more.AliyunShowMoreValue;
 import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
+import com.edu.hxdd_player.api.ApiUtils;
+import com.edu.hxdd_player.api.net.ApiCall;
+import com.edu.hxdd_player.bean.LearnRecordBean;
+import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.media.Media;
+import com.edu.hxdd_player.bean.media.Question;
+import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
 import com.edu.hxdd_player.fragment.ChapterFragment;
+import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.TablayoutUtil;
+import com.edu.hxdd_player.utils.TimeUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class PlayerActivity extends AppCompatActivity {
+public class PlayerActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     AliyunVodPlayerView mAliyunVodPlayerView;
 
     TabLayout tabLayout;
@@ -48,22 +57,25 @@ public class PlayerActivity extends AppCompatActivity {
     private List<Fragment> fragments = new ArrayList<>();
     BaseFragmentPagerAdapter fragmentAdapter;
 
+    TimeUtil timeUtil_record, timeUtil_question;
+    Catalog mCatalog;
+    Map<Long, Question> questionMap;
+    String learnRecordId = null;
+
+    GetChapter getChapter = new GetChapter();
+    long recodTime;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(com.aliyun.vodplayer.R.style.NoActionTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.player_view);
-        mAliyunVodPlayerView.setKeepScreenOn(true);
-//        mAliyunVodPlayerView.setAutoPlay(true);
-        mAliyunVodPlayerView.setOnShowMoreClickListener(new ControlView.OnShowMoreClickListener() {
-            @Override
-            public void showMore() {
-                PlayerActivity.this.showMore(PlayerActivity.this);
-            }
-        });
+
         initTab();
         initLiveData();
+        initVideoBack();
+        initTimer();
     }
 
     private void initTab() {
@@ -72,8 +84,21 @@ public class PlayerActivity extends AppCompatActivity {
 
         tabTitles.add(getString(R.string.tab_1));
         tabTitles.add(getString(R.string.tab_2));
+        //应为传递过来的数据bean
+        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
+        getChapter.timestamp = "1559012862459";
+        getChapter.businessLineCode = "ld_gk";
+        getChapter.coursewareCode = "2216_ept";
+        getChapter.courseCode = "04732";
+        getChapter.catalogId = "314972266083385344";
+        getChapter.clientCode = "123456";
+        getChapter.userId = "123456654";
+        getChapter.userName = "李亚飞测试";
+        getChapter.validTime = "0";
+        getChapter.lastTime = "0";
+        getChapter.isQuestion = true;
 
-        fragments.add(ChapterFragment.newInstance());
+        fragments.add(ChapterFragment.newInstance(getChapter));
         fragments.add(JiangyiFragment.newInstance());
 
         fragmentAdapter = new BaseFragmentPagerAdapter(getSupportFragmentManager(),
@@ -81,28 +106,31 @@ public class PlayerActivity extends AppCompatActivity {
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(fragmentAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.post(new Runnable() {
-            @Override
-            //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
-            public void run() {
-                TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4);
-            }
-        });
+        //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
+        tabLayout.post(() -> TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4));
+
     }
 
     private void initLiveData() {
         LiveDataBus.get()
-                .with("media", Media.class)
-                .observe(this, new Observer<Media>() {
-                    @Override
-                    public void onChanged(@Nullable Media media) {
-                        setMedia(media);
-                    }
+                .with("Catalog", Catalog.class)
+                .observe(this, catalog -> {
+                    setMedia(catalog.media);
+                    mCatalog = catalog;
+                    getQuestionMap();
                 });
     }
 
-    private void setMedia(Media media) {
+    private void getQuestionMap() {
+        if (mCatalog == null || mCatalog.questions == null)
+            return;
+        questionMap = new HashMap<>();
+        for (Question question : mCatalog.questions) {
+            questionMap.put(question.mediaTime, question);
+        }
+    }
 
+    private void setMedia(Media media) {
         if ("aliyunCode".equals(media.serverType)) {
             AliyunPlayAuth.AliyunPlayAuthBuilder aliyunDataSourceBuilder = new AliyunPlayAuth.AliyunPlayAuthBuilder();
             aliyunDataSourceBuilder.setPlayAuth(media.playAuth);
@@ -130,6 +158,12 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        videoPause();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         updatePlayerViewMode();
@@ -145,6 +179,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        videoRecord(recodTime);
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onDestroy();
             mAliyunVodPlayerView = null;
@@ -227,44 +262,32 @@ public class PlayerActivity extends AppCompatActivity {
         ShowMoreView showMoreView = new ShowMoreView(activity, moreValue);
         showMoreDialog.setContentView(showMoreView);
         showMoreDialog.show();
-        showMoreView.setOnDownloadButtonClickListener(new ShowMoreView.OnDownloadButtonClickListener() {
-            @Override
-            public void onDownloadClick() {
-                // 点击下载
-                showMoreDialog.dismiss();
-                FixedToastUtils.show(activity, "功能开发中, 敬请期待...");
-            }
+        showMoreView.setOnDownloadButtonClickListener(() -> {
+            // 点击下载
+            showMoreDialog.dismiss();
+            FixedToastUtils.show(activity, "功能开发中, 敬请期待...");
         });
 
-        showMoreView.setOnScreenCastButtonClickListener(new ShowMoreView.OnScreenCastButtonClickListener() {
-            @Override
-            public void onScreenCastClick() {
-                FixedToastUtils.show(PlayerActivity.this, "功能开发中, 敬请期待...");
-            }
-        });
+        showMoreView.setOnScreenCastButtonClickListener(() -> FixedToastUtils.show(PlayerActivity.this, "功能开发中, 敬请期待..."));
 
-        showMoreView.setOnBarrageButtonClickListener(new ShowMoreView.OnBarrageButtonClickListener() {
-            @Override
-            public void onBarrageClick() {
-                FixedToastUtils.show(PlayerActivity.this, "功能开发中, 敬请期待...");
-            }
-        });
+        showMoreView.setOnBarrageButtonClickListener(() -> FixedToastUtils.show(PlayerActivity.this, "功能开发中, 敬请期待..."));
 
-        showMoreView.setOnSpeedCheckedChangedListener(new ShowMoreView.OnSpeedCheckedChangedListener() {
-            @Override
-            public void onSpeedChanged(RadioGroup group, int checkedId) {
-                // 点击速度切换
-                if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_normal) {
-                    mAliyunVodPlayerView.changeSpeed(SpeedValue.One);
-                } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onequartern) {
-                    mAliyunVodPlayerView.changeSpeed(SpeedValue.OneQuartern);
-                } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onehalf) {
-                    mAliyunVodPlayerView.changeSpeed(SpeedValue.OneHalf);
-                } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_twice) {
-                    mAliyunVodPlayerView.changeSpeed(SpeedValue.Twice);
-                }
-
+        showMoreView.setOnSpeedCheckedChangedListener((group, checkedId) -> {
+            // 点击速度切换
+            if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_normal) {
+                mAliyunVodPlayerView.changeSpeed(SpeedValue.One);
+                timeUtil_question.setTimeInterval(TimeUtil.DEFAULT);
+            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onequartern) {
+                mAliyunVodPlayerView.changeSpeed(SpeedValue.OneQuartern);
+                timeUtil_question.setTimeInterval(TimeUtil.ONE_HALF);
+            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onehalf) {
+                mAliyunVodPlayerView.changeSpeed(SpeedValue.OneHalf);
+                timeUtil_question.setTimeInterval(TimeUtil.ONE_SEVEN_FIVE);
+            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_twice) {
+                mAliyunVodPlayerView.changeSpeed(SpeedValue.Twice);
+                timeUtil_question.setTimeInterval(TimeUtil.TWO);
             }
+
         });
 
         // 亮度seek
@@ -284,7 +307,7 @@ public class PlayerActivity extends AppCompatActivity {
 
             }
         });
-
+        //声音seek
         showMoreView.setOnVoiceSeekChangeListener(new ShowMoreView.OnVoiceSeekChangeListener() {
             @Override
             public void onStart(SeekBar seekBar) {
@@ -303,4 +326,127 @@ public class PlayerActivity extends AppCompatActivity {
         });
 
     }
+
+    private void initTimer() {
+        timeUtil_question = new TimeUtil();
+        timeUtil_question.setCallback(time -> {
+            Log.i("test", "timeUtil_question:" + time);
+            long ss = mAliyunVodPlayerView.getCurrentPosition() / 1000;
+            if (questionMap != null && questionMap.containsKey(ss)) {
+                videoPause();
+                showQuestion(questionMap.get(ss));
+            }
+        });
+
+        timeUtil_record = new TimeUtil();
+        timeUtil_record.setCallback(time -> {
+            Log.i("test", "timeUtil_record:" + time);
+            recodTime = time;
+            if (time >= 60) {
+                videoRecord(time);
+                timeUtil_record.start();
+            }
+        });
+
+    }
+
+    private void initVideoBack() {
+        mAliyunVodPlayerView.setKeepScreenOn(true);
+//        mAliyunVodPlayerView.setAutoPlay(true);
+        mAliyunVodPlayerView.setOnShowMoreClickListener(() -> PlayerActivity.this.showMore(PlayerActivity.this));
+
+        //播放完成
+        mAliyunVodPlayerView.setOnCompletionListener(() -> {
+
+        });
+        //播放错误
+        mAliyunVodPlayerView.setOnErrorListener((i, i1, s) -> {
+
+        });
+        //播放停止
+        mAliyunVodPlayerView.setOnStoppedListener(() -> {
+            Log.i("test", "播放停止:");
+        });
+        //开始播放
+        mAliyunVodPlayerView.setOnFirstFrameStartListener(() -> {
+            Log.i("test", "开始播放:");
+            timeUtil_record.start();
+            timeUtil_question.start();
+        });
+        mAliyunVodPlayerView.setOnSeekCompleteListener(() -> {
+            timeUtil_record.resume();
+            timeUtil_question.resume();
+        });
+        //播放状态
+        mAliyunVodPlayerView.setOnPlayStateBtnClickListener(playerState -> {
+            if (playerState == IAliyunVodPlayer.PlayerState.Started) {
+                Log.i("test", "暂停:");
+                timeUtil_record.pause();
+                timeUtil_question.pause();
+            } else if (playerState == IAliyunVodPlayer.PlayerState.Paused) {
+                Log.i("test", "播放:");
+                timeUtil_record.resume();
+                timeUtil_question.resume();
+            }
+        });
+    }
+
+    private void videoPause() {
+        timeUtil_question.pause();
+        timeUtil_record.pause();
+        mAliyunVodPlayerView.pause();
+    }
+
+    private void videoStart() {
+        timeUtil_question.resume();
+        timeUtil_record.resume();
+        mAliyunVodPlayerView.start();
+    }
+
+    private void showQuestion(Question question) {
+        ExamFragment examFragment = ExamFragment.newInstance(question.toString());
+        examFragment.show(getSupportFragmentManager(), "exam");
+    }
+
+    @Override
+    public void commit(Question question) {
+
+    }
+
+    @Override
+    public void over(Question question) {
+        questionResult(question);
+        videoStart();
+    }
+
+    @Override
+    public void cancel(Question question) {
+        questionResult(question);
+        videoStart();
+    }
+
+    private void questionResult(Question question) {
+        PutLearnRecords putLearnRecords =
+                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint);
+        uploadRecord(putLearnRecords);
+    }
+
+    private void videoRecord(long accumulativeTime) {
+        long videoTime = mCatalog.mediaDuration;
+        long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
+        PutLearnRecords putLearnRecords =
+                PutLearnRecords.getRecord(learnRecordId, getChapter, mCatalog.id, videoTime, lastTime, accumulativeTime);
+        uploadRecord(putLearnRecords);
+    }
+
+    private void uploadRecord(PutLearnRecords putLearnRecords) {
+        ApiUtils.getInstance(this).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
+            @Override
+            protected void onResult(LearnRecordBean data) {
+                learnRecordId = data.learnRecordId;
+            }
+        });
+
+    }
+
 }

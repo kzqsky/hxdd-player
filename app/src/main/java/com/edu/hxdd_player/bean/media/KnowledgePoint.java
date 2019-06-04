@@ -19,6 +19,6 @@ public class KnowledgePoint {
     public Integer isDel;              // 是否删除: 已删除(1)、未删除(0)
     public String  createdBy;          // 创建人
     public String  updatedBy;          // 更新人
-    public Date    createdAt;          // 创建时间
-    public Date    updatedAt;          // 更新时间
+    public String    createdAt;          // 创建时间
+    public String    updatedAt;          // 更新时间
 }
