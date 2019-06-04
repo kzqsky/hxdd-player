@@ -39,7 +39,7 @@ public class ExamResultQuestionItem {
         if (questionChoices == null) {
             return list;
         }
-        String temp_userAnswer = userAnswer == null ? "" : userAnswer.toLowerCase();
+        String temp_userAnswer = userAnswer == null ? "" : userAnswer;
         for (QuestionOption choice : questionChoices) {
             ExamQuestionItemView item = new ExamQuestionItemView(context);
             item.setContent(choice.quesOption);

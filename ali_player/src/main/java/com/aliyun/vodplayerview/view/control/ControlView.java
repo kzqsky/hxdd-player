@@ -21,6 +21,7 @@ import com.aliyun.vodplayer.R;
 import com.aliyun.vodplayer.media.AliyunMediaInfo;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.utils.TimeFormater;
+import com.aliyun.vodplayerview.view.TimePointSeekBar;
 import com.aliyun.vodplayerview.view.interfaces.ViewAction;
 import com.aliyun.vodplayerview.view.quality.QualityItem;
 import com.aliyun.vodplayerview.widget.AliyunScreenMode;
@@ -94,7 +95,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     //时长文字
     private TextView mLargeDurationText;
     //进度条
-    private SeekBar mLargeSeekbar;
+    private TimePointSeekBar mLargeSeekbar;
     //当前的清晰度
     private String mCurrentQuality;
     //是否固定清晰度
@@ -111,7 +112,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     //时长文字
     private TextView mSmallDurationText;
     //seek进度条
-    private SeekBar mSmallSeekbar;
+    private TimePointSeekBar mSmallSeekbar;
 
 
     //整个view的显示控制：
@@ -189,14 +190,14 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         mLargeInfoBar = findViewById(R.id.alivc_info_large_bar);
         mLargePositionText = (TextView) findViewById(R.id.alivc_info_large_position);
         mLargeDurationText = (TextView) findViewById(R.id.alivc_info_large_duration);
-        mLargeSeekbar = (SeekBar) findViewById(R.id.alivc_info_large_seekbar);
+        mLargeSeekbar = findViewById(R.id.alivc_info_large_seekbar);
         mLargeChangeQualityBtn = (Button) findViewById(R.id.alivc_info_large_rate_btn);
 
 
         mSmallInfoBar = findViewById(R.id.alivc_info_small_bar);
         mSmallPositionText = (TextView) findViewById(R.id.alivc_info_small_position);
         mSmallDurationText = (TextView) findViewById(R.id.alivc_info_small_duration);
-        mSmallSeekbar = (SeekBar) findViewById(R.id.alivc_info_small_seekbar);
+        mSmallSeekbar = findViewById(R.id.alivc_info_small_seekbar);
     }
 
     private void setViewListener() {
@@ -1000,5 +1001,15 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
     public void setOnScreenRecoderClickListener(OnScreenRecoderClickListener listener){
         this.mOnScreenRecoderClickListener = listener;
+    }
+
+    public void setTimePointList(List<Long> list) {
+        mLargeSeekbar.setTimePointList(list);
+        mSmallSeekbar.setTimePointList(list);
+    }
+
+    public void setTimePaintColor(int paintColor) {
+        mLargeSeekbar.setTimePaintColor(paintColor);
+        mSmallSeekbar.setTimePaintColor(paintColor);
     }
 }

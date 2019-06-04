@@ -75,7 +75,7 @@ public class ExamQuestionItemView extends LinearLayout {
 
     //获取选项order,对应选项数据模型名称
     public String getAnswerOrder() {
-        return mCircleView.getText().toString().toLowerCase();
+        return mCircleView.getText().toString();
     }
 
 }

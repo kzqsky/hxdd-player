@@ -128,6 +128,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         for (Question question : mCatalog.questions) {
             questionMap.put(question.mediaTime, question);
         }
+        mAliyunVodPlayerView.setTimePointList(new ArrayList<>(questionMap.keySet()));
     }
 
     private void setMedia(Media media) {

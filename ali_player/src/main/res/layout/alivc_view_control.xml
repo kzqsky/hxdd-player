@@ -105,7 +105,7 @@
                     android:textColor="@color/alivc_white"
                     android:textSize="@dimen/alivc_info_text_large_size" />
 
-                <SeekBar
+                <com.aliyun.vodplayerview.view.TimePointSeekBar
                     android:id="@+id/alivc_info_large_seekbar"
                     style="@style/alivc_info_seekbar"
                     android:layout_width="0dp"
@@ -142,7 +142,7 @@
                     android:textColor="@color/alivc_white"
                     android:textSize="@dimen/alivc_info_text_small_size" />
 
-                <SeekBar
+                <com.aliyun.vodplayerview.view.TimePointSeekBar
                     android:id="@+id/alivc_info_small_seekbar"
                     style="@style/alivc_info_seekbar"
                     android:layout_width="0dp"

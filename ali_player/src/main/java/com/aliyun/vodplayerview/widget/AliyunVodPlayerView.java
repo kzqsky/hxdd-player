@@ -2507,4 +2507,12 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         ControlView.OnShowMoreClickListener listener) {
         this.mOutOnShowMoreClickListener = listener;
     }
+
+    public void setTimePointList(List<Long> list) {
+        mControlView.setTimePointList(list);
+    }
+
+    public void setTimePaintColor(int paintColor) {
+        mControlView.setTimePaintColor(paintColor);
+    }
 }
