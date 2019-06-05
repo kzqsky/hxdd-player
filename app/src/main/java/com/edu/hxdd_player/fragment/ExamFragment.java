@@ -1,10 +1,12 @@
 package com.edu.hxdd_player.fragment;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
@@ -155,6 +158,7 @@ public class ExamFragment extends AppCompatDialogFragment {
         if (mLayoutQuestion != null) {
             mLayoutQuestion.removeAllViews();
         }
+        buildType();
         buildTitle();
         buildItem();
     }
@@ -166,6 +170,7 @@ public class ExamFragment extends AppCompatDialogFragment {
         if (mLayoutQuestion != null) {
             mLayoutQuestion.removeAllViews();
         }
+        buildType();
         buildTitle();
         buildResultItem();
         buildAnswer();
@@ -283,5 +288,22 @@ public class ExamFragment extends AppCompatDialogFragment {
             }
         }
         mQuestionBean.userAnswer = sb.toString();
+    }
+
+    private void buildType() {
+        TextView textView = new TextView(getContext());
+        textView.setTextColor(getContext().getResources().getColor(R.color.text));
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimension(R.dimen.exam_textsize));
+        textView.setPadding(0,DensityUtil.dip2px(getContext(),5),0,DensityUtil.dip2px(getContext(),5));
+        textView .setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        switch (mQuestionBean.questionType) {
+            case 1:
+                textView.setText("单选题");
+                break;
+            case 2:
+                textView.setText("多选题");
+                break;
+        }
+        mLayoutQuestion.addView(textView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 }
