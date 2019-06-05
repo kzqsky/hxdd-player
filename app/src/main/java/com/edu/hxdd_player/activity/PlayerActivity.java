@@ -185,6 +185,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             mAliyunVodPlayerView.onDestroy();
             mAliyunVodPlayerView = null;
         }
+        if (timeUtil_question != null) {
+            timeUtil_question.stop();
+        }
+
+        if (timeUtil_record != null) {
+            timeUtil_record.stop();
+        }
+
         super.onDestroy();
     }
 
