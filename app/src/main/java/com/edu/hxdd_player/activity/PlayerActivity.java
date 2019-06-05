@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.login.LoginException;
+
 public class PlayerActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     AliyunVodPlayerView mAliyunVodPlayerView;
 
@@ -64,6 +66,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     GetChapter getChapter = new GetChapter();
     long recodTime;
+
+    long questionTime;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -331,8 +335,15 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void initTimer() {
         timeUtil_question = new TimeUtil();
         timeUtil_question.setCallback(time -> {
-            Log.i("test", "timeUtil_question:" + time);
-            long ss = mAliyunVodPlayerView.getCurrentPosition() / 1000;
+//            Log.i("test", "timeUtil_question:" + time);
+            long currentPosition = mAliyunVodPlayerView.getCurrentPosition();
+            long ss = currentPosition / 1000;
+//            Log.e("test", "currentPosition:" + currentPosition);
+            Log.e("test", "ss:" + ss +"---questionTime:"+questionTime);
+            if (ss == questionTime) {
+                return;
+            }
+            questionTime = ss;
             if (questionMap != null && questionMap.containsKey(ss)) {
                 videoPause();
                 showQuestion(questionMap.get(ss));
@@ -341,7 +352,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
-            Log.i("test", "timeUtil_record:" + time);
+//            Log.i("test", "timeUtil_record:" + time);
             recodTime = time;
             if (time >= 60) {
                 videoRecord(time);
