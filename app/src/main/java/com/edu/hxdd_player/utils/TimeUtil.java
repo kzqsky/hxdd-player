@@ -25,8 +25,8 @@ public class TimeUtil {
     private static final String tag = "TimeUtil";
     private volatile long accumulativeTime;//单位秒
     private Thread thread;
-    private boolean start;
-    private boolean isPause;
+    private boolean start = false;
+    private boolean isPause = true;
     private TimeUtilCallback mCallback;
 
     private int[] timeIntervalArray = {1000, 750, 600, 500};//1000为默认1秒，800为1.5倍速，600为1.75倍速，500为2倍速
