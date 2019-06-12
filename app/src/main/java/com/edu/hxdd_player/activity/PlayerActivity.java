@@ -48,8 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.security.auth.login.LoginException;
-
 public class PlayerActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     AliyunVodPlayerView mAliyunVodPlayerView;
 
@@ -64,7 +62,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     Map<Long, Question> questionMap;
     String learnRecordId = null;
 
-    GetChapter getChapter = new GetChapter();
+    GetChapter getChapter;
     long recodTime;
 
     long questionTime;
@@ -76,10 +74,31 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.player_view);
 
+        getIntentData();
         initTab();
         initLiveData();
         initVideoBack();
         initTimer();
+    }
+
+    private void getIntentData() {
+        getChapter = (GetChapter) getIntent().getSerializableExtra("data");
+
+//        getChapter = new GetChapter();
+//        //应为传递过来的数据bean
+//        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
+//        getChapter.timestamp = "1559012862459";
+//        getChapter.businessLineCode = "ld_gk";
+//        getChapter.coursewareCode = "2216_ept";
+//        getChapter.courseCode = "04732";
+//        getChapter.catalogId = "314972266083385344";
+//        getChapter.clientCode = "123456";
+//        getChapter.userId = "123456654";
+//        getChapter.userName = "李亚飞测试";
+//        getChapter.validTime = "0";
+//        getChapter.lastTime = "0";
+//        getChapter.isQuestion = true;
+
     }
 
     private void initTab() {
@@ -88,19 +107,6 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         tabTitles.add(getString(R.string.tab_1));
         tabTitles.add(getString(R.string.tab_2));
-        //应为传递过来的数据bean
-        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
-        getChapter.timestamp = "1559012862459";
-        getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "2216_ept";
-        getChapter.courseCode = "04732";
-        getChapter.catalogId = "314972266083385344";
-        getChapter.clientCode = "123456";
-        getChapter.userId = "123456654";
-        getChapter.userName = "李亚飞测试";
-        getChapter.validTime = "0";
-        getChapter.lastTime = "0";
-        getChapter.isQuestion = true;
 
         fragments.add(ChapterFragment.newInstance(getChapter));
         fragments.add(JiangyiFragment.newInstance());
@@ -339,7 +345,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             long currentPosition = mAliyunVodPlayerView.getCurrentPosition();
             long ss = currentPosition / 1000;
 //            Log.e("test", "currentPosition:" + currentPosition);
-            Log.e("test", "ss:" + ss +"---questionTime:"+questionTime);
+            Log.e("test", "ss:" + ss + "---questionTime:" + questionTime);
             if (ss == questionTime) {
                 return;
             }
