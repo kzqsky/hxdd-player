@@ -69,7 +69,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(com.aliyun.vodplayer.R.style.NoActionTheme);
+        setTheme(R.style.NoActionTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.player_view);
@@ -293,16 +293,16 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         showMoreView.setOnSpeedCheckedChangedListener((group, checkedId) -> {
             // 点击速度切换
-            if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_normal) {
+            if (checkedId == R.id.rb_speed_normal) {
                 mAliyunVodPlayerView.changeSpeed(SpeedValue.One);
                 timeUtil_question.setTimeInterval(TimeUtil.DEFAULT);
-            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onequartern) {
+            } else if (checkedId == R.id.rb_speed_onequartern) {
                 mAliyunVodPlayerView.changeSpeed(SpeedValue.OneQuartern);
                 timeUtil_question.setTimeInterval(TimeUtil.ONE_HALF);
-            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_onehalf) {
+            } else if (checkedId == R.id.rb_speed_onehalf) {
                 mAliyunVodPlayerView.changeSpeed(SpeedValue.OneHalf);
                 timeUtil_question.setTimeInterval(TimeUtil.ONE_SEVEN_FIVE);
-            } else if (checkedId == com.aliyun.vodplayer.R.id.rb_speed_twice) {
+            } else if (checkedId == R.id.rb_speed_twice) {
                 mAliyunVodPlayerView.changeSpeed(SpeedValue.Twice);
                 timeUtil_question.setTimeInterval(TimeUtil.TWO);
             }

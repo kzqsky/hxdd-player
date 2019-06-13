@@ -24,16 +24,21 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    repositories {
+        flatDir { dirs 'libs' }
+    }
+
 }
 
 
 
 dependencies {
+    api fileTree(include: ['*.aar'], dir: 'libs')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-    api project(':ali_player')
+//    api project(':ali_player')
 
     implementation fileTree(dir: 'libs', include: ['*.jar',"*.aar"])
     implementation "com.android.support:appcompat-v7:$versions.support_v"

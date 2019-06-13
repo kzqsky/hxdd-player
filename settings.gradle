@@ -1,2 +1,2 @@
 include ':app'
-include ':ali_player'
+//include ':ali_player'
