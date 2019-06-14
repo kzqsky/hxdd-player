@@ -1,2 +1,2 @@
-include ':app'
+include ':hxdd_player'
 //include ':ali_player'

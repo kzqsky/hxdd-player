@@ -41,16 +41,16 @@ dependencies {
 //    api project(':ali_player')
 
     implementation fileTree(dir: 'libs', include: ['*.jar',"*.aar"])
-    implementation "com.android.support:appcompat-v7:$versions.support_v"
+    implementation "com.android.support:appcompat-v7:27.1.1"
 
-    implementation "com.squareup.retrofit2:retrofit:$versions.retrofit"
-    implementation "com.squareup.retrofit2:converter-gson:$versions.retrofit"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
+    implementation "com.squareup.retrofit2:adapter-rxjava2:2.5.0"
 
-    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:$versions.baseRecyclerViewAdapterHelper"
-    implementation "me.jessyan:retrofit-url-manager:$versions.retrofit_url_manager"
-    implementation "com.blankj:utilcode:$versions.utilcode"
-    implementation  "com.android.support:design:$versions.support_v"
+    implementation "com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46"
+    implementation "me.jessyan:retrofit-url-manager:1.4.0"
+    implementation "com.blankj:utilcode:1.22.10"
+    implementation  "com.android.support:design:27.1.1"
 
-    implementation "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+    implementation "com.android.support.constraint:constraint-layout:1.1.0"
 }
