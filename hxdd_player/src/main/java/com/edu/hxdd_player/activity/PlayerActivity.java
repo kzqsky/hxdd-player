@@ -72,7 +72,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         setTheme(R.style.NoActionTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-        mAliyunVodPlayerView = findViewById(R.id.player_view);
+        mAliyunVodPlayerView = findViewById(R.id.hxdd_player_player_view);
 
         getIntentData();
         initTab();
@@ -102,8 +102,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void initTab() {
-        tabLayout = findViewById(R.id.tabs);
-        viewPager = findViewById(R.id.viewpager);
+        tabLayout = findViewById(R.id.hxdd_player_tabs);
+        viewPager = findViewById(R.id.hxdd_player_viewpager);
 
         tabTitles.add(getString(R.string.tab_1));
         tabTitles.add(getString(R.string.tab_2));

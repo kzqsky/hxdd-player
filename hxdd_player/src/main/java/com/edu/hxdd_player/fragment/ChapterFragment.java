@@ -49,7 +49,7 @@ public class ChapterFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.layout_recyclerview, container, false);
+        View view = inflater.inflate(R.layout.hxdd_player_layout_recyclerview, container, false);
         initView(view);
         getData();
         return view;
@@ -59,7 +59,7 @@ public class ChapterFragment extends Fragment {
      * @param view
      */
     private void initView(View view) {
-        recyclerView = view.findViewById(R.id.recyclerview);
+        recyclerView = view.findViewById(R.id.hxdd_player_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         chapterAdapter = new ChapterAdapter(null);
