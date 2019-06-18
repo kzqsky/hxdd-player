@@ -7,7 +7,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
 //        applicationId "com.edu.hxdd_player"
-//        multiDexEnabled true
+        multiDexEnabled true
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1
@@ -32,18 +32,18 @@ android {
         javaMaxHeapSize "4g"
     }
 
-//    sourceSets {
-//        main {
-//            java {
-//                srcDir 'src/main/java' // 指定源码目录
-//            }
-//            resources {
-//                srcDir 'src/main/res' //资源目录
-//            }
-//            jniLibs.srcDir 'libs'
-//        }
-//    }
-//    resourcePrefix 'hxdd_player'
+    sourceSets {
+        main {
+            java {
+                srcDir 'src/main/java' // 指定源码目录
+            }
+            resources {
+                srcDir 'src/main/res' //资源目录
+            }
+            jniLibs.srcDir 'libs'
+        }
+    }
+    resourcePrefix 'hxdd_player'
 
 }
 
