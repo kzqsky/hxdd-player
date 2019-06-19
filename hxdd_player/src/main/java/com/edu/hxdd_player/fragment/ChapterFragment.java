@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,9 +69,11 @@ public class ChapterFragment extends Fragment {
         chapterAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                chapterAdapter.checked(position);
-                ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
-                getMedia(chapterBean.id);
+                if (chapterAdapter.isMedia(position)) {
+                    chapterAdapter.checked(position);
+                    ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
+                    getMedia(chapterBean.id);
+                }
             }
         });
     }
@@ -88,7 +91,11 @@ public class ChapterFragment extends Fragment {
                 ArrayList<MultiItemEntity> res = new ArrayList<>();
                 res.addAll(data);
                 chapterAdapter.setNewData(res);
-                setLast(0);
+                if (TextUtils.isEmpty(getChapter.catalogId))
+                    setLast(0);
+                else {
+                    setLast(chapterAdapter.getCheckedIndex(getChapter.catalogId));
+                }
             }
         });
     }

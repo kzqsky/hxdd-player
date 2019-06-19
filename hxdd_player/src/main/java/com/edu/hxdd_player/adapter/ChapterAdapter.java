@@ -64,7 +64,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setGone(R.id.txt_time, true);
                     helper.setGone(R.id.imageView, true);
                 }
-                ImageView imageView=helper.getView(R.id.imageView);
+                ImageView imageView = helper.getView(R.id.imageView);
                 if (helper.getAdapterPosition() == selectIndex) {
                     helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.colorPrimary));
                     helper.setTextColor(R.id.txt_time, mContext.getResources().getColor(R.color.colorPrimary));
@@ -98,6 +98,26 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
 //        item2.checked = true;
         selectIndex = index;
         notifyDataSetChanged();
+    }
+
+    public int getCheckedIndex(String id) {
+        int index = 0;
+        for (MultiItemEntity itemEntity : getData()) {
+            ChapterBean chapterBean = (ChapterBean) itemEntity;
+            if (chapterBean.id.equals(id)) {
+                return index;
+            }
+            index++;
+        }
+        return 0;
+    }
+
+    public boolean isMedia(int index) {
+        ChapterBean baseItem = (ChapterBean) getData().get(index);
+        if (baseItem.isMedia == 0) { //代表沒有媒体
+            return false;
+        }
+        return true;
     }
 
 //    public void lastChecked(String code) {

@@ -1,7 +1,15 @@
 //apply plugin: 'com.android.application'
 apply plugin: 'com.android.library'
-//apply plugin: 'com.github.dcendents.android-maven'
-//group='com.github.kzqsky'
+apply plugin: 'com.github.dcendents.android-maven'
+group='com.github.kzqsky'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
 
 android {
     compileSdkVersion 27
@@ -25,24 +33,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    repositories {
-        flatDir { dirs 'libs' }
-    }
+
     dexOptions {
         javaMaxHeapSize "4g"
     }
-
-    sourceSets {
-        main {
-            java {
-                srcDir 'src/main/java' // 指定源码目录
-            }
-            resources {
-                srcDir 'src/main/res' //资源目录
-            }
-            jniLibs.srcDir 'libs'
-        }
+    lintOptions {
+        abortOnError false
     }
+
     resourcePrefix 'hxdd_player'
 
 }
@@ -50,14 +48,12 @@ android {
 
 
 dependencies {
-//    api fileTree(include: ['*.aar'], dir: 'libs')
+    implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
-//    api project(':ali_player')
-
-    implementation fileTree(dir: 'libs', include: ['*.jar',"*.aar"])
+//    implementation fileTree(dir: 'libs', include: ['*.jar',"*.aar"])
     implementation "com.android.support:appcompat-v7:27.1.1"
 
     implementation "com.squareup.retrofit2:retrofit:2.5.0"
@@ -68,6 +64,7 @@ dependencies {
     implementation "me.jessyan:retrofit-url-manager:1.4.0"
     implementation "com.blankj:utilcode:1.22.10"
     implementation  "com.android.support:design:27.1.1"
-
     implementation "com.android.support.constraint:constraint-layout:1.1.0"
+    implementation 'com.aliyun.dpa:oss-android-sdk:+'
+    implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
 }

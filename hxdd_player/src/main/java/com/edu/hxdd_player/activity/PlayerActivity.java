@@ -69,7 +69,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setTheme(R.style.NoActionTheme);
+//        setTheme(R.style.NoActionTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
         mAliyunVodPlayerView = findViewById(R.id.hxdd_player_player_view);
@@ -125,8 +125,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
                 .observe(this, catalog -> {
-                    setMedia(catalog.media);
+                    videoRecord(recodTime);
+                    recodTime = 0;
+                    learnRecordId = null;
+
                     mCatalog = catalog;
+                    setMedia(catalog.media);
                     getQuestionMap();
                 });
     }
@@ -155,6 +159,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             asb.setSource(url);
             AliyunLocalSource mLocalSource = asb.build();
             mAliyunVodPlayerView.setLocalSource(mLocalSource);
+        }
+        if (mCatalog.learnRecord != null) {
+            mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
         }
         mAliyunVodPlayerView.setAutoPlay(true);
     }
@@ -458,6 +465,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void videoRecord(long accumulativeTime) {
+        if (mCatalog == null)
+            return;
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         PutLearnRecords putLearnRecords =
@@ -469,7 +478,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         ApiUtils.getInstance(this).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
-                learnRecordId = data.learnRecordId;
+                if (data.catalogId.equals(mCatalog.id))
+                    learnRecordId = data.learnRecordId;
             }
         });
 

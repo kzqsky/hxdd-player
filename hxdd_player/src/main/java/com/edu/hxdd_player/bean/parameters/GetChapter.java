@@ -1,6 +1,6 @@
 package com.edu.hxdd_player.bean.parameters;
 
-public class GetChapter extends BaseParameters{
+public class GetChapter extends BaseParameters {
     public String businessLineCode;              // 业务线编码
     public String coursewareCode;             // 课件编码(必填)
     public String courseCode;                   // 课程编码
@@ -14,6 +14,6 @@ public class GetChapter extends BaseParameters{
 
     public String validTime;
 
-    public boolean isQuestion; // 默认是true 不需要弹题 改为false
+    public boolean isQuestion = true; // 默认是true 不需要弹题 改为false
 
 }
