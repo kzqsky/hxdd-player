@@ -1,7 +1,9 @@
 package com.edu.hxdd_player.view.exam.sheet;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -9,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 
 /**
@@ -24,6 +27,8 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     //字体大小
     private int textSizeDp;
     private int textColor = R.color.text;
+    private Paint bgPaint;
+    private int off = 2;
 
     /**
      *
@@ -57,6 +62,12 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     }
 
     void init() {
+        off = DensityUtil.dip2px(getContext(), 1);
+
+        bgPaint = new Paint();
+        bgPaint.setAntiAlias(true);
+        bgPaint.setColor(Color.WHITE);
+
         setGravity(Gravity.CENTER);
         setTextColor(getResources().getColor(textColor));
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, textSizeDp);
@@ -81,7 +92,8 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     public void unChecked() {
         this.checked = false;
         setTextColor(getContext().getResources().getColor(textColor));
-        setBackgroundResource(R.drawable.circle_stroke_bg);
+        bgPaint.setColor(Color.WHITE);
+        invalidate();
     }
 
     /**
@@ -90,7 +102,9 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     public void green() {
         this.checked = false;
         setTextColor(Color.WHITE);
-        setBackgroundResource(R.drawable.circle_green_bg);
+//        setBackgroundResource(R.drawable.circle_green_bg);
+        bgPaint.setColor(getContext().getResources().getColor(R.color.answer_sheet_green));
+        invalidate();
     }
 
     /**
@@ -99,7 +113,9 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     public void red() {
         this.checked = false;
         setTextColor(Color.WHITE);
-        setBackgroundResource(R.drawable.circle_red_bg);
+//        setBackgroundResource(R.drawable.circle_red_bg);
+        bgPaint.setColor(getContext().getResources().getColor(R.color.answer_sheet_red));
+        invalidate();
     }
 
     /**
@@ -108,11 +124,19 @@ public class AnswerSheetCircleView extends AppCompatTextView {
     public void checked() {
         this.checked = true;
         setTextColor(Color.WHITE);
-        setBackgroundResource(R.drawable.circle_primary_bg);
+//        setBackgroundResource(R.drawable.circle_primary_bg);
+        bgPaint.setColor(StartPlayerUtils.getColorPrimary());
+        invalidate();
     }
 
     public void setNormalTextColor(int textColor) {
         this.textColor = textColor;
         setTextColor(getResources().getColor(textColor));
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawOval(off, off, getWidth() - off, getHeight() - off, bgPaint);
+        super.onDraw(canvas);
     }
 }

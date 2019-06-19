@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layout_answer"
+    android:id="@+id/hxdd_player_layout_answer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -24,7 +24,7 @@
 
     <!--答案内容-->
     <com.edu.hxdd_player.view.exam.ExamTextImageView
-        android:id="@+id/txt_answer"
+        android:id="@+id/hxdd_player_txt_answer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -33,7 +33,7 @@
         android:textSize="@dimen/exam_textsize" />
 
     <TextView
-        android:id="@+id/txt_title_parse"
+        android:id="@+id/hxdd_player_txt_title_parse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
@@ -46,7 +46,7 @@
 
     <!--解析内容-->
     <com.edu.hxdd_player.view.exam.ExamTextImageView
-        android:id="@+id/txt_parse"
+        android:id="@+id/hxdd_player_txt_parse"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"

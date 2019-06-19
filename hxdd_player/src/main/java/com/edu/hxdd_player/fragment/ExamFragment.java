@@ -18,6 +18,7 @@ import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.view.exam.ExamQuestionAnswer;
 import com.edu.hxdd_player.view.exam.ExamQuestionItem;
 import com.edu.hxdd_player.view.exam.ExamQuestionItemView;
@@ -67,20 +68,26 @@ public class ExamFragment extends AppCompatDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_exam, container, false);
+        return inflater.inflate(R.layout.hxdd_player_fragment_exam, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mQuestionBean = new Gson().fromJson(getArguments().getString(QUESTION), Question.class);
-        mLayoutQuestion = view.findViewById(R.id.layout_question);
-        mLayoutAnswer = view.findViewById(R.id.layout_answer);
-        mTextCommit = view.findViewById(R.id.text_commit);
-        mTextCancel = view.findViewById(R.id.text_cancel);
-        mTextConfirm = view.findViewById(R.id.text_confirm);
-        mTxtAnswer = view.findViewById(R.id.txt_answer);
-        mTxtParse = view.findViewById(R.id.txt_parse);
+        mLayoutQuestion = view.findViewById(R.id.hxdd_player_layout_question);
+        mLayoutAnswer = view.findViewById(R.id.hxdd_player_layout_answer);
+        mTextCommit = view.findViewById(R.id.hxdd_player_text_commit);
+        mTextCancel = view.findViewById(R.id.hxdd_player_text_cancel);
+        mTextConfirm = view.findViewById(R.id.hxdd_player_text_confirm);
+        mTxtAnswer = view.findViewById(R.id.hxdd_player_txt_answer);
+        mTxtParse = view.findViewById(R.id.hxdd_player_txt_parse);
+
+        mTextCommit.setTextColor(StartPlayerUtils.getColorPrimary());
+        mTextCancel.setTextColor(StartPlayerUtils.getColorPrimary());
+        mTextConfirm.setTextColor(StartPlayerUtils.getColorPrimary());
+
+
 
         try {
             mCallback = (ExamFragmentCallback) getActivity();

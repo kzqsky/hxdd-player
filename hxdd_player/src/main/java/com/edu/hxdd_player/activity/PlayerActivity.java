@@ -40,6 +40,7 @@ import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
 import com.edu.hxdd_player.utils.LiveDataBus;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
 
@@ -69,9 +70,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        setTheme(R.style.NoActionTheme);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player);
+        setContentView(R.layout.hxdd_player_activity_player);
         mAliyunVodPlayerView = findViewById(R.id.hxdd_player_player_view);
 
         getIntentData();
@@ -81,23 +81,24 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         initTimer();
     }
 
-    private void getIntentData() {
-        getChapter = (GetChapter) getIntent().getSerializableExtra("data");
 
-//        getChapter = new GetChapter();
-//        //应为传递过来的数据bean
-//        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
-//        getChapter.timestamp = "1559012862459";
-//        getChapter.businessLineCode = "ld_gk";
-//        getChapter.coursewareCode = "2216_ept";
-//        getChapter.courseCode = "04732";
-//        getChapter.catalogId = "314972266083385344";
-//        getChapter.clientCode = "123456";
-//        getChapter.userId = "123456654";
-//        getChapter.userName = "李亚飞测试";
-//        getChapter.validTime = "0";
-//        getChapter.lastTime = "0";
-//        getChapter.isQuestion = true;
+    private void getIntentData() {
+//        getChapter = (GetChapter) getIntent().getSerializableExtra("data");
+
+        getChapter = new GetChapter();
+        //应为传递过来的数据bean
+        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
+        getChapter.timestamp = "1559012862459";
+        getChapter.businessLineCode = "ld_gk";
+        getChapter.coursewareCode = "2216_ept";
+        getChapter.courseCode = "04732";
+        getChapter.catalogId = "314972266083385344";
+        getChapter.clientCode = "123456";
+        getChapter.userId = "123456654";
+        getChapter.userName = "李亚飞测试";
+        getChapter.validTime = "0";
+        getChapter.lastTime = "0";
+        getChapter.isQuestion = true;
 
     }
 
@@ -116,9 +117,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(fragmentAdapter);
         tabLayout.setupWithViewPager(viewPager);
-        //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
-        tabLayout.post(() -> TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4));
-
+        tabLayout.setSelectedTabIndicatorColor(StartPlayerUtils.getColorPrimary());
+        tabLayout.setTabTextColors(getResources().getColor(R.color.text), StartPlayerUtils.getColorPrimary());
     }
 
     private void initLiveData() {
@@ -172,6 +172,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onResume();
+        }
+        if (tabLayout != null) {
+            //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
+            tabLayout.post(() -> TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4));
         }
     }
 

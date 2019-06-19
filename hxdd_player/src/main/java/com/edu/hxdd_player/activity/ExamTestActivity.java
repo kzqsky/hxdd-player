@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.activity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +10,9 @@ import android.widget.Toast;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
+import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.fragment.ExamFragment;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TimeUtil;
 import com.google.gson.Gson;
 
@@ -23,16 +26,20 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_exam_test);
-        findViewById(R.id.button).setOnClickListener(v -> {
+        setContentView(R.layout.hxdd_player_activity_exam_test);
+
+        StartPlayerUtils.setColorPrimary(Color.RED);
+
+        findViewById(R.id.hxdd_player_button).setOnClickListener(v -> {
             ExamFragment examFragment = ExamFragment.newInstance(buildQuestion());
             examFragment.show(getSupportFragmentManager(), "exam");
         });
-        findViewById(R.id.button2).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button2).setOnClickListener(v -> {
             ExamFragment examFragment = ExamFragment.newInstance(buildQuestionM());
             examFragment.show(getSupportFragmentManager(), "exam");
         });
-        textView = findViewById(R.id.text);
+        textView = findViewById(R.id.hxdd_player_text);
+        textView.setTextColor(StartPlayerUtils.getColorPrimary());
         timeUtil = new TimeUtil();
         timeUtil.setCallback(new TimeUtil.TimeUtilCallback() {
             @Override
@@ -40,29 +47,47 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                 textView.setText(time+"");
             }
         });
-        findViewById(R.id.button3).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button3).setOnClickListener(v -> {
             timeUtil.start();
         });
-        findViewById(R.id.button4).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button4).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.ONE_HALF);
         });
-        findViewById(R.id.button5).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button5).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.ONE_SEVEN_FIVE);
         });
-        findViewById(R.id.button6).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button6).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.TWO);
         });
-        findViewById(R.id.button7).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button7).setOnClickListener(v -> {
             timeUtil.pause();
         });
-        findViewById(R.id.button8).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button8).setOnClickListener(v -> {
             timeUtil.resume();
         });
-        findViewById(R.id.button9).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button9).setOnClickListener(v -> {
             timeUtil.stop();
         });
-        findViewById(R.id.button10).setOnClickListener(v -> {
+        findViewById(R.id.hxdd_player_button10).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.DEFAULT);
+        });
+        findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
+            GetChapter getChapter = new GetChapter();
+            //应为传递过来的数据bean
+            getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
+            getChapter.timestamp = "1559012862459";
+            getChapter.businessLineCode = "ld_gk";
+            getChapter.coursewareCode = "2216_ept";
+            getChapter.courseCode = "04732";
+            getChapter.catalogId = "314972266083385344";
+            getChapter.clientCode = "123456";
+            getChapter.userId = "123456654";
+            getChapter.userName = "李亚飞测试";
+            getChapter.validTime = "0";
+            getChapter.lastTime = "0";
+            getChapter.isQuestion = true;
+
+            StartPlayerUtils.play(this, getChapter, Color.GREEN);
         });
     }
 

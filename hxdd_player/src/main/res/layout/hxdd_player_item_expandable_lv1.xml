@@ -7,7 +7,7 @@
     android:minHeight="50dp">
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/hxdd_player_imageView"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="15dp"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txt_time"
+        android:id="@+id/hxdd_player_txt_time"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginStart="25dp"
@@ -30,7 +30,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/txt_title"
+        android:id="@+id/hxdd_player_txt_title"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="15dp"
@@ -41,7 +41,7 @@
         android:textColor="@color/text"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txt_time"
+        app:layout_constraintEnd_toStartOf="@+id/hxdd_player_txt_time"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

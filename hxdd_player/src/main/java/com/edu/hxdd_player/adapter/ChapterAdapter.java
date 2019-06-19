@@ -1,8 +1,6 @@
 package com.edu.hxdd_player.adapter;
 
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
@@ -10,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.List;
 
@@ -30,8 +29,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
      */
     public ChapterAdapter(List<MultiItemEntity> data) {
         super(data);
-        addItemType(TYPE_LEVEL_1, R.layout.item_expandable_lv1);
-        addItemType(TYPE_LEVEL_2, R.layout.item_expandable_lv2);
+        addItemType(TYPE_LEVEL_1, R.layout.hxdd_player_item_expandable_lv1);
+        addItemType(TYPE_LEVEL_2, R.layout.hxdd_player_item_expandable_lv2);
 //        addItemType(TYPE_LEVEL_3, R.layout.item_expandable_lv3);
 //        addItemType(TYPE_LEVEL_4, R.layout.item_expandable_lv4);
 //        addItemType(5, R.layout.item_expandable_lv4);
@@ -56,23 +55,23 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case 8:
             case 9:
             case 10:
-                helper.setText(R.id.txt_title, baseItem.title).setText(R.id.txt_time, baseItem.getMediaDuration());
+                helper.setText(R.id.hxdd_player_txt_title, baseItem.title).setText(R.id.hxdd_player_txt_time, baseItem.getMediaDuration());
                 if (baseItem.isMedia == 0) { //代表沒有媒体
-                    helper.setGone(R.id.txt_time, false);
-                    helper.setGone(R.id.imageView, false);
+                    helper.setGone(R.id.hxdd_player_txt_time, false);
+                    helper.setGone(R.id.hxdd_player_imageView, false);
                 } else {
-                    helper.setGone(R.id.txt_time, true);
-                    helper.setGone(R.id.imageView, true);
+                    helper.setGone(R.id.hxdd_player_txt_time, true);
+                    helper.setGone(R.id.hxdd_player_imageView, true);
                 }
-                ImageView imageView = helper.getView(R.id.imageView);
+                ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
                 if (helper.getAdapterPosition() == selectIndex) {
-                    helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.colorPrimary));
-                    helper.setTextColor(R.id.txt_time, mContext.getResources().getColor(R.color.colorPrimary));
+                    helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
+                    helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
 //                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_p);
-                    imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.colorPrimary));
+                    imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                 } else {
-                    helper.setTextColor(R.id.txt_title, mContext.getResources().getColor(R.color.black));
-                    helper.setTextColor(R.id.txt_time, mContext.getResources().getColor(R.color.black));
+                    helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
+                    helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
 //                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_n);
                     imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
                 }

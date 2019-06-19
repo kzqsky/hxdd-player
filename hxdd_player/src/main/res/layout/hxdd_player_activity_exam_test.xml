@@ -5,67 +5,71 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/hxdd_player_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="弹题" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/hxdd_player_button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="弹题多选" />
 
     <TextView
-        android:id="@+id/text"
+        android:id="@+id/hxdd_player_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimary"
         android:gravity="center"
         android:textSize="16dp" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/hxdd_player_button3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="开始计时" />
 
     <Button
-        android:id="@+id/button10"
+        android:id="@+id/hxdd_player_button10"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="1倍" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/hxdd_player_button4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="1.5倍" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/hxdd_player_button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="1.75倍" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/hxdd_player_button6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="2倍" />
     <Button
-        android:id="@+id/button7"
+        android:id="@+id/hxdd_player_button7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="暂停" />
     <Button
-        android:id="@+id/button8"
+        android:id="@+id/hxdd_player_button8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="恢复" />
     <Button
-        android:id="@+id/button9"
+        android:id="@+id/hxdd_player_button9"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="停止" />
+    <Button
+        android:id="@+id/hxdd_player_button11"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开启播放界面" />
 </LinearLayout>

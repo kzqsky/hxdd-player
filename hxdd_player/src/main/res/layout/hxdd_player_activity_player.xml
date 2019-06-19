@@ -16,9 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        app:tabIndicatorColor="@color/colorPrimary"
         app:tabIndicatorHeight="3dp"
-        app:tabSelectedTextColor="@color/colorPrimary"
         app:tabTextColor="@color/text"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
         />
