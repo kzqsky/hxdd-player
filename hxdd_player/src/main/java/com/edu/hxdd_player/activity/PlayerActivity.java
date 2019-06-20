@@ -64,7 +64,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     String learnRecordId = null;
 
     GetChapter getChapter;
-    long recodTime;
+    long recordTime;
 
     long questionTime;
 
@@ -73,7 +73,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hxdd_player_activity_player);
         mAliyunVodPlayerView = findViewById(R.id.hxdd_player_player_view);
-
+        initPlayer();
         getIntentData();
         initTab();
         initLiveData();
@@ -84,21 +84,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     private void getIntentData() {
         getChapter = (GetChapter) getIntent().getSerializableExtra("data");
-//        getChapter = new GetChapter();
-//        //应为传递过来的数据bean
-//        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
-//        getChapter.timestamp = "1559012862459";
-//        getChapter.businessLineCode = "ld_gk";
-//        getChapter.coursewareCode = "2216_ept";
-//        getChapter.courseCode = "04732";
-//        getChapter.catalogId = "314972266083385344";
-//        getChapter.clientCode = "123456";
-//        getChapter.userId = "123456654";
-//        getChapter.userName = "李亚飞测试";
-//        getChapter.validTime = "0";
-//        getChapter.lastTime = "0";
-//        getChapter.isQuestion = true;
+    }
 
+    private void initPlayer() {
+        mAliyunVodPlayerView.setAutoPlay(true);
     }
 
     private void initTab() {
@@ -124,8 +113,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
                 .observe(this, catalog -> {
-                    videoRecord(recodTime);
-                    recodTime = 0;
+                    videoRecord(recordTime);
+                    recordTime = 0;
                     learnRecordId = null;
 
                     mCatalog = catalog;
@@ -159,10 +148,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             AliyunLocalSource mLocalSource = asb.build();
             mAliyunVodPlayerView.setLocalSource(mLocalSource);
         }
-        if (mCatalog.learnRecord != null) {
-            mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
-        }
-        mAliyunVodPlayerView.setAutoPlay(true);
+
+        mAliyunVodPlayerView.start();
+
     }
 
     @Override
@@ -200,7 +188,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     @Override
     protected void onDestroy() {
-        videoRecord(recodTime);
+        videoRecord(recordTime);
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onDestroy();
             mAliyunVodPlayerView = null;
@@ -376,11 +364,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
-//            Log.i("test", "timeUtil_record:" + time);
-            recodTime = time;
-            if (time >= 60) {
+            recordTime = time;
+            if (time % 60 == 0) {
                 videoRecord(time);
-                timeUtil_record.start();
             }
         });
 
@@ -408,6 +394,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Log.i("test", "开始播放:");
             timeUtil_record.start();
             timeUtil_question.start();
+            if (mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
+                mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
+            }
         });
         mAliyunVodPlayerView.setOnSeekCompleteListener(() -> {
             timeUtil_record.resume();
