@@ -83,22 +83,21 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
 
     private void getIntentData() {
-//        getChapter = (GetChapter) getIntent().getSerializableExtra("data");
-
-        getChapter = new GetChapter();
-        //应为传递过来的数据bean
-        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
-        getChapter.timestamp = "1559012862459";
-        getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "2216_ept";
-        getChapter.courseCode = "04732";
-        getChapter.catalogId = "314972266083385344";
-        getChapter.clientCode = "123456";
-        getChapter.userId = "123456654";
-        getChapter.userName = "李亚飞测试";
-        getChapter.validTime = "0";
-        getChapter.lastTime = "0";
-        getChapter.isQuestion = true;
+        getChapter = (GetChapter) getIntent().getSerializableExtra("data");
+//        getChapter = new GetChapter();
+//        //应为传递过来的数据bean
+//        getChapter.publicKey = "216bf87d1ab84652f3b29b8fe8f865c4";
+//        getChapter.timestamp = "1559012862459";
+//        getChapter.businessLineCode = "ld_gk";
+//        getChapter.coursewareCode = "2216_ept";
+//        getChapter.courseCode = "04732";
+//        getChapter.catalogId = "314972266083385344";
+//        getChapter.clientCode = "123456";
+//        getChapter.userId = "123456654";
+//        getChapter.userName = "李亚飞测试";
+//        getChapter.validTime = "0";
+//        getChapter.lastTime = "0";
+//        getChapter.isQuestion = true;
 
     }
 
