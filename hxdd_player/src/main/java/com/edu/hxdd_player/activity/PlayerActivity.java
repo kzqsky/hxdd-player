@@ -379,7 +379,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
-
+            timeUtil_record.stop();
         });
         //播放错误
         mAliyunVodPlayerView.setOnErrorListener((i, i1, s) -> {
