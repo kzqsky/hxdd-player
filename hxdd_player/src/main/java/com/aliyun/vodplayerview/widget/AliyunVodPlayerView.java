@@ -1285,7 +1285,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             @Override
             public void onTimeExpiredError() {
                 System.out.println("abc : onTimeExpiredError");
-                Log.e("radish : ", "onTimeExpiredError: " + mAliyunMediaInfo.getVideoId());
+//                Log.e("radish : ", "onTimeExpiredError: " + mAliyunMediaInfo.getVideoId());
                 if(mTipsView != null){
                     mTipsView.hideAll();
                     mTipsView.showErrorTipViewWithoutCode("鉴权过期");
