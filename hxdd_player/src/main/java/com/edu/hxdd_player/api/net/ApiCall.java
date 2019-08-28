@@ -13,10 +13,10 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
     boolean showLoading;
 
     public ApiCall() {
-        this( false);
+        this(false);
     }
 
-    public ApiCall( boolean showLoading) {
+    public ApiCall(boolean showLoading) {
 
         this.showLoading = showLoading;
 
@@ -36,11 +36,7 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
                 onResult((T) baseBean.data);
             } else {
                 ToastUtils.showLong(baseBean.message);
-//                if (baseBean.error_code == -1 || baseBean.error_code == -3) {
-//                    Intent intent = new Intent(baseActivity, LoginActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    baseActivity.startActivity(intent);
-//                }
+                onApiFailure();
             }
         }
     }
@@ -52,4 +48,9 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
 
     protected abstract void onResult(T data);
 
+    /**
+     * 调用接口成功，但接口返回错误
+     */
+    public void onApiFailure() {
+    }
 }

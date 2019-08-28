@@ -99,6 +99,13 @@ public class ChapterFragment extends Fragment {
                     setLast(chapterAdapter.getCheckedIndex(getChapter.catalogId));
                 }
             }
+
+            @Override
+            public void onApiFailure() {
+                super.onApiFailure();
+                if (getActivity() != null)
+                    getActivity().finish();
+            }
         });
     }
 
