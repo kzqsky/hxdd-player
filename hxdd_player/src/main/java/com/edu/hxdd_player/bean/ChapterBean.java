@@ -1,11 +1,8 @@
 package com.edu.hxdd_player.bean;
 
-import com.chad.library.adapter.base.entity.AbstractExpandableItem;
-import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.adapter.ChapterAdapter;
 import com.edu.hxdd_player.utils.TimeFormatUtils;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**

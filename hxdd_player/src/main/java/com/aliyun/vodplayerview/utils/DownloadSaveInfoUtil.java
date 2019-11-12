@@ -1,5 +1,9 @@
 package com.aliyun.vodplayerview.utils;
 
+import android.text.TextUtils;
+
+import com.aliyun.vodplayerview.utils.download.AliyunDownloadMediaInfo;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,20 +15,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import android.text.TextUtils;
-
-import com.alivc.player.VcPlayerLog;
-import com.aliyun.vodplayer.core.downloader.InfoSaveHelper;
-import com.aliyun.vodplayer.downloader.AliyunDownloadMediaInfo;
-import com.aliyun.vodplayer.downloader.AliyunDownloadMediaInfo.Status;
-
 /**
  * @author Mulberry create on 2018/4/18.
  */
 
 public class DownloadSaveInfoUtil {
 
-    private static final String TAG = InfoSaveHelper.class.getSimpleName();
     private String mSaveDir;
 
     public DownloadSaveInfoUtil(String saveDir) {
@@ -35,15 +31,11 @@ public class DownloadSaveInfoUtil {
         String savePath = downloadInfo.getSavePath();
         if (!TextUtils.isEmpty(savePath)) {
             File saveFile = new File(downloadInfo.getSavePath());
-            VcPlayerLog.d("Downloader", "save file path :" + downloadInfo.getSavePath());
-            VcPlayerLog.d("Downloader", "save info path dir :" + this.mSaveDir);
-            VcPlayerLog.d("Downloader", "save info path  :" + getInfoFileName(saveFile.getName()));
             File infoFile = new File(this.mSaveDir, getInfoFileName(saveFile.getName()));
             if (!infoFile.exists() || infoFile.isDirectory()) {
                 try {
                     infoFile.createNewFile();
                 } catch (IOException var7) {
-                    VcPlayerLog.e(TAG, "info 文件创建失败");
                 }
             }
 
@@ -51,7 +43,6 @@ public class DownloadSaveInfoUtil {
             infos.add(downloadInfo);
             if (infoFile.exists()) {
                 String content = AliyunDownloadMediaInfo.getJsonFromInfos(infos);
-                VcPlayerLog.d("Downloader", "save content  :" + content);
                 this.writeStringToFile(infoFile, content);
             }
 
@@ -85,8 +76,8 @@ public class DownloadSaveInfoUtil {
                             if (infosFromJson != null && !infosFromJson.isEmpty()) {
                                 for (Iterator var10 = infosFromJson.iterator(); var10.hasNext(); infos.add(info)) {
                                     info = (AliyunDownloadMediaInfo)var10.next();
-                                    if (info.getStatus() == Status.Complete) {
-                                        info.setStatus(Status.Complete);
+                                    if (info.getStatus() == AliyunDownloadMediaInfo.Status.Complete) {
+                                        info.setStatus(AliyunDownloadMediaInfo.Status.Complete);
                                     }
                                 }
                             }
@@ -117,8 +108,8 @@ public class DownloadSaveInfoUtil {
                     AliyunDownloadMediaInfo cacheInfo = (AliyunDownloadMediaInfo)var8.next();
                     info.setDownloadIndex(cacheInfo.getDownloadIndex());
                     info.setProgress(cacheInfo.getProgress());
-                    Status cacheInfoStatus = cacheInfo.getStatus();
-                    if (cacheInfoStatus == Status.Complete) {
+                    AliyunDownloadMediaInfo.Status cacheInfoStatus = cacheInfo.getStatus();
+                    if (cacheInfoStatus == AliyunDownloadMediaInfo.Status.Complete) {
                         info.setStatus(cacheInfoStatus);
                     }
 
@@ -162,7 +153,6 @@ public class DownloadSaveInfoUtil {
             ps.println(content);
             ps.flush();
         } catch (FileNotFoundException var8) {
-            VcPlayerLog.d(TAG, var8.getMessage());
         } finally {
             if (ps != null) {
                 ps.close();
@@ -186,7 +176,6 @@ public class DownloadSaveInfoUtil {
 
             reader.close();
         } catch (IOException var13) {
-            VcPlayerLog.d(TAG, var13.getMessage());
         } finally {
             if (reader != null) {
                 try {

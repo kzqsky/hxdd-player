@@ -54,4 +54,20 @@
     <color name="alivc_color_gray">#D8D8D8</color>
     <color name="alivc_dialog_bg_translucent">#E6373d41</color>
     <color name="alivc_barrage_switch_background">#80D8D8D8</color>
+
+
+    <color name="alivc_common_white">#ffffffff</color>
+    <color name="alivc_common_bg_cyan_light">#00C1DE</color>
+
+    <color name="alivc_player_theme_blue">#379DF2</color>
+    <color name="alivc_player_theme_green">#57AB44</color>
+    <color name="alivc_player_theme_orange">#EE7C33</color>
+    <color name="alivc_player_theme_red">#E94033</color>
+    <color name="alivc_common_font_white_light">#e7e7e7</color>
+    <color name="alivc_common_bg_black_alpha_50">#7f000000</color>
+    <color name="alivc_common_bg_black_alpha_80">#CC000000</color>
+
+    <color name="alivc_common_font_gray_333">#333</color>
+    <color name="alivc_common_line_gray_bright">#D7D8D9</color>
+    <color name="alivc_common_font_cyan_light">#00C1DE</color>
 </resources>

@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.alivc.player.VcPlayerLog;
+import com.aliyun.utils.VcPlayerLog;
 import com.edu.hxdd_player.R;
 
 /*

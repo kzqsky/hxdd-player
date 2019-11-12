@@ -1,8 +1,5 @@
 package com.aliyun.vodplayerview.view.choice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -24,15 +21,19 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.aliyun.vodplayerview.utils.ScreenUtils;
 import com.edu.hxdd_player.R;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Mulberry
  *         create on 2018/5/15.
  */
 
-public class AlivcActionListDialog extends Dialog{
+public class AlivcActionListDialog extends Dialog {
 
     private static final String TAG = AlivcActionListDialog.class.getName();
 
@@ -93,8 +94,8 @@ public class AlivcActionListDialog extends Dialog{
             return;
         }
         TranslateAnimation translateAnimation = new TranslateAnimation(
-            Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,
-            Animation.RELATIVE_TO_SELF,1f,Animation.RELATIVE_TO_SELF,0f);
+            Animation.RELATIVE_TO_SELF,0f, Animation.RELATIVE_TO_SELF,0f,
+            Animation.RELATIVE_TO_SELF,1f, Animation.RELATIVE_TO_SELF,0f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
         AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(translateAnimation);
@@ -216,7 +217,7 @@ public class AlivcActionListDialog extends Dialog{
         /**
          * @param typeAndTag Item 的文字内容，同时会把内容设置为 tag。
          */
-        public BottomListCheckBuilder addItem(String typeAndTag,String value) {
+        public BottomListCheckBuilder addItem(String typeAndTag, String value) {
             mItems.add(new BottomCheckListItemData(typeAndTag, value,typeAndTag));
             return this;
         }
@@ -250,7 +251,7 @@ public class AlivcActionListDialog extends Dialog{
         public AlivcActionListDialog build(){
             alivcCheckItemDialog = new AlivcActionListDialog(mContext);
             View contentView = buildViews();
-            alivcCheckItemDialog.setContentView(contentView,new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+            alivcCheckItemDialog.setContentView(contentView,new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             if (onBottomDialogDismissListener != null){
                 alivcCheckItemDialog.setOnDismissListener(onBottomDialogDismissListener);
             }
@@ -306,7 +307,7 @@ public class AlivcActionListDialog extends Dialog{
             String value;
             String tag;
 
-            public BottomCheckListItemData(String type, String value,String tag) {
+            public BottomCheckListItemData(String type, String value, String tag) {
                 this.type = type;
                 this.value = value;
                 this.tag = tag;

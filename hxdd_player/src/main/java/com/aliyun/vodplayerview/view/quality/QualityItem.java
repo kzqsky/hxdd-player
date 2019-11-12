@@ -2,9 +2,6 @@ package com.aliyun.vodplayerview.view.quality;
 
 import android.content.Context;
 
-import com.aliyun.vodplayer.media.IAliyunVodPlayer;
-import com.aliyun.vodplayer.utils.QualityLanguage;
-
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
  */

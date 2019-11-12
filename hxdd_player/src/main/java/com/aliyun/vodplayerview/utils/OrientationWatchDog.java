@@ -4,7 +4,8 @@ import android.content.Context;
 import android.hardware.SensorManager;
 import android.view.OrientationEventListener;
 
-import com.alivc.player.VcPlayerLog;
+import com.aliyun.utils.VcPlayerLog;
+
 
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -33,9 +34,13 @@ public class OrientationWatchDog {
          */
         Port,
         /**
-         * 横屏
+         * 横屏,正向
          */
-        Land
+        Land_Forward,
+        /**
+         * 横屏,反向
+         */
+        Land_Reverse;
     }
 
 
@@ -49,10 +54,12 @@ public class OrientationWatchDog {
     public void startWatch() {
         VcPlayerLog.e(TAG, "startWatch");
         if (mLandOrientationListener == null) {
-            mLandOrientationListener = new OrientationEventListener(mContext,
-                    SensorManager.SENSOR_DELAY_NORMAL) {
+            mLandOrientationListener = new OrientationEventListener(mContext, SensorManager.SENSOR_DELAY_NORMAL) {
                 @Override
                 public void onOrientationChanged(int orientation) {
+                    if(orientation == -1){
+                        return ;
+                    }
                     //这里的|| 和&& 不能弄错！！
                     //根据手机的方向角度计算。在90和180度上下10度的时候认为横屏了。
                     //竖屏类似。
@@ -63,15 +70,23 @@ public class OrientationWatchDog {
                             || (orientation < 190 && orientation > 170);
 
                     if (isLand) {
-                        if (mOrientationListener != null) {
-                            VcPlayerLog.d(TAG, "ToLand");
-                            mOrientationListener.changedToLandScape(mLastOrientation == Orientation.Port);
+                        if (mOrientationListener != null && (orientation < 100 && orientation > 80)) {
+                            VcPlayerLog.d(TAG, "ToLandForward");
+                            mOrientationListener.changedToLandReverseScape(mLastOrientation == Orientation.Port
+                                    || mLastOrientation == Orientation.Land_Forward);
+                            mLastOrientation = Orientation.Land_Reverse;
+                        }else if(mOrientationListener != null && (orientation < 280 && orientation > 260)){
+                            VcPlayerLog.d(TAG, "ToLandReverse");
+                            mOrientationListener.changedToLandForwardScape(mLastOrientation == Orientation.Port
+                                    || mLastOrientation == Orientation.Land_Reverse);
+                            mLastOrientation = Orientation.Land_Forward;
+
                         }
-                        mLastOrientation = Orientation.Land;
                     } else if (isPort) {
                         if (mOrientationListener != null) {
                             VcPlayerLog.d(TAG, "ToPort");
-                            mOrientationListener.changedToPortrait(mLastOrientation == Orientation.Land);
+                            mOrientationListener.changedToPortrait(mLastOrientation == Orientation.Land_Reverse
+                                    || mLastOrientation == Orientation.Land_Forward);
                         }
                         mLastOrientation = Orientation.Port;
                     }
@@ -107,11 +122,18 @@ public class OrientationWatchDog {
      */
     public interface OnOrientationListener {
         /**
-         * 变为Land
+         * 变为Land_Forward
          *
          * @param fromPort 是否是从竖屏变过来的
          */
-        void changedToLandScape(boolean fromPort);
+        void changedToLandForwardScape(boolean fromPort);
+
+        /**
+         * 变为Land_Reverse
+         *
+         * @param fromPort 是否是从竖屏变过来的
+         */
+        void changedToLandReverseScape(boolean fromPort);
 
         /**
          * 变为Port

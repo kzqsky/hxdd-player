@@ -1,12 +1,12 @@
 package com.aliyun.vodplayerview.utils;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.CheckBox;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by lifujun on 2017/6/22.

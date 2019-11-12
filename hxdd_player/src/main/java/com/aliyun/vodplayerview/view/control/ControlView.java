@@ -16,8 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.alivc.player.VcPlayerLog;
-import com.aliyun.vodplayer.media.AliyunMediaInfo;
+import com.aliyun.player.nativeclass.MediaInfo;
+import com.aliyun.player.nativeclass.TrackInfo;
+import com.aliyun.utils.VcPlayerLog;
+import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.utils.TimeFormater;
 import com.aliyun.vodplayerview.view.TimePointSeekBar;
@@ -28,6 +30,7 @@ import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -77,7 +80,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
     //大小屏公用的信息
     //视频信息，info显示用。
-    private AliyunMediaInfo mAliyunMediaInfo;
+    private MediaInfo mAliyunMediaInfo;
     //播放的进度
     private int mVideoPosition = 0;
     //seekbar拖动状态
@@ -145,8 +148,11 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     private OnScreenShotClickListener mOnScreenShotClickListener;
     //录制
     private OnScreenRecoderClickListener mOnScreenRecoderClickListener;
+    //原视频时长
+    private long mSourceDuration;
     private ImageView mScreenShot;
     private ImageView mScreenRecorder;
+
 
     public ControlView(Context context) {
         super(context);
@@ -179,7 +185,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
         mTitlebarBackBtn = (ImageView) findViewById(R.id.alivc_title_back);
         mTitlebarText = (TextView) findViewById(R.id.alivc_title_title);
-        mTitleDownload = (ImageView)findViewById(R.id.alivc_title_download);
+        mTitleDownload = (ImageView) findViewById(R.id.alivc_title_download);
         mTitleMore = findViewById(R.id.alivc_title_more);
         mScreenModeBtn = (ImageView) findViewById(R.id.alivc_screen_mode);
         mScreenLockBtn = (ImageView) findViewById(R.id.alivc_screen_lock);
@@ -190,18 +196,17 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         mLargeInfoBar = findViewById(R.id.alivc_info_large_bar);
         mLargePositionText = (TextView) findViewById(R.id.alivc_info_large_position);
         mLargeDurationText = (TextView) findViewById(R.id.alivc_info_large_duration);
-        mLargeSeekbar = findViewById(R.id.alivc_info_large_seekbar);
+        mLargeSeekbar = (TimePointSeekBar) findViewById(R.id.alivc_info_large_seekbar);
         mLargeChangeQualityBtn = (Button) findViewById(R.id.alivc_info_large_rate_btn);
-
 
         mSmallInfoBar = findViewById(R.id.alivc_info_small_bar);
         mSmallPositionText = (TextView) findViewById(R.id.alivc_info_small_position);
         mSmallDurationText = (TextView) findViewById(R.id.alivc_info_small_duration);
-        mSmallSeekbar = findViewById(R.id.alivc_info_small_seekbar);
+        mSmallSeekbar = (TimePointSeekBar) findViewById(R.id.alivc_info_small_seekbar);
     }
 
     private void setViewListener() {
-//标题的返回按钮监听
+        //标题的返回按钮监听
         mTitlebarBackBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,7 +215,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 }
             }
         });
-//下载菜单监听
+        //下载菜单监听
         mTitleDownload.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,7 +224,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 }
             }
         });
-//控制栏的播放按钮监听
+        //控制栏的播放按钮监听
         mPlayStateBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,7 +233,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 }
             }
         });
-//锁屏按钮监听
+        //锁屏按钮监听
         mScreenLockBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,7 +247,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         mScreenShot.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnScreenShotClickListener != null){
+                if (mOnScreenShotClickListener != null) {
                     mOnScreenShotClickListener.onScreenShotClick();
                 }
             }
@@ -252,15 +257,13 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         mScreenRecorder.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnScreenRecoderClickListener != null){
+                if (mOnScreenRecoderClickListener != null) {
                     mOnScreenRecoderClickListener.onScreenRecoderClick();
                 }
             }
         });
 
-
-
-//大小屏按钮监听
+        //大小屏按钮监听
         mScreenModeBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +272,8 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 }
             }
         });
-//seekbar的滑动监听
+
+        //seekbar的滑动监听
         SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -283,21 +287,24 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                         //小屏状态
                         mSmallPositionText.setText(TimeFormater.formatMs(progress));
                     }
+                    if (mOnSeekListener != null) {
+                        mOnSeekListener.onProgressChanged(progress);
+                    }
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 isSeekbarTouching = true;
+
                 mHideHandler.removeMessages(WHAT_HIDE);
                 if (mOnSeekListener != null) {
-                    mOnSeekListener.onSeekStart();
+                    mOnSeekListener.onSeekStart(seekBar.getProgress());
                 }
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
                 if (mOnSeekListener != null) {
                     mOnSeekListener.onSeekEnd(seekBar.getProgress());
                 }
@@ -307,16 +314,25 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 mHideHandler.sendEmptyMessageDelayed(WHAT_HIDE, DELAY_TIME);
             }
         };
-//seekbar的滑动监听
+        //seekbar的滑动监听
         mLargeSeekbar.setOnSeekBarChangeListener(seekBarChangeListener);
         mSmallSeekbar.setOnSeekBarChangeListener(seekBarChangeListener);
-//全屏下的切换分辨率按钮监听
+        //全屏下的切换分辨率按钮监听
         mLargeChangeQualityBtn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //点击切换分辨率 显示分辨率的对话框
                 if (mOnQualityBtnClickListener != null && mAliyunMediaInfo != null) {
-                    mOnQualityBtnClickListener.onQualityBtnClick(v, mAliyunMediaInfo.getQualities(), mCurrentQuality);
+                    List<TrackInfo> qualityTrackInfos = new ArrayList<>();
+                    List<TrackInfo> trackInfos = mAliyunMediaInfo.getTrackInfos();
+                    for (TrackInfo trackInfo : trackInfos) {
+                        //清晰度
+                        if (trackInfo.getType() == TrackInfo.Type.TYPE_VOD) {
+                            qualityTrackInfos.add(trackInfo);
+                        }
+                    }
+                    mOnQualityBtnClickListener.onQualityBtnClick(v, qualityTrackInfos, mCurrentQuality);
                 }
             }
         });
@@ -383,6 +399,15 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     }
 
     /**
+     * 设置弹幕开关样式
+     */
+    public void setDanmuText(String text) {
+//        if (mLargeDanmuTextView != null) {
+//            mLargeDanmuTextView.setText(text);
+//        }
+    }
+
+    /**
      * 设置当前屏幕模式：全屏还是小屏
      *
      * @param mode {@link AliyunScreenMode#Small}：小屏. {@link AliyunScreenMode#Full}:全屏
@@ -404,9 +429,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      * 更新下载按钮的显示和隐藏
      */
     public void updateDownloadBtn() {
-        if (mAliyunScreenMode == AliyunScreenMode.Full) {
+        if (mAliyunScreenMode == AliyunScreenMode.Full || "localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
             mTitleDownload.setVisibility(GONE);
-        } else if (mAliyunScreenMode == AliyunScreenMode.Small){
+        } else if (mAliyunScreenMode == AliyunScreenMode.Small || "vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)) {
             mTitleDownload.setVisibility(GONE);
         }
     }
@@ -436,7 +461,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     }
 
     /**
-     *  更新更多按钮的显示和隐藏
+     * 更新更多按钮的显示和隐藏
      */
     private void updateShowMoreBtn() {
         if (mAliyunScreenMode == AliyunScreenMode.Full) {
@@ -474,11 +499,12 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      * @param aliyunMediaInfo 媒体信息
      * @param currentQuality  当前清晰度
      */
-    public void setMediaInfo(AliyunMediaInfo aliyunMediaInfo, String currentQuality) {
+    public void setMediaInfo(MediaInfo aliyunMediaInfo, String currentQuality) {
         mAliyunMediaInfo = aliyunMediaInfo;
         mCurrentQuality = currentQuality;
         updateLargeInfoBar();
         updateChangeQualityBtn();
+        updateTitleView();
     }
 
 
@@ -560,6 +586,19 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     }
 
     /**
+     * 判断当前播放进度是否在中间广告位置
+     */
+//    private boolean isVideoPositionInMiddle(int mVideoPosition){
+//        if(mAdvPosition == MutiSeekBarView.AdvPosition.ALL
+//                || mAdvPosition == MutiSeekBarView.AdvPosition.START_END
+//                || mAdvPosition == MutiSeekBarView.AdvPosition.START_MIDDLE){
+//            return (mVideoPosition >= mSourceDuration / 2 + mAdvDuration) && (mVideoPosition <= mSourceDuration / 2 + mAdvDuration);
+//        }else{
+//            return mVideoPosition >= mSourceDuration / 2 && mVideoPosition <= mSourceDuration / 2;
+//        }
+//    }
+
+    /**
      * 获取视频进度
      *
      * @return 视频进度
@@ -638,10 +677,10 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         } else if (mAliyunScreenMode == AliyunScreenMode.Small) {
             //先设置小屏的info数据
             if (mAliyunMediaInfo != null) {
-                mSmallDurationText.setText("" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
+                mSmallDurationText.setText("/" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
                 mSmallSeekbar.setMax((int) mAliyunMediaInfo.getDuration());
             } else {
-                mSmallDurationText.setText("" + TimeFormater.formatMs(0));
+                mSmallDurationText.setText("/" + TimeFormater.formatMs(0));
                 mSmallSeekbar.setMax(0);
             }
 
@@ -665,13 +704,12 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
             //里面包含了很多按钮，比如切换清晰度的按钮之类的
             mLargeInfoBar.setVisibility(INVISIBLE);
         } else if (mAliyunScreenMode == AliyunScreenMode.Full) {
-
             //先更新大屏的info数据
             if (mAliyunMediaInfo != null) {
-                mLargeDurationText.setText("" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
+                mLargeDurationText.setText("/" + TimeFormater.formatMs(mAliyunMediaInfo.getDuration()));
                 mLargeSeekbar.setMax((int) mAliyunMediaInfo.getDuration());
             } else {
-                mLargeDurationText.setText("" + TimeFormater.formatMs(0));
+                mLargeDurationText.setText("/" + TimeFormater.formatMs(0));
                 mLargeSeekbar.setMax(0);
             }
 
@@ -683,12 +721,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
                 mLargePositionText.setText(TimeFormater.formatMs(mVideoPosition));
             }
             mLargeChangeQualityBtn.setText(QualityItem.getItem(getContext(), mCurrentQuality, isMtsSource).getName());
-
             //然后再显示出来。
             mLargeInfoBar.setVisibility(VISIBLE);
         }
-
-
     }
 
     /**
@@ -729,7 +764,6 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      * 更新播放按钮的状态
      */
     private void updatePlayStateBtn() {
-
         if (mPlayState == PlayState.NotPlaying) {
             mPlayStateBtn.setImageResource(R.drawable.alivc_playstate_play);
         } else if (mPlayState == PlayState.Playing) {
@@ -739,9 +773,6 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
     /**
      * 监听view是否可见。从而实现5秒隐藏的功能
-     *
-     * @param changedView
-     * @param visibility
      */
     @Override
     protected void onVisibilityChanged(@Nullable View changedView, int visibility) {
@@ -771,7 +802,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
             ControlView controlView = controlViewWeakReference.get();
             if (controlView != null) {
-                if(!controlView.isSeekbarTouching){
+                if (!controlView.isSeekbarTouching) {
                     controlView.hide(HideType.Normal);
                 }
             }
@@ -886,7 +917,7 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
          * @param qualities      支持的清晰度
          * @param currentQuality 当前清晰度
          */
-        void onQualityBtnClick(View v, List<String> qualities, String currentQuality);
+        void onQualityBtnClick(View v, List<TrackInfo> qualities, String currentQuality);
 
         /**
          * 隐藏
@@ -938,7 +969,12 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
         /**
          * seek开始事件
          */
-        void onSeekStart();
+        void onSeekStart(int position);
+
+        /**
+         * seek进度改变事件
+         */
+        void onProgressChanged(int progress);
     }
 
 
@@ -984,25 +1020,24 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
     /**
      * 屏幕截图
      */
-    public interface OnScreenShotClickListener{
+    public interface OnScreenShotClickListener {
         void onScreenShotClick();
     }
 
-    public void setOnScreenShotClickListener(OnScreenShotClickListener listener){
+    public void setOnScreenShotClickListener(OnScreenShotClickListener listener) {
         this.mOnScreenShotClickListener = listener;
     }
 
     /**
      * 录制
      */
-    public interface OnScreenRecoderClickListener{
+    public interface OnScreenRecoderClickListener {
         void onScreenRecoderClick();
     }
 
-    public void setOnScreenRecoderClickListener(OnScreenRecoderClickListener listener){
+    public void setOnScreenRecoderClickListener(OnScreenRecoderClickListener listener) {
         this.mOnScreenRecoderClickListener = listener;
     }
-
     public void setTimePointList(List<Long> list) {
         mLargeSeekbar.setTimePointList(list);
         mSmallSeekbar.setTimePointList(list);

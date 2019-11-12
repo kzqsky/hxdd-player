@@ -2,7 +2,7 @@ package com.aliyun.vodplayerview.view.gesturedialog;
 
 import android.app.Activity;
 
-import com.alivc.player.VcPlayerLog;
+import com.aliyun.utils.VcPlayerLog;
 import com.edu.hxdd_player.R;
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -14,9 +14,9 @@ import com.edu.hxdd_player.R;
 public class VolumeDialog extends BaseGestureDialog {
 
     private static final String TAG = VolumeDialog.class.getSimpleName();
-    private int initVolume = 0;
+    private float initVolume = 0;
 
-    public VolumeDialog(Activity context, int percent) {
+    public VolumeDialog(Activity context, float percent) {
         super(context);
         initVolume = percent;
         mImageView.setImageResource(R.drawable.alivc_volume_img);
@@ -27,9 +27,9 @@ public class VolumeDialog extends BaseGestureDialog {
      * 更新音量值
      * @param percent 音量百分比
      */
-    public void updateVolume(int percent) {
-        mTextView.setText(percent + "%");
-        mImageView.setImageLevel(percent);
+    public void updateVolume(float percent) {
+        mTextView.setText((int)percent + "%");
+        mImageView.setImageLevel((int) percent);
     }
 
     /**
@@ -37,11 +37,10 @@ public class VolumeDialog extends BaseGestureDialog {
      * @param changePercent 变化的百分比
      * @return 最后的音量
      */
-    public int getTargetVolume(int changePercent) {
+    public float getTargetVolume(int changePercent) {
 
         VcPlayerLog.d(TAG, "changePercent = " + changePercent + " , initVolume  = " + initVolume);
-
-        int newVolume = initVolume - changePercent;
+        float newVolume = initVolume - changePercent;
         if (newVolume > 100) {
             newVolume = 100;
         } else if (newVolume < 0) {

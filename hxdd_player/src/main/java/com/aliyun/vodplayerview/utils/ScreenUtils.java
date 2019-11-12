@@ -1,7 +1,7 @@
 package com.aliyun.vodplayerview.utils;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
@@ -61,4 +61,10 @@ public class ScreenUtils {
         return (xPos < getWidth(mContext) / 2);
     }
 
+    public static int getNavigationBarHeight(Context context) {
+        Resources resources =  context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height","dimen", "android");
+        int height = resources.getDimensionPixelSize(resourceId);
+        return height;
+    }
 }

@@ -1,14 +1,14 @@
 package com.aliyun.vodplayerview.theme;
 
-import com.aliyun.vodplayerview.view.tipsview.ErrorView;
-import com.aliyun.vodplayerview.view.tipsview.NetChangeView;
-import com.aliyun.vodplayerview.view.tipsview.ReplayView;
-import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.aliyun.vodplayerview.view.control.ControlView;
 import com.aliyun.vodplayerview.view.guide.GuideView;
 import com.aliyun.vodplayerview.view.quality.QualityView;
 import com.aliyun.vodplayerview.view.speed.SpeedView;
+import com.aliyun.vodplayerview.view.tipsview.ErrorView;
+import com.aliyun.vodplayerview.view.tipsview.NetChangeView;
+import com.aliyun.vodplayerview.view.tipsview.ReplayView;
 import com.aliyun.vodplayerview.view.tipsview.TipsView;
+import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.

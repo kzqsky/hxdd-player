@@ -35,4 +35,6 @@ public class Catalog {
     public Long pId;                    // 父节点 ID
 
     public LearnRecord learnRecord;
+
+    public String savePath;
 }

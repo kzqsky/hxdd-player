@@ -1,8 +1,8 @@
-//apply plugin: 'com.android.application'
-apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-group='com.github.kzqsky'
-version = '1.0'
+apply plugin: 'com.android.application'
+//apply plugin: 'com.android.library'
+//apply plugin: 'com.github.dcendents.android-maven'
+//group='com.github.kzqsky'
+//version = '1.0'
 
 repositories {
     mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 android {
     compileSdkVersion 27
     defaultConfig {
-//        applicationId "com.edu.hxdd_player"
+        applicationId "com.edu.hxdd_player"
         multiDexEnabled true
         minSdkVersion 21
         targetSdkVersion 27
@@ -28,7 +28,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a','x86_64'
+            universalApk true
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -64,6 +71,15 @@ dependencies {
     implementation "com.blankj:utilcode:1.22.10"
     implementation  "com.android.support:design:27.1.1"
     implementation "com.android.support.constraint:constraint-layout:1.1.0"
+
+
+    implementation 'com.aliyun.sdk.android:AliyunPlayer:4.7.1-full'
+    implementation 'com.alivc.conan:AlivcConan:+'
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
+//    implementation 'com.aliyun.video.android:core:+'
+
+    implementation 'com.github.ctiao:DanmakuFlameMaster:0.9.25'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
 
 }

@@ -1,18 +1,16 @@
 package com.aliyun.vodplayerview.widget;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -21,21 +19,36 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.alivc.player.AliyunErrorCode;
-import com.alivc.player.VcPlayerLog;
-import com.aliyun.vodplayer.media.AliyunLocalSource;
-import com.aliyun.vodplayer.media.AliyunMediaInfo;
-import com.aliyun.vodplayer.media.AliyunPlayAuth;
-import com.aliyun.vodplayer.media.AliyunVidSts;
-import com.aliyun.vodplayer.media.AliyunVodPlayer;
-import com.aliyun.vodplayer.media.IAliyunVodPlayer;
-import com.aliyun.vodplayer.media.IAliyunVodPlayer.PlayerState;
+import com.aliyun.player.AliPlayer;
+import com.aliyun.player.AliPlayerFactory;
+import com.aliyun.player.IPlayer;
+import com.aliyun.player.bean.ErrorInfo;
+import com.aliyun.player.bean.InfoBean;
+import com.aliyun.player.bean.InfoCode;
+import com.aliyun.player.nativeclass.MediaInfo;
+import com.aliyun.player.nativeclass.PlayerConfig;
+import com.aliyun.player.nativeclass.Thumbnail;
+import com.aliyun.player.nativeclass.TrackInfo;
+import com.aliyun.player.source.UrlSource;
+import com.aliyun.player.source.VidAuth;
+import com.aliyun.player.source.VidSts;
+import com.aliyun.thumbnail.ThumbnailBitmapInfo;
+import com.aliyun.thumbnail.ThumbnailHelper;
+import com.aliyun.utils.VcPlayerLog;
+import com.aliyun.vodplayerview.constants.PlayParameter;
+import com.aliyun.vodplayerview.listener.LockPortraitListener;
+import com.aliyun.vodplayerview.listener.OnAutoPlayListener;
+import com.aliyun.vodplayerview.listener.OnChangeQualityListener;
+import com.aliyun.vodplayerview.listener.OnScreenCostingSingleTagListener;
+import com.aliyun.vodplayerview.listener.OnStoppedListener;
 import com.aliyun.vodplayerview.theme.ITheme;
+import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.ImageLoader;
 import com.aliyun.vodplayerview.utils.NetWatchdog;
 import com.aliyun.vodplayerview.utils.OrientationWatchDog;
 import com.aliyun.vodplayerview.utils.ScreenUtils;
+import com.aliyun.vodplayerview.utils.TimeFormater;
 import com.aliyun.vodplayerview.view.control.ControlView;
 import com.aliyun.vodplayerview.view.control.ControlView.OnDownloadClickListener;
 import com.aliyun.vodplayerview.view.gesture.GestureDialogManager;
@@ -45,6 +58,7 @@ import com.aliyun.vodplayerview.view.interfaces.ViewAction;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.view.quality.QualityView;
 import com.aliyun.vodplayerview.view.speed.SpeedView;
+import com.aliyun.vodplayerview.view.thumbnail.ThumbnailView;
 import com.aliyun.vodplayerview.view.tipsview.TipsView;
 import com.edu.hxdd_player.R;
 
@@ -52,8 +66,6 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
 
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -65,13 +77,16 @@ import java.util.concurrent.ExecutorService;
  * 以及封面等。 view 的初始化是在{@link #initVideoView}方法中实现的。 然后是对各个view添加监听方法，处理对应的操作，从而实现与播放器的共同操作
  */
 public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
-
+    /**
+     * 精准seek开启判断逻辑：当视频时长小于5分钟的时候。
+     */
+    private static final int ACCURATE = 5 * 60 * 1000;
     private static final String TAG = AliyunVodPlayerView.class.getSimpleName();
 
     /**
      * 判断VodePlayer 是否加载完成
      */
-    private Map<AliyunMediaInfo,Boolean> hasLoadEnd = new HashMap<>();
+    private Map<MediaInfo, Boolean> hasLoadEnd = new HashMap<>();
 
     //视频画面
     private SurfaceView mSurfaceView;
@@ -87,8 +102,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private GuideView mGuideView;
     //封面view
     private ImageView mCoverView;
+    /**
+     * 缩略图View
+     */
+    private ThumbnailView mThumbnailView;
+
     //播放器
-    private AliyunVodPlayer mAliyunVodPlayer;
+    private AliPlayer mAliyunVodPlayer;
     //手势对话框控制
     private GestureDialogManager mGestureDialogManager;
     //网络状态监听
@@ -98,7 +118,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     //Tips view
     private TipsView mTipsView;
     //锁定竖屏
-    private IAliyunVodPlayer.LockPortraitListener mLockPortraitListener = null;
+    private LockPortraitListener mLockPortraitListener = null;
     //是否锁定全屏
     private boolean mIsFullScreenLocked = false;
     //当前屏幕模式
@@ -107,64 +127,87 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private boolean inSeek = false;
     //播放是否完成
     private boolean isCompleted = false;
-    //用来记录前后台切换时的状态，以供恢复。
-    private PlayerState mPlayerState;
     //媒体信息
-    private AliyunMediaInfo mAliyunMediaInfo;
-    //整体缓冲进度
-    private int mCurrentBufferPercentage = 0;
-    //进度更新计时器
-    private ProgressUpdateTimer mProgressUpdateTimer = new ProgressUpdateTimer(this);
+    private MediaInfo mAliyunMediaInfo;
     //解决bug,进入播放界面快速切换到其他界面,播放器仍然播放视频问题
     private VodPlayerLoadEndHandler vodPlayerLoadEndHandler = new VodPlayerLoadEndHandler(this);
+    //原视频的buffered
+    private long mVideoBufferedPosition = 0;
+    //原视频的currentPosition
+    private long mCurrentPosition = 0;
+    //当前播放器的状态 默认为idle状态
+    private int mPlayerState = IPlayer.idle;
+    //原视频时长
+    private long mSourceDuration;
 
     //目前支持的几种播放方式
-    private AliyunPlayAuth mAliyunPlayAuth;
-    private AliyunLocalSource mAliyunLocalSource;
-    private AliyunVidSts mAliyunVidSts;
+    private VidAuth mAliyunPlayAuth;
+    private UrlSource mAliyunLocalSource;
+    private VidSts mAliyunVidSts;
 
     //对外的各种事件监听
-    private IAliyunVodPlayer.OnInfoListener mOutInfoListener = null;
-    private IAliyunVodPlayer.OnErrorListener mOutErrorListener = null;
-    private IAliyunVodPlayer.OnRePlayListener mOutRePlayListener = null;
-    private IAliyunVodPlayer.OnPcmDataListener mOutPcmDataListener = null;
-    private IAliyunVodPlayer.OnAutoPlayListener mOutAutoPlayListener = null;
-    private IAliyunVodPlayer.OnPreparedListener mOutPreparedListener = null;
-    private IAliyunVodPlayer.OnCompletionListener mOutCompletionListener = null;
-    private IAliyunVodPlayer.OnSeekCompleteListener mOuterSeekCompleteListener = null;
-    private IAliyunVodPlayer.OnChangeQualityListener mOutChangeQualityListener = null;
-    private IAliyunVodPlayer.OnFirstFrameStartListener mOutFirstFrameStartListener = null;
-    private IAliyunVodPlayer.OnTimeExpiredErrorListener mOutTimeExpiredErrorListener = null;
-    private IAliyunVodPlayer.OnUrlTimeExpiredListener mOutUrlTimeExpiredListener = null;
+    private IPlayer.OnInfoListener mOutInfoListener = null;
+    private IPlayer.OnErrorListener mOutErrorListener = null;
+    //    private IPlayer.OnRePlayListener mOutRePlayListener = null;
+    private OnAutoPlayListener mOutAutoPlayListener = null;
+    private IPlayer.OnPreparedListener mOutPreparedListener = null;
+    private IPlayer.OnCompletionListener mOutCompletionListener = null;
+    private IPlayer.OnSeekCompleteListener mOuterSeekCompleteListener = null;
+    private OnChangeQualityListener mOutChangeQualityListener = null;
+    private IPlayer.OnRenderingStartListener mOutFirstFrameStartListener = null;
+    private OnScreenCostingSingleTagListener mOnScreenCostingSingleTagListener = null;
+    private OnScreenBrightnessListener mOnScreenBrightnessListener = null;
+    private OnTimeExpiredErrorListener mOutTimeExpiredErrorListener = null;
+    //    private IPlayer.OnUrlTimeExpiredListener mOutUrlTimeExpiredListener = null;
     //对外view点击事件监听
     private OnPlayerViewClickListener mOnPlayerViewClickListener = null;
     // 连网断网监听
     private NetConnectedListener mNetConnectedListener = null;
     // 横屏状态点击更多
     private ControlView.OnShowMoreClickListener mOutOnShowMoreClickListener;
-    /**
-     * 播放按钮点击监听
-     */
-
+    //播放按钮点击监听
     private OnPlayStateBtnClickListener onPlayStateBtnClickListener;
+    //停止按钮监听
+    private OnStoppedListener mOnStoppedListener;
+    /**
+     * 对外SEI消息通知
+     */
+    private IPlayer.OnSeiDataListener mOutSeiDataListener = null;
+    //当前屏幕亮度
+    private int mScreenBrightness;
+    /**
+     * 缩略图帮助类
+     */
+    private ThumbnailHelper mThumbnailHelper;
+    //获取缩略图是否成功
+    private boolean mThumbnailPrepareSuccess = false;
 
     private float currentSpeed;
-    private int currentVolume;
+    private float currentVolume;
     private int currentScreenBrigtness;
+
+    private AudioManager mAudioManager;
 
     public AliyunVodPlayerView(Context context) {
         super(context);
+        initAudio(context);
         initVideoView();
     }
 
     public AliyunVodPlayerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initAudio(context);
         initVideoView();
     }
 
     public AliyunVodPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        initAudio(context);
         initVideoView();
+    }
+
+    private void initAudio(Context context) {
+        mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
     }
 
     /**
@@ -179,10 +222,12 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         initCoverView();
         //初始化手势view
         initGestureView();
-        //初始化清晰度view
-        initQualityView();
         //初始化控制栏
         initControlView();
+        //初始化清晰度view
+        initQualityView();
+        //初始化缩略图
+        initThumbnailView();
         //初始化倍速view
         initSpeedView();
         //初始化指引view
@@ -196,7 +241,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         //初始化手势对话框控制
         initGestureDialogManager();
         //默认为蓝色主题
-        setTheme(Theme.Orange);
+        setTheme(Theme.Blue);
         //先隐藏手势和控制栏，防止在没有prepare的时候做操作。
         hideGestureAndControlViews();
     }
@@ -213,7 +258,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         for (int i = 0; i < childCounts; i++) {
             View view = getChildAt(i);
             if (view instanceof ITheme) {
-                ((ITheme)view).setTheme(theme);
+                ((ITheme) view).setTheme(theme);
             }
         }
     }
@@ -221,7 +266,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     /**
      * 切换播放速度
      *
-     * @param speedValue
+     * @param speedValue 播放速度
      */
     public void changeSpeed(SpeedValue speedValue) {
         if (speedValue == SpeedValue.One) {
@@ -233,34 +278,27 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         } else if (speedValue == SpeedValue.Twice) {
             currentSpeed = 2.0f;
         }
-        mAliyunVodPlayer.setPlaySpeed(currentSpeed);
+        mAliyunVodPlayer.setSpeed(currentSpeed);
     }
 
     public void setCurrentSpeed(float currentSpeed) {
         this.currentSpeed = currentSpeed;
-
     }
 
     public float getCurrentSpeed() {
         return currentSpeed;
     }
 
-    public void setCurrentVolume(int progress) {
+    public void setCurrentVolume(float progress) {
         this.currentVolume = progress;
         mAliyunVodPlayer.setVolume(progress);
     }
 
-    public int getCurrentVolume() {
-        return mAliyunVodPlayer.getVolume();
-    }
-
-    public void setCurrentScreenBrigtness(int progress) {
-        this.currentScreenBrigtness = progress;
-        mAliyunVodPlayer.setScreenBrightness(progress);
-    }
-
-    public int getCurrentScreenBrigtness() {
-        return mAliyunVodPlayer.getScreenBrightness();
+    public float getCurrentVolume() {
+        if (mAliyunVodPlayer != null) {
+            return mAliyunVodPlayer.getVolume();
+        }
+        return 0;
     }
 
     public void updateScreenShow() {
@@ -309,7 +347,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mNetWatchdog = new NetWatchdog(context);
         mNetWatchdog.setNetChangeListener(new MyNetChangeListener(this));
         mNetWatchdog.setNetConnectedListener(new MyNetConnectedListener(this));
-
     }
 
     private void onWifiTo4G() {
@@ -321,7 +358,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         }
 
         //wifi变成4G，先暂停播放
-        pause();
+        if (!isLocalSource()) {
+            pause();
+        }
+
 
         //隐藏其他的动作,防止点击界面去进行其他操作
         mGestureView.hide(ControlView.HideType.Normal);
@@ -386,6 +426,15 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     /**
+     * 初始化缩略图
+     */
+    private void initThumbnailView() {
+        mThumbnailView = new ThumbnailView(getContext());
+        mThumbnailView.setVisibility(View.GONE);
+        addSubViewByCenter(mThumbnailView);
+    }
+
+    /**
      * 初始化屏幕方向旋转。用来监听屏幕方向。结果通过OrientationListener回调出去。
      */
     private void initOrientationWatchdog() {
@@ -403,10 +452,18 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         }
 
         @Override
-        public void changedToLandScape(boolean fromPort) {
+        public void changedToLandForwardScape(boolean fromPort) {
             AliyunVodPlayerView playerView = playerViewWeakReference.get();
             if (playerView != null) {
-                playerView.changedToLandScape(fromPort);
+                playerView.changedToLandForwardScape(fromPort);
+            }
+        }
+
+        @Override
+        public void changedToLandReverseScape(boolean fromPort) {
+            AliyunVodPlayerView playerView = playerViewWeakReference.get();
+            if (playerView != null) {
+                playerView.changedToLandReverseScape(fromPort);
             }
         }
 
@@ -424,18 +481,28 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param fromPort 是否从竖屏变过来
      */
-    private void changedToLandScape(boolean fromPort) {
+    private void changedToLandForwardScape(boolean fromPort) {
         //如果不是从竖屏变过来，也就是一直是横屏的时候，就不用操作了
         if (!fromPort) {
             return;
         }
-        //屏幕由竖屏转为横屏
-        if (mCurrentScreenMode == AliyunScreenMode.Full) {
-            //全屏情况转到了横屏
-        } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
-            changeScreenMode(AliyunScreenMode.Full);
+        changeScreenMode(AliyunScreenMode.Full, false);
+        if (orientationChangeListener != null) {
+            orientationChangeListener.orientationChange(fromPort, mCurrentScreenMode);
         }
+    }
 
+    /**
+     * 屏幕方向变为横屏。
+     *
+     * @param fromPort 是否从竖屏变过来
+     */
+    private void changedToLandReverseScape(boolean fromPort) {
+        //如果不是从竖屏变过来，也就是一直是横屏的时候，就不用操作了
+        if (!fromPort) {
+            return;
+        }
+        changeScreenMode(AliyunScreenMode.Full, true);
         if (orientationChangeListener != null) {
             orientationChangeListener.orientationChange(fromPort, mCurrentScreenMode);
         }
@@ -457,7 +524,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             if (getLockPortraitMode() == null) {
                 //没有固定竖屏，就变化mode
                 if (fromLand) {
-                    changeScreenMode(AliyunScreenMode.Small);
+                    changeScreenMode(AliyunScreenMode.Small, false);
                 } else {
                     //如果没有转到过横屏，就不让他转了。防止竖屏的时候点横屏之后，又立即转回来的现象
                 }
@@ -467,7 +534,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
             //竖屏的情况转到了竖屏
         }
-
         if (orientationChangeListener != null) {
             orientationChangeListener.orientationChange(fromLand, mCurrentScreenMode);
         }
@@ -479,7 +545,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private void initGestureDialogManager() {
         Context context = getContext();
         if (context instanceof Activity) {
-            mGestureDialogManager = new GestureDialogManager((Activity)context);
+            mGestureDialogManager = new GestureDialogManager((Activity) context);
         }
     }
 
@@ -493,23 +559,20 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mTipsView.setOnTipClickListener(new TipsView.OnTipClickListener() {
             @Override
             public void onContinuePlay() {
-                VcPlayerLog.d(TAG, "playerState = " + mAliyunVodPlayer.getPlayerState());
+                VcPlayerLog.d(TAG, "playerState = " + mPlayerState);
                 //继续播放。如果没有prepare或者stop了，需要重新prepare
                 mTipsView.hideAll();
-                if (mAliyunVodPlayer.getPlayerState() == PlayerState.Idle ||
-                    mAliyunVodPlayer.getPlayerState() == PlayerState.Stopped) {
+                if (mPlayerState == IPlayer.paused || mPlayerState == IPlayer.prepared) {
+                    start();
+                } else {
                     if (mAliyunPlayAuth != null) {
                         prepareAuth(mAliyunPlayAuth);
                     } else if (mAliyunVidSts != null) {
                         prepareVidsts(mAliyunVidSts);
                     } else if (mAliyunLocalSource != null) {
-                        //setLocalSource(mAliyunLocalSource);
                         prepareLocalSource(mAliyunLocalSource);
                     }
-                } else {
-                    start();
                 }
-
             }
 
             @Override
@@ -520,7 +583,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
                 Context context = getContext();
                 if (context instanceof Activity) {
-                    ((Activity)context).finish();
+                    ((Activity) context).finish();
                 }
             }
 
@@ -534,6 +597,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             public void onReplay() {
                 //重播
                 rePlay();
+            }
+
+            @Override
+            public void onRefreshSts() {
+                if (mOutTimeExpiredErrorListener != null) {
+                    mOutTimeExpiredErrorListener.onTimeExpiredError();
+                }
             }
         });
         addSubView(mTipsView);
@@ -568,19 +638,21 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             if (mTipsView != null) {
                 mTipsView.showNetLoadingTipView();
             }
-            //seek到当前的位置再播放
+
             /*
                 isLocalSource()判断不够,有可能是sts播放,也有可能是url播放,还有可能是sd卡的视频播放,
                 如果是后两者,需要走if,否则走else
-             */
-            if (isLocalSource()) {
-                mAliyunVodPlayer.prepareAsync(mAliyunLocalSource);
-            } else if (isVidSts()){
-                mAliyunVodPlayer.prepareAsync(mAliyunVidSts);
+            */
+            if (isLocalSource() || isUrlSource()) {
+                mAliyunVodPlayer.setDataSource(mAliyunLocalSource);
+                mAliyunVodPlayer.prepare();
             } else {
-                mAliyunVodPlayer.seekTo(currentPosition);
+                mAliyunVodPlayer.setDataSource(mAliyunVidSts);
+                mAliyunVodPlayer.prepare();
             }
+            isAutoAccurate(currentPosition);
         }
+
     }
 
     /**
@@ -607,7 +679,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 mTipsView.showNetLoadingTipView();
             }
             //重播是从头开始播
-            mAliyunVodPlayer.replay();
+            mAliyunVodPlayer.prepare();
         }
 
     }
@@ -618,6 +690,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private void reset() {
         isCompleted = false;
         inSeek = false;
+        mCurrentPosition = 0;
+        mVideoBufferedPosition = 0;
 
         if (mTipsView != null) {
             mTipsView.hideAll();
@@ -647,7 +721,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private void initControlView() {
         mControlView = new ControlView(getContext());
         addSubView(mControlView);
-
         //设置播放按钮点击
         mControlView.setOnPlayStateClickListener(new ControlView.OnPlayStateClickListener() {
             @Override
@@ -659,28 +732,36 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnSeekListener(new ControlView.OnSeekListener() {
             @Override
             public void onSeekEnd(int position) {
-                if(mControlView != null){
+
+                if (mControlView != null) {
                     mControlView.setVideoPosition(position);
                 }
                 if (isCompleted) {
                     //播放完成了，不能seek了
                     inSeek = false;
                 } else {
-
                     //拖动结束后，开始seek
                     seekTo(position);
 
-                    inSeek = true;
                     if (onSeekStartListener != null) {
-                        onSeekStartListener.onSeekStart();
+                        onSeekStartListener.onSeekStart(position);
                     }
+                    hideThumbnailView();
                 }
             }
 
             @Override
-            public void onSeekStart() {
+            public void onSeekStart(int position) {
                 //拖动开始
                 inSeek = true;
+                if (mThumbnailPrepareSuccess) {
+                    showThumbnailView();
+                }
+            }
+
+            @Override
+            public void onProgressChanged(int progress) {
+                requestBitmapByPosition(progress);
             }
         });
         //菜单按钮点击
@@ -697,10 +778,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             public void onDownloadClick() {
                 //点击下载之后弹出不同清晰度选择下载dialog
                 // 如果当前播放视频时url类型, 不允许下载
-//                if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
-//                    FixedToastUtils.show(getContext(), getResources().getString(R.string.slivc_not_support_url));
-//                    return;
-//                }
+                if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+                    FixedToastUtils.show(getContext(), getResources().getString(R.string.alivc_video_not_support_download));
+                    return;
+                }
                 if (mOnPlayerViewClickListener != null) {
                     mOnPlayerViewClickListener.onClick(mCurrentScreenMode, PlayViewType.Download);
                 }
@@ -710,7 +791,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnQualityBtnClickListener(new ControlView.OnQualityBtnClickListener() {
 
             @Override
-            public void onQualityBtnClick(View v, List<String> qualities, String currentQuality) {
+            public void onQualityBtnClick(View v, List<TrackInfo> qualities, String currentQuality) {
                 //显示清晰度列表
                 mQualityView.setQuality(qualities, currentQuality);
                 mQualityView.showAtTop(v);
@@ -739,7 +820,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                     targetMode = AliyunScreenMode.Small;
                 }
 
-                changeScreenMode(targetMode);
+                changeScreenMode(targetMode, false);
                 if (mCurrentScreenMode == AliyunScreenMode.Full) {
                     mControlView.showMoreButton();
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
@@ -754,12 +835,12 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
                 if (mCurrentScreenMode == AliyunScreenMode.Full) {
                     //设置为小屏状态
-                    changeScreenMode(AliyunScreenMode.Small);
+                    changeScreenMode(AliyunScreenMode.Small, false);
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     //小屏状态下，就结束活动
                     Context context = getContext();
                     if (context instanceof Activity) {
-                        ((Activity)context).finish();
+                        ((Activity) context).finish();
                     }
                 }
 
@@ -783,7 +864,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnScreenShotClickListener(new ControlView.OnScreenShotClickListener() {
             @Override
             public void onScreenShotClick() {
-                if(!mIsFullScreenLocked){
+                if (!mIsFullScreenLocked) {
                     FixedToastUtils.show(getContext(), "功能正在开发中, 敬请期待....");
                 }
             }
@@ -793,12 +874,101 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnScreenRecoderClickListener(new ControlView.OnScreenRecoderClickListener() {
             @Override
             public void onScreenRecoderClick() {
-                if(!mIsFullScreenLocked){
+                if (!mIsFullScreenLocked) {
                     FixedToastUtils.show(getContext(), "功能正在开发中, 敬请期待....");
                 }
             }
         });
     }
+
+    /**
+     * 根据位置请求缩略图
+     */
+    private void requestBitmapByPosition(int targetPosition) {
+        if (mThumbnailHelper != null && mThumbnailPrepareSuccess) {
+            mThumbnailHelper.requestBitmapAtPosition(targetPosition);
+        }
+    }
+
+    /**
+     * 隐藏缩略图
+     */
+    private void hideThumbnailView() {
+        if (mThumbnailView != null) {
+            mThumbnailView.hideThumbnailView();
+        }
+    }
+
+    /**
+     * 显示缩略图
+     */
+    private void showThumbnailView() {
+        if (mThumbnailView != null && mThumbnailPrepareSuccess) {
+            mThumbnailView.showThumbnailView();
+            //根据屏幕大小调整缩略图的大小
+            ImageView thumbnailImageView = mThumbnailView.getThumbnailImageView();
+            if (thumbnailImageView != null) {
+                ViewGroup.LayoutParams layoutParams = thumbnailImageView.getLayoutParams();
+                layoutParams.width = (int) (ScreenUtils.getWidth(getContext()) / 3);
+                layoutParams.height = layoutParams.width / 2 - DensityUtil.px2dip(getContext(), 10);
+                thumbnailImageView.setLayoutParams(layoutParams);
+            }
+        }
+    }
+
+    /**
+     * 目标位置计算算法
+     *
+     * @param duration        视频总时长
+     * @param currentPosition 当前播放位置
+     * @param deltaPosition   与当前位置相差的时长
+     * @return
+     */
+    public int getTargetPosition(long duration, long currentPosition, long deltaPosition) {
+        // seek步长
+        long finalDeltaPosition;
+        // 根据视频时长，决定seek步长
+        long totalMinutes = duration / 1000 / 60;
+        int hours = (int) (totalMinutes / 60);
+        int minutes = (int) (totalMinutes % 60);
+
+        // 视频时长为1小时以上，小屏和全屏的手势滑动最长为视频时长的十分之一
+        if (hours >= 1) {
+            finalDeltaPosition = deltaPosition / 10;
+        }// 视频时长为31分钟－60分钟时，小屏和全屏的手势滑动最长为视频时长五分之一
+        else if (minutes > 30) {
+            finalDeltaPosition = deltaPosition / 5;
+        }// 视频时长为11分钟－30分钟时，小屏和全屏的手势滑动最长为视频时长三分之一
+        else if (minutes > 10) {
+            finalDeltaPosition = deltaPosition / 3;
+        }// 视频时长为4-10分钟时，小屏和全屏的手势滑动最长为视频时长二分之一
+        else if (minutes > 3) {
+            finalDeltaPosition = deltaPosition / 2;
+        }// 视频时长为1秒钟至3分钟时，小屏和全屏的手势滑动最长为视频结束
+        else {
+            finalDeltaPosition = deltaPosition;
+        }
+
+        long targetPosition = finalDeltaPosition + currentPosition;
+        if (targetPosition < 0) {
+            targetPosition = 0;
+        }
+        if (targetPosition > duration) {
+            targetPosition = duration;
+        }
+        return (int) targetPosition;
+    }
+
+    public interface createSuccessListener {
+        void createSuccess();
+    }
+
+    private createSuccessListener mListener;
+
+    public void setCreateSuccessListener(createSuccessListener listener) {
+        this.mListener = listener;
+    }
+
 
     /**
      * 锁定屏幕。锁定屏幕后，只有锁会显示，其他都不会显示。手势也不可用
@@ -824,15 +994,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         //清晰度点击事件
         mQualityView.setOnQualityClickListener(new QualityView.OnQualityClickListener() {
             @Override
-            public void onQualityClick(String quality) {
+            public void onQualityClick(TrackInfo qualityTrackInfo) {
                 //进行清晰度的切换
-                if (mTipsView != null) {
-                    mTipsView.showNetLoadingTipView();
-                }
-
-                stopProgressUpdateTimer();
-                mAliyunVodPlayer.changeQuality(quality);
-
+                mAliyunVodPlayer.selectTrack(qualityTrackInfo.getIndex());
             }
         });
     }
@@ -861,7 +1025,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
                 //改变倍速
                 if (mAliyunVodPlayer != null) {
-                    mAliyunVodPlayer.setPlaySpeed(speed);
+                    mAliyunVodPlayer.setSpeed(speed);
                 }
 
                 mSpeedView.setSpeed(value);
@@ -887,14 +1051,15 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 切换播放状态。点播播放按钮之后的操作
      */
     private void switchPlayerState() {
-        PlayerState playerState = mAliyunVodPlayer.getPlayerState();
-        if (playerState == PlayerState.Started) {
+
+        if (mPlayerState == IPlayer.started) {
             pause();
-        } else if (playerState == PlayerState.Paused || playerState == PlayerState.Prepared) {
+
+        } else if (mPlayerState == IPlayer.paused || mPlayerState == IPlayer.prepared) {
             start();
         }
         if (onPlayStateBtnClickListener != null) {
-            onPlayStateBtnClickListener.onPlayBtnClick(playerState);
+            onPlayStateBtnClickListener.onPlayBtnClick(mPlayerState);
         }
     }
 
@@ -913,45 +1078,53 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 //水平滑动调节seek。
                 // seek需要在手势结束时操作。
                 long duration = mAliyunVodPlayer.getDuration();
-                long position = mAliyunVodPlayer.getCurrentPosition();
+                long position = mCurrentPosition;
                 long deltaPosition = 0;
-
-                if (mAliyunVodPlayer.getPlayerState() == PlayerState.Prepared ||
-                    mAliyunVodPlayer.getPlayerState() == PlayerState.Paused ||
-                    mAliyunVodPlayer.getPlayerState() == PlayerState.Started) {
+                int targetPosition = 0;
+                if (mPlayerState == IPlayer.prepared ||
+                        mPlayerState == IPlayer.paused ||
+                        mPlayerState == IPlayer.started) {
                     //在播放时才能调整大小
-                    deltaPosition = (long)(nowX - downX) * duration / getWidth();
+                    deltaPosition = (long) (nowX - downX) * duration / getWidth();
+                    targetPosition = getTargetPosition(duration, position, deltaPosition);
                 }
 
                 if (mGestureDialogManager != null) {
-                    mGestureDialogManager.showSeekDialog(AliyunVodPlayerView.this, (int)position);
-                    mGestureDialogManager.updateSeekDialog(duration, position, deltaPosition);
+                    inSeek = true;
+                    mControlView.setVideoPosition(targetPosition);
+                    requestBitmapByPosition(targetPosition);
+                    showThumbnailView();
                 }
             }
 
             @Override
             public void onLeftVerticalDistance(float downY, float nowY) {
                 //左侧上下滑动调节亮度
-                int changePercent = (int)((nowY - downY) * 100 / getHeight());
+                int changePercent = (int) ((nowY - downY) * 100 / getHeight());
 
                 if (mGestureDialogManager != null) {
-                    mGestureDialogManager.showBrightnessDialog(AliyunVodPlayerView.this);
+                    mGestureDialogManager.showBrightnessDialog(AliyunVodPlayerView.this, mScreenBrightness);
                     int brightness = mGestureDialogManager.updateBrightnessDialog(changePercent);
-                    mAliyunVodPlayer.setScreenBrightness(brightness);
+                    if (mOnScreenBrightnessListener != null) {
+                        mOnScreenBrightnessListener.onScreenBrightness(brightness);
+                    }
+                    mScreenBrightness = brightness;
                 }
             }
 
             @Override
             public void onRightVerticalDistance(float downY, float nowY) {
                 //右侧上下滑动调节音量
-                int changePercent = (int)((nowY - downY) * 100 / getHeight());
-                int volume = mAliyunVodPlayer.getVolume();
+                int max = mAudioManager.getStreamMaxVolume(mAudioManager.STREAM_MUSIC);
+                int changePercent = (int) ((nowY - downY) * 100 / getHeight());
 
                 if (mGestureDialogManager != null) {
-                    mGestureDialogManager.showVolumeDialog(AliyunVodPlayerView.this, volume);
-                    int targetVolume = mGestureDialogManager.updateVolumeDialog(changePercent);
+                    mGestureDialogManager.showVolumeDialog(AliyunVodPlayerView.this, currentVolume);
+                    float targetVolume = mGestureDialogManager.updateVolumeDialog(changePercent);
                     currentVolume = targetVolume;
-                    mAliyunVodPlayer.setVolume(targetVolume);//通过返回值改变音量
+                    int ss = Math.round((currentVolume / 100.00f * max));
+                    mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, ss, 0);
+
                 }
             }
 
@@ -962,34 +1135,37 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 if (mGestureDialogManager != null) {
                     mGestureDialogManager.dismissBrightnessDialog();
                     mGestureDialogManager.dismissVolumeDialog();
-
-                    int seekPosition = mGestureDialogManager.dismissSeekDialog();
-                    if (seekPosition >= mAliyunVodPlayer.getDuration()) {
-                        seekPosition = (int)(mAliyunVodPlayer.getDuration() - 1000);
+                    if (inSeek) {
+                        int seekPosition = mControlView.getVideoPosition();
+                        if (seekPosition >= mAliyunVodPlayer.getDuration()) {
+                            seekPosition = (int) (mAliyunVodPlayer.getDuration() - 1000);
+                        }
+                        if (seekPosition >= 0) {
+                            seekTo(seekPosition);
+                            hideThumbnailView();
+                        } else {
+                            inSeek = false;
+                        }
                     }
 
-                    if (seekPosition >= 0) {
-                        seekTo(seekPosition);
-                        inSeek = true;
-                    }
                 }
             }
 
             @Override
             public void onSingleTap() {
                 //单击事件，显示控制栏
-                if(mControlView != null){
+                if (mControlView != null) {
                     if (mControlView.getVisibility() != VISIBLE) {
                         mControlView.show();
                     } else {
                         mControlView.hide(ControlView.HideType.Normal);
                     }
                 }
+
             }
 
             @Override
             public void onDoubleTap() {
-                //双击事件，控制暂停播放
                 switchPlayerState();
             }
         });
@@ -1008,21 +1184,30 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 VcPlayerLog.d(TAG, " surfaceCreated = surfaceHolder = " + surfaceHolder);
-                mAliyunVodPlayer.setDisplay(surfaceHolder);
+                if (mAliyunVodPlayer != null) {
+                    mAliyunVodPlayer.setDisplay(surfaceHolder);
+                    //防止黑屏
+                    mAliyunVodPlayer.redraw();
+                }
             }
 
             @Override
             public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width,
                                        int height) {
                 VcPlayerLog.d(TAG,
-                    " surfaceChanged surfaceHolder = " + surfaceHolder + " ,  width = " + width + " , height = "
-                        + height);
-                mAliyunVodPlayer.surfaceChanged();
+                        " surfaceChanged surfaceHolder = " + surfaceHolder + " ,  width = " + width + " , height = "
+                                + height);
+                if (mAliyunVodPlayer != null) {
+                    mAliyunVodPlayer.redraw();
+                }
             }
 
             @Override
             public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
                 VcPlayerLog.d(TAG, " surfaceDestroyed = surfaceHolder = " + surfaceHolder);
+                if (mAliyunVodPlayer != null) {
+                    mAliyunVodPlayer.setDisplay(null);
+                }
             }
         });
     }
@@ -1031,288 +1216,27 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 初始化播放器
      */
     private void initAliVcPlayer() {
-        mAliyunVodPlayer = new AliyunVodPlayer(getContext());
-        mAliyunVodPlayer.enableNativeLog();
+        mAliyunVodPlayer = AliPlayerFactory.createAliPlayer(getContext().getApplicationContext());
+        mAliyunVodPlayer.enableLog(false);
         //设置准备回调
-        mAliyunVodPlayer.setOnPreparedListener(new IAliyunVodPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared() {
-                if (mAliyunVodPlayer == null) {
-                    return;
-                }
-
-                mAliyunMediaInfo = mAliyunVodPlayer.getMediaInfo();
-                if (mAliyunMediaInfo == null) {
-                    return;
-                }
-                //防止服务器信息和实际不一致
-                mAliyunMediaInfo.setDuration((int)mAliyunVodPlayer.getDuration());
-                //使用用户设置的标题
-                mAliyunMediaInfo.setTitle(getTitle(mAliyunMediaInfo.getTitle()));
-                mAliyunMediaInfo.setPostUrl(getPostUrl(mAliyunMediaInfo.getPostUrl()));
-                mControlView.setMediaInfo(mAliyunMediaInfo, mAliyunVodPlayer.getCurrentQuality());
-                mControlView.setHideType(ViewAction.HideType.Normal);
-                mGestureView.setHideType(ViewAction.HideType.Normal);
-                mControlView.show();
-                mGestureView.show();
-                if (mTipsView != null) {
-                    mTipsView.hideNetLoadingTipView();
-                }
-
-                setCoverUri(mAliyunMediaInfo.getPostUrl());
-                //准备成功之后可以调用start方法开始播放
-                if (mOutPreparedListener != null) {
-                    mOutPreparedListener.onPrepared();
-                }
-            }
-        });
+        mAliyunVodPlayer.setOnPreparedListener(new VideoPlayerPreparedListener(this));
         //播放器出错监听
-        mAliyunVodPlayer.setOnErrorListener(new IAliyunVodPlayer.OnErrorListener() {
-            @Override
-            public void onError(int errorCode, int errorEvent, String errorMsg) {
-                if (errorCode == AliyunErrorCode.ALIVC_ERR_INVALID_INPUTFILE.getCode()) {
-                    //当播放本地报错4003的时候，可能是文件地址不对，也有可能是没有权限。
-                    //如果是没有权限导致的，就做一个权限的错误提示。其他还是正常提示：
-                    int storagePermissionRet = ContextCompat.checkSelfPermission(
-                        AliyunVodPlayerView.this.getContext().getApplicationContext(),
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE);
-                    if (storagePermissionRet != PackageManager.PERMISSION_GRANTED) {
-                        errorMsg = AliyunErrorCode.ALIVC_ERR_NO_STORAGE_PERMISSION.getDescription(getContext());
-                    } else if (!NetWatchdog.hasNet(getContext())) {
-                        //也可能是网络不行
-                        errorCode = AliyunErrorCode.ALIVC_ERR_NO_NETWORK.getCode();
-                        errorMsg = AliyunErrorCode.ALIVC_ERR_NO_NETWORK.getDescription(getContext());
-                    }
-                }
-
-                //关闭定时器
-                stopProgressUpdateTimer();
-
-                if (mTipsView != null) {
-                    mTipsView.hideAll();
-                }
-                //出错之后解锁屏幕，防止不能做其他操作，比如返回。
-                lockScreen(false);
-
-                showErrorTipView(errorCode, errorEvent, errorMsg);
-
-                if (mOutErrorListener != null) {
-                    mOutErrorListener.onError(errorCode, errorEvent, errorMsg);
-                }
-
-            }
-        });
-
+        mAliyunVodPlayer.setOnErrorListener(new VideoPlayerErrorListener(this));
         //播放器加载回调
-        mAliyunVodPlayer.setOnLoadingListener(new IAliyunVodPlayer.OnLoadingListener() {
-            @Override
-            public void onLoadStart() {
-                if (mTipsView != null) {
-                    mTipsView.showBufferLoadingTipView();
-                }
-            }
-
-            @Override
-            public void onLoadEnd() {
-                if (mTipsView != null) {
-                    mTipsView.hideBufferLoadingTipView();
-                }
-                if (mAliyunVodPlayer.isPlaying()) {
-                    mTipsView.hideErrorTipView();
-                }
-                hasLoadEnd.put(mAliyunMediaInfo,true);
-                vodPlayerLoadEndHandler.sendEmptyMessage(1);
-            }
-
-            @Override
-            public void onLoadProgress(int percent) {
-                if (mTipsView != null) {
-                    mTipsView.updateLoadingPercent(percent);
-                }
-            }
-        });
+        mAliyunVodPlayer.setOnLoadingStatusListener(new VideoPlayerLoadingStatusListener(this));
+        //播放器状态
+        mAliyunVodPlayer.setOnStateChangedListener(new VideoPlayerStateChangedListener(this));
         //播放结束
-        mAliyunVodPlayer.setOnCompletionListener(new IAliyunVodPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion() {
-                inSeek = false;
-                //关闭定时器
-                stopProgressUpdateTimer();
-
-                //如果当前播放资源是本地资源时, 再显示replay
-                if (mTipsView != null && isLocalSource()) {
-                    //隐藏其他的动作,防止点击界面去进行其他操作
-                    mGestureView.hide(ViewAction.HideType.End);
-                    mControlView.hide(ViewAction.HideType.End);
-                    mTipsView.showReplayTipView();
-                }
-
-                if (mOutCompletionListener != null) {
-                    mOutCompletionListener.onCompletion();
-                }
-            }
-        });
-        mAliyunVodPlayer.setOnBufferingUpdateListener(new IAliyunVodPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(int percent) {
-                mCurrentBufferPercentage = percent;
-            }
-        });
+        mAliyunVodPlayer.setOnCompletionListener(new VideoPlayerCompletionListener(this));
         //播放信息监听
-        mAliyunVodPlayer.setOnInfoListener(new IAliyunVodPlayer.OnInfoListener() {
-            @Override
-            public void onInfo(int arg0, int arg1) {
-                if (mOutInfoListener != null) {
-                    mOutInfoListener.onInfo(arg0, arg1);
-                }
-            }
-        });
-        //切换清晰度结果事件
-        mAliyunVodPlayer.setOnChangeQualityListener(new IAliyunVodPlayer.OnChangeQualityListener() {
-            @Override
-            public void onChangeQualitySuccess(String finalQuality) {
-                //切换成功后就开始播放
-                mControlView.setCurrentQuality(finalQuality);
-                start();
-
-                startProgressUpdateTimer();
-
-                if (mTipsView != null) {
-                    mTipsView.hideNetLoadingTipView();
-                }
-                if (mOutChangeQualityListener != null) {
-                    mOutChangeQualityListener.onChangeQualitySuccess(finalQuality);
-                }
-            }
-
-            @Override
-            public void onChangeQualityFail(int code, String msg) {
-                //失败的话，停止播放，通知上层
-                if (mTipsView != null) {
-                    mTipsView.hideNetLoadingTipView();
-                }
-                if (code == CODE_SAME_QUALITY) {
-                    if (mOutChangeQualityListener != null) {
-                        mOutChangeQualityListener.onChangeQualitySuccess(mAliyunVodPlayer.getCurrentQuality());
-                    }
-                } else {
-                    stop();
-                    if (mOutChangeQualityListener != null) {
-                        mOutChangeQualityListener.onChangeQualityFail(code, msg);
-                    }
-                }
-            }
-        });
-        //重播监听
-        mAliyunVodPlayer.setOnRePlayListener(new IAliyunVodPlayer.OnRePlayListener() {
-            @Override
-            public void onReplaySuccess() {
-                //重播、重试成功
-                mTipsView.hideAll();
-                mGestureView.show();
-                mControlView.show();
-                mControlView.setMediaInfo(mAliyunMediaInfo, mAliyunVodPlayer.getCurrentQuality());
-                //重播自动开始播放,需要设置播放状态
-                if (mControlView != null) {
-                    mControlView.setPlayState(ControlView.PlayState.Playing);
-                }
-                //开始启动更新进度的定时器
-                startProgressUpdateTimer();
-                if (mOutRePlayListener != null) {
-                    mOutRePlayListener.onReplaySuccess();
-                }
-            }
-        });
-        //自动播放
-        mAliyunVodPlayer.setOnAutoPlayListener(new IAliyunVodPlayer.OnAutoPlayListener() {
-            @Override
-            public void onAutoPlayStarted() {
-                //自动播放开始,需要设置播放状态
-                if (mControlView != null) {
-                    mControlView.setPlayState(ControlView.PlayState.Playing);
-                }
-                if (mOutAutoPlayListener != null) {
-                    mOutAutoPlayListener.onAutoPlayStarted();
-                }
-            }
-        });
-        //seek结束事件
-        mAliyunVodPlayer.setOnSeekCompleteListener(new IAliyunVodPlayer.OnSeekCompleteListener() {
-            @Override
-            public void onSeekComplete() {
-                inSeek = false;
-
-                if (mOuterSeekCompleteListener != null) {
-                    mOuterSeekCompleteListener.onSeekComplete();
-                }
-            }
-        });
-        //PCM原始数据监听
-        mAliyunVodPlayer.setOnPcmDataListener(new IAliyunVodPlayer.OnPcmDataListener() {
-            @Override
-            public void onPcmData(byte[] data, int size) {
-                if (mOutPcmDataListener != null) {
-                    mOutPcmDataListener.onPcmData(data, size);
-                }
-            }
-        });
+        mAliyunVodPlayer.setOnInfoListener(new VideoPlayerInfoListener(this));
         //第一帧显示
-        mAliyunVodPlayer.setOnFirstFrameStartListener(new IAliyunVodPlayer.OnFirstFrameStartListener() {
-            @Override
-            public void onFirstFrameStart() {
-                //开始启动更新进度的定时器
-                startProgressUpdateTimer();
-
-                mCoverView.setVisibility(GONE);
-                if (mOutFirstFrameStartListener != null) {
-                    mOutFirstFrameStartListener.onFirstFrameStart();
-                }
-            }
-        });
-        //url过期监听
-        mAliyunVodPlayer.setOnUrlTimeExpiredListener(new IAliyunVodPlayer.OnUrlTimeExpiredListener() {
-            @Override
-            public void onUrlTimeExpired(String vid, String quality) {
-                System.out.println("abc : onUrlTimeExpired");
-                if (mOutUrlTimeExpiredListener != null) {
-                    mOutUrlTimeExpiredListener.onUrlTimeExpired(vid, quality);
-                }
-            }
-        });
-
-        //请求源过期信息
-        mAliyunVodPlayer.setOnTimeExpiredErrorListener(new IAliyunVodPlayer.OnTimeExpiredErrorListener() {
-            @Override
-            public void onTimeExpiredError() {
-                System.out.println("abc : onTimeExpiredError");
-//                Log.e("radish : ", "onTimeExpiredError: " + mAliyunMediaInfo.getVideoId());
-                if(mTipsView != null){
-                    mTipsView.hideAll();
-                    mTipsView.showErrorTipViewWithoutCode("鉴权过期");
-                    mTipsView.setOnTipClickListener(new TipsView.OnTipClickListener() {
-                        @Override
-                        public void onContinuePlay() {
-                        }
-
-                        @Override
-                        public void onStopPlay() {
-                        }
-
-                        @Override
-                        public void onRetryPlay() {
-                            if (mOutTimeExpiredErrorListener != null) {
-                                mOutTimeExpiredErrorListener.onTimeExpiredError();
-                            }
-                        }
-
-                        @Override
-                        public void onReplay() {
-                        }
-                    });
-                }
-            }
-        });
-
+        mAliyunVodPlayer.setOnRenderingStartListener(new VideoPlayerRenderingStartListener(this));
+        //trackChange监听
+        mAliyunVodPlayer.setOnTrackChangedListener(new VideoPlayerTrackChangedListener(this));
+        //seek结束事件
+        mAliyunVodPlayer.setOnSeekCompleteListener(new VideoPlayerOnSeekCompleteListener(this));
+        mAliyunVodPlayer.setOnSeiDataListener(new VideoPlayerOnSeiDataListener(this));
         mAliyunVodPlayer.setDisplay(mSurfaceView.getHolder());
     }
 
@@ -1361,30 +1285,34 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     /**
-     * 获取整体缓冲进度
-     *
-     * @return 整体缓冲进度
-     */
-    public int getBufferPercentage() {
-        if (mAliyunVodPlayer != null) {
-            return mCurrentBufferPercentage;
-        }
-        return 0;
-    }
-
-    /**
      * 判断是否是本地资源
+     *
      * @return
      */
     private boolean isLocalSource() {
-        return mAliyunLocalSource != null;
+        String scheme = null;
+        if ("vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+            return false;
+        }
+        if ("localSource".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+            Uri parse = Uri.parse(PlayParameter.PLAY_PARAM_URL);
+            scheme = parse.getScheme();
+        }
+        return scheme == null;
     }
 
     /**
      * 判断是否是Url播放资源
      */
-    private boolean isVidSts(){
-        return mAliyunVidSts != null;
+    private boolean isUrlSource() {
+        String scheme = null;
+        if ("vidsts".equals(PlayParameter.PLAY_PARAM_TYPE)) {
+            return false;
+        } else {
+            Uri parse = Uri.parse(PlayParameter.PLAY_PARAM_URL);
+            scheme = parse.getScheme();
+            return scheme != null;
+        }
     }
 
 
@@ -1394,8 +1322,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @return 视频时长
      */
     public int getDuration() {
-        if (mAliyunVodPlayer != null && mAliyunVodPlayer.isPlaying()) {
-            return (int)mAliyunVodPlayer.getDuration();
+        if (mAliyunVodPlayer != null) {
+            return (int) mAliyunVodPlayer.getDuration();
         }
 
         return 0;
@@ -1406,12 +1334,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @return 当前位置
      */
-    public int getCurrentPosition() {
-        if (mAliyunVodPlayer != null && mAliyunVodPlayer.isPlaying()) {
-            return (int)mAliyunVodPlayer.getCurrentPosition();
-        }
-
-        return 0;
+    public long getCurrentPosition() {
+//        if (mAliyunVodPlayer != null && mAliyunVodPlayer.isPlaying()) {
+//            return (int)mAliyunVodPlayer.getCurrentPosition();
+//        }
+//
+//        return 0;
+        return mCurrentPosition;
     }
 
     /**
@@ -1421,10 +1350,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @param errorEvent 错误事件
      * @param errorMsg   错误描述
      */
-    public void showErrorTipView(int errorCode, int errorEvent, String errorMsg) {
+    public void showErrorTipView(int errorCode, String errorEvent, String errorMsg) {
         pause();
         stop();
-
         if (mControlView != null) {
             mControlView.setPlayState(ControlView.PlayState.NotPlaying);
         }
@@ -1453,15 +1381,45 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     private void addSubView(View view) {
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        addView(view, params);//添加到布局中
+        //添加到布局中
+        addView(view, params);
     }
+
+    /**
+     * 添加子View到布局中央
+     */
+    private void addSubViewByCenter(View view) {
+        LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        addView(view, params);
+    }
+
+    /**
+     * 添加子View到布局中,在某个View的下方
+     *
+     * @param view            需要添加的View
+     * @param belowTargetView 在这个View的下方
+     */
+    private void addSubViewBelow(final View view, final View belowTargetView) {
+        belowTargetView.post(new Runnable() {
+            @Override
+            public void run() {
+                LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+                int measuredHeight = belowTargetView.getMeasuredHeight();
+                params.topMargin = measuredHeight;
+                //添加到布局中
+                addView(view, params);
+            }
+        });
+    }
+
 
     /**
      * 改变屏幕模式：小屏或者全屏。
      *
-     * @param targetMode {@link AliyunScreenMode}
+     * @param targetMode
      */
-    public void changeScreenMode(AliyunScreenMode targetMode) {
+    public void changeScreenMode(AliyunScreenMode targetMode, boolean isReverse) {
         VcPlayerLog.d(TAG, "mIsFullScreenLocked = " + mIsFullScreenLocked + " ， targetMode = " + targetMode);
 
         AliyunScreenMode finalScreenMode = targetMode;
@@ -1475,12 +1433,31 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             mCurrentScreenMode = finalScreenMode;
         }
 
+        if (mControlView != null) {
+            mControlView.setScreenModeStatus(finalScreenMode);
+        }
+
+        if (mSpeedView != null) {
+            mSpeedView.setScreenMode(finalScreenMode);
+        }
+
+        if (mGuideView != null) {
+            mGuideView.setScreenMode(finalScreenMode);
+        }
+
         Context context = getContext();
         if (context instanceof Activity) {
             if (finalScreenMode == AliyunScreenMode.Full) {
                 if (getLockPortraitMode() == null) {
                     //不是固定竖屏播放。
-                    ((Activity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                    ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    if (isReverse) {
+                        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                    } else {
+                        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    }
+
+                    //SCREEN_ORIENTATION_LANDSCAPE只能固定一个横屏方向
                 } else {
                     //如果是固定全屏，那么直接设置view的布局，宽高
                     ViewGroup.LayoutParams aliVcVideoViewLayoutParams = getLayoutParams();
@@ -1491,26 +1468,15 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
                 if (getLockPortraitMode() == null) {
                     //不是固定竖屏播放。
-                    ((Activity)context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 } else {
                     //如果是固定全屏，那么直接设置view的布局，宽高
                     ViewGroup.LayoutParams aliVcVideoViewLayoutParams = getLayoutParams();
-                    aliVcVideoViewLayoutParams.height = (int)(ScreenUtils.getWidth(context) * 9.0f / 16);
+                    aliVcVideoViewLayoutParams.height = (int) (ScreenUtils.getWidth(context) * 9.0f / 16);
                     aliVcVideoViewLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 }
             }
         }
-
-        if (mControlView != null) {
-            mControlView.setScreenModeStatus(finalScreenMode);
-        }
-
-        if (mSpeedView != null) {
-            mSpeedView.setScreenMode(finalScreenMode);
-        }
-
-        mGuideView.setScreenMode(finalScreenMode);
-
     }
 
     /**
@@ -1527,7 +1493,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onPreparedListener 准备事件
      */
-    public void setOnPreparedListener(IAliyunVodPlayer.OnPreparedListener onPreparedListener) {
+    public void setOnPreparedListener(IPlayer.OnPreparedListener onPreparedListener) {
         mOutPreparedListener = onPreparedListener;
     }
 
@@ -1536,7 +1502,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onErrorListener 错误事件监听
      */
-    public void setOnErrorListener(IAliyunVodPlayer.OnErrorListener onErrorListener) {
+    public void setOnErrorListener(IPlayer.OnErrorListener onErrorListener) {
         mOutErrorListener = onErrorListener;
     }
 
@@ -1545,7 +1511,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onInfoListener 信息事件监听
      */
-    public void setOnInfoListener(IAliyunVodPlayer.OnInfoListener onInfoListener) {
+    public void setOnInfoListener(IPlayer.OnInfoListener onInfoListener) {
         mOutInfoListener = onInfoListener;
     }
 
@@ -1554,7 +1520,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onCompletionListener 播放完成事件监听
      */
-    public void setOnCompletionListener(IAliyunVodPlayer.OnCompletionListener onCompletionListener) {
+    public void setOnCompletionListener(IPlayer.OnCompletionListener onCompletionListener) {
         mOutCompletionListener = onCompletionListener;
     }
 
@@ -1563,35 +1529,31 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param l 清晰度事件监听
      */
-    public void setOnChangeQualityListener(IAliyunVodPlayer.OnChangeQualityListener l) {
+    public void setOnChangeQualityListener(OnChangeQualityListener l) {
         mOutChangeQualityListener = l;
     }
+
 
     /**
      * 设置重播事件监听
      *
      * @param onRePlayListener 重播事件监听
      */
-    public void setOnRePlayListener(IAliyunVodPlayer.OnRePlayListener onRePlayListener) {
-        mOutRePlayListener = onRePlayListener;
-    }
+//    public void setOnRePlayListener(IPlayer.OnRePlayListener onRePlayListener) {
+//        mOutRePlayListener = onRePlayListener;
+//    }
 
     /**
      * 设置自动播放事件监听
      *
      * @param l 自动播放事件监听
      */
-    public void setOnAutoPlayListener(IAliyunVodPlayer.OnAutoPlayListener l) {
+    public void setOnAutoPlayListener(OnAutoPlayListener l) {
         mOutAutoPlayListener = l;
     }
 
-    /**
-     * 设置PCM数据监听
-     *
-     * @param l PCM数据监听
-     */
-    public void setOnPcmDataListener(IAliyunVodPlayer.OnPcmDataListener l) {
-        mOutPcmDataListener = l;
+    public interface OnTimeExpiredErrorListener {
+        void onTimeExpiredError();
     }
 
     /**
@@ -1599,7 +1561,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param l 源超时监听
      */
-    public void setOnTimeExpiredErrorListener(IAliyunVodPlayer.OnTimeExpiredErrorListener l) {
+    public void setOnTimeExpiredErrorListener(OnTimeExpiredErrorListener l) {
         mOutTimeExpiredErrorListener = l;
     }
 
@@ -1608,16 +1570,16 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param listener
      */
-    public void setOnUrlTimeExpiredListener(IAliyunVodPlayer.OnUrlTimeExpiredListener listener) {
-        this.mOutUrlTimeExpiredListener = listener;
-    }
+//    public void setOnUrlTimeExpiredListener(IPlayer.OnUrlTimeExpiredListener listener) {
+//        this.mOutUrlTimeExpiredListener = listener;
+//    }
 
     /**
      * 设置首帧显示事件监听
      *
      * @param onFirstFrameStartListener 首帧显示事件监听
      */
-    public void setOnFirstFrameStartListener(IAliyunVodPlayer.OnFirstFrameStartListener onFirstFrameStartListener) {
+    public void setOnFirstFrameStartListener(IPlayer.OnRenderingStartListener onFirstFrameStartListener) {
         mOutFirstFrameStartListener = onFirstFrameStartListener;
     }
 
@@ -1626,7 +1588,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onSeekCompleteListener seek结束监听
      */
-    public void setOnSeekCompleteListener(IAliyunVodPlayer.OnSeekCompleteListener onSeekCompleteListener) {
+    public void setOnSeekCompleteListener(IPlayer.OnSeekCompleteListener onSeekCompleteListener) {
         mOuterSeekCompleteListener = onSeekCompleteListener;
     }
 
@@ -1635,10 +1597,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onStoppedListener 停止播放监听
      */
-    public void setOnStoppedListener(IAliyunVodPlayer.OnStoppedListener onStoppedListener) {
-        if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setOnStoppedListner(onStoppedListener);
-        }
+    public void setOnStoppedListener(OnStoppedListener onStoppedListener) {
+        this.mOnStoppedListener = onStoppedListener;
     }
 
     /**
@@ -1646,29 +1606,32 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onLoadingListener 加载状态监听
      */
-    public void setOnLoadingListener(IAliyunVodPlayer.OnLoadingListener onLoadingListener) {
+    public void setOnLoadingListener(IPlayer.OnLoadingStatusListener onLoadingListener) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setOnLoadingListener(onLoadingListener);
+            mAliyunVodPlayer.setOnLoadingStatusListener(onLoadingListener);
         }
     }
 
+    public void setSeiDataListener(IPlayer.OnSeiDataListener onSeiDataListener) {
+        this.mOutSeiDataListener = onSeiDataListener;
+    }
     /**
      * 设置缓冲监听
      *
      * @param onBufferingUpdateListener 缓冲监听
      */
-    public void setOnBufferingUpdateListener(IAliyunVodPlayer.OnBufferingUpdateListener onBufferingUpdateListener) {
-        if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
-        }
-    }
+//    public void setOnBufferingUpdateListener(IPlayer.OnBufferingUpdateListener onBufferingUpdateListener) {
+//        if (mAliyunVodPlayer != null) {
+//            mAliyunVodPlayer.setOnBufferingUpdateListener(onBufferingUpdateListener);
+//        }
+//    }
 
     /**
      * 设置视频宽高变化监听
      *
      * @param onVideoSizeChangedListener 视频宽高变化监听
      */
-    public void setOnVideoSizeChangedListener(IAliyunVodPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener) {
+    public void setOnVideoSizeChangedListener(IPlayer.OnVideoSizeChangedListener onVideoSizeChangedListener) {
         if (mAliyunVodPlayer != null) {
             mAliyunVodPlayer.setOnVideoSizeChangedListener(onVideoSizeChangedListener);
         }
@@ -1679,18 +1642,18 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param onCircleStartListener 循环播放开始监听
      */
-    public void setOnCircleStartListener(IAliyunVodPlayer.OnCircleStartListener onCircleStartListener) {
-        if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setOnCircleStartListener(onCircleStartListener);
-        }
-    }
+//    public void setOnCircleStartListener(IPlayer.OnCircleStartListener onCircleStartListener) {
+//        if (mAliyunVodPlayer != null) {
+//            mAliyunVodPlayer.setOnCircleStartListener(onCircleStartListener);
+//        }
+//    }
 
     /**
      * 设置PlayAuth的播放方式
      *
      * @param aliyunPlayAuth auth
      */
-    public void setAuthInfo(AliyunPlayAuth aliyunPlayAuth) {
+    public void setAuthInfo(VidAuth aliyunPlayAuth) {
         if (mAliyunVodPlayer == null) {
             return;
         }
@@ -1720,7 +1683,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param aliyunPlayAuth 源
      */
-    private void prepareAuth(AliyunPlayAuth aliyunPlayAuth) {
+    private void prepareAuth(VidAuth aliyunPlayAuth) {
         if (mTipsView != null) {
             mTipsView.showNetLoadingTipView();
         }
@@ -1730,7 +1693,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mQualityView != null) {
             mQualityView.setIsMtsSource(false);
         }
-        mAliyunVodPlayer.prepareAsync(aliyunPlayAuth);
+        mAliyunVodPlayer.setDataSource(aliyunPlayAuth);
+        mAliyunVodPlayer.prepare();
     }
 
     /**
@@ -1747,7 +1711,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param aliyunLocalSource 本地播放源
      */
-    public void setLocalSource(AliyunLocalSource aliyunLocalSource) {
+    public void setLocalSource(UrlSource aliyunLocalSource) {
         if (mAliyunVodPlayer == null) {
             return;
         }
@@ -1760,7 +1724,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mControlView != null) {
             mControlView.setForceQuality(true);
         }
-
         if (!isLocalSource() && NetWatchdog.is4GConnected(getContext())) {
             if (mTipsView != null) {
                 mTipsView.showNetChangeTipView();
@@ -1768,6 +1731,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         } else {
             prepareLocalSource(aliyunLocalSource);
         }
+
     }
 
     /**
@@ -1775,7 +1739,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param aliyunLocalSource 本地播放源
      */
-    private void prepareLocalSource(AliyunLocalSource aliyunLocalSource) {
+    private void prepareLocalSource(UrlSource aliyunLocalSource) {
         if (mControlView != null) {
             mControlView.setForceQuality(true);
         }
@@ -1786,9 +1750,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mQualityView != null) {
             mQualityView.setIsMtsSource(false);
         }
-        System.out.println("abc : prepared = " + aliyunLocalSource.getSource() + " --- " + mAliyunVodPlayer.getPlayerState());
-        mAliyunVodPlayer.prepareAsync(aliyunLocalSource);
-        System.out.println("abc : preparedAfter = " + mAliyunVodPlayer.getPlayerState());
+        mAliyunVodPlayer.setAutoPlay(true);
+        mAliyunVodPlayer.setDataSource(aliyunLocalSource);
+        mAliyunVodPlayer.prepare();
     }
 
     /**
@@ -1796,7 +1760,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param vidSts 源
      */
-    public void setVidSts(AliyunVidSts vidSts) {
+    public void setVidSts(VidSts vidSts) {
         if (mAliyunVodPlayer == null) {
             return;
         }
@@ -1809,22 +1773,19 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mControlView != null) {
             mControlView.setForceQuality(vidSts.isForceQuality());
         }
-
         if (NetWatchdog.is4GConnected(getContext())) {
             if (mTipsView != null) {
                 mTipsView.showNetChangeTipView();
             }
         } else {
-            prepareVidsts(vidSts);
+            prepareVidsts(mAliyunVidSts);
         }
     }
 
     /**
      * 准备vidsts 源
-     *
-     * @param vidSts
      */
-    private void prepareVidsts(AliyunVidSts vidSts) {
+    private void prepareVidsts(VidSts vidSts) {
         if (mTipsView != null) {
             mTipsView.showNetLoadingTipView();
         }
@@ -1835,7 +1796,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mQualityView != null) {
             mQualityView.setIsMtsSource(false);
         }
-        mAliyunVodPlayer.prepareAsync(vidSts);
+        if (mAliyunVodPlayer != null) {
+            mAliyunVodPlayer.setDataSource(vidSts);
+            mAliyunVodPlayer.prepare();
+        }
     }
 
     /**
@@ -1872,7 +1836,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void setPlayingCache(boolean enable, String saveDir, int maxDuration, long maxSize) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setPlayingCache(enable, saveDir, maxDuration, maxSize);
+//            mAliyunVodPlayer.setPlayingCache(enable, saveDir, maxDuration, maxSize);
         }
     }
 
@@ -1881,49 +1845,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param scallingMode 缩放模式
      */
-    public void setVideoScalingMode(IAliyunVodPlayer.VideoScalingMode scallingMode) {
+    public void setVideoScalingMode(IPlayer.ScaleMode scallingMode) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setVideoScalingMode(scallingMode);
-        }
-    }
-
-    /**
-     * 开始进度条更新计时器
-     */
-    private void startProgressUpdateTimer() {
-        if (mProgressUpdateTimer != null) {
-            mProgressUpdateTimer.removeMessages(0);
-            mProgressUpdateTimer.sendEmptyMessageDelayed(0, 1000);
-        }
-    }
-
-    /**
-     * 停止进度条更新计时器
-     */
-    private void stopProgressUpdateTimer() {
-        if (mProgressUpdateTimer != null) {
-            mProgressUpdateTimer.removeMessages(0);
-        }
-    }
-
-    /**
-     * 进度更新计时器
-     */
-    private static class ProgressUpdateTimer extends Handler {
-
-        private WeakReference<AliyunVodPlayerView> viewWeakReference;
-
-        ProgressUpdateTimer(AliyunVodPlayerView aliyunVodPlayerView) {
-            viewWeakReference = new WeakReference<AliyunVodPlayerView>(aliyunVodPlayerView);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            AliyunVodPlayerView aliyunVodPlayerView = viewWeakReference.get();
-            if (aliyunVodPlayerView != null) {
-                aliyunVodPlayerView.handleProgressUpdateMessage(msg);
-            }
-            super.handleMessage(msg);
+            mAliyunVodPlayer.setScaleMode(scallingMode);
         }
     }
 
@@ -1931,44 +1855,30 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 当VodPlayer 没有加载完成的时候,调用onStop 去暂停视频,
      * 会出现暂停失败的问题。
      */
-    private static class VodPlayerLoadEndHandler extends Handler{
+    private static class VodPlayerLoadEndHandler extends Handler {
 
         private WeakReference<AliyunVodPlayerView> weakReference;
 
         private boolean intentPause;
 
-        public VodPlayerLoadEndHandler(AliyunVodPlayerView aliyunVodPlayerView){
+        public VodPlayerLoadEndHandler(AliyunVodPlayerView aliyunVodPlayerView) {
             weakReference = new WeakReference<>(aliyunVodPlayerView);
         }
 
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == 0){
+            if (msg.what == 0) {
                 intentPause = true;
             }
-            if(msg.what == 1){
+            if (msg.what == 1) {
                 AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
-                if(aliyunVodPlayerView != null && intentPause){
+                if (aliyunVodPlayerView != null && intentPause) {
                     aliyunVodPlayerView.onStop();
                     intentPause = false;
                 }
             }
         }
-    }
-
-    /**
-     * 处理进度更新消息
-     *
-     * @param msg
-     */
-    private void handleProgressUpdateMessage(Message msg) {
-        if (mAliyunVodPlayer != null && !inSeek) {
-            mControlView.setVideoBufferPosition(mAliyunVodPlayer.getBufferingPosition());
-            mControlView.setVideoPosition((int)mAliyunVodPlayer.getCurrentPosition());
-        }
-        //解决bug：在Prepare中开始更新的时候，不会发送更新消息。
-        startProgressUpdateTimer();
     }
 
     /**
@@ -1978,9 +1888,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mIsFullScreenLocked) {
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                changeScreenMode(AliyunScreenMode.Small);
+                changeScreenMode(AliyunScreenMode.Small, false);
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                changeScreenMode(AliyunScreenMode.Full);
+                changeScreenMode(AliyunScreenMode.Full, false);
             }
         }
 
@@ -1993,9 +1903,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         }
 
         //从其他界面过来的话，也要show。
-        if (mControlView != null) {
-            mControlView.show();
-        }
+//        if (mControlView != null) {
+//            mControlView.show();
+//        }
 
         //onStop中记录下来的状态，在这里恢复使用
         resumePlayerState();
@@ -2006,10 +1916,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 暂停播放器的操作
      */
     public void onStop() {
-        if(!(hasLoadEnd != null && hasLoadEnd.size() > 0)){
-            vodPlayerLoadEndHandler.sendEmptyMessage(0);
-            return ;
-        }
         if (mNetWatchdog != null) {
             mNetWatchdog.stopWatch();
         }
@@ -2028,15 +1934,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mAliyunVodPlayer == null) {
             return;
         }
-        if (mPlayerState == PlayerState.Paused) {
-            pause();
-        } else if (mPlayerState == PlayerState.Started) {
-            if (isLocalSource()) {
-                reTry();
-            } else {
-                start();
-            }
+        //恢复前台后需要进行判断,如果是本地资源,则继续播放,如果是4g则给予提示,不会继续播放,否则继续播放
+        if (!isLocalSource() && NetWatchdog.is4GConnected(getContext())) {
+
+        } else {
+            start();
         }
+
     }
 
     /**
@@ -2046,12 +1950,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mAliyunVodPlayer == null) {
             return;
         }
-
-        mPlayerState = mAliyunVodPlayer.getPlayerState();
         //然后再暂停播放器
         //如果希望后台继续播放，不需要暂停的话，可以注释掉pause调用。
         pause();
-
     }
 
     /**
@@ -2059,7 +1960,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @return 媒体信息
      */
-    public AliyunMediaInfo getMediaInfo() {
+    public MediaInfo getMediaInfo() {
         if (mAliyunVodPlayer != null) {
             return mAliyunVodPlayer.getMediaInfo();
         }
@@ -2074,16 +1975,13 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         stop();
         if (mAliyunVodPlayer != null) {
             mAliyunVodPlayer.release();
+            mAliyunVodPlayer = null;
         }
-
-        stopProgressUpdateTimer();
-        mProgressUpdateTimer = null;
 
         mSurfaceView = null;
         mGestureView = null;
         mControlView = null;
         mCoverView = null;
-        mAliyunVodPlayer = null;
         mGestureDialogManager = null;
         if (mNetWatchdog != null) {
             mNetWatchdog.stopWatch();
@@ -2095,7 +1993,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             mOrientationWatchDog.destroy();
         }
         mOrientationWatchDog = null;
-        if(hasLoadEnd != null){
+        if (hasLoadEnd != null) {
             hasLoadEnd.clear();
         }
     }
@@ -2106,10 +2004,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @return 是否处于播放状态
      */
     public boolean isPlaying() {
-        if (mAliyunVodPlayer != null) {
-            return mAliyunVodPlayer.isPlaying();
-        }
-        return false;
+        return mPlayerState == IPlayer.started;
     }
 
     /**
@@ -2117,11 +2012,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @return 播放器状态
      */
-    public PlayerState getPlayerState() {
-        if (mAliyunVodPlayer != null) {
-            return mAliyunVodPlayer.getPlayerState();
-        }
-        return null;
+    public int getPlayerState() {
+        return mPlayerState;
     }
 
     /**
@@ -2129,20 +2021,19 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void start() {
         if (mControlView != null) {
+            mControlView.show();
             mControlView.setPlayState(ControlView.PlayState.Playing);
         }
-        //显示其他的动作
-        //mControlView.setHideType(ViewAction.HideType.Normal);
-        //mGestureView.setHideType(ViewAction.HideType.Normal);
-        mGestureView.show();
-        mControlView.show();
 
         if (mAliyunVodPlayer == null) {
             return;
         }
 
-        PlayerState playerState = mAliyunVodPlayer.getPlayerState();
-        if (playerState == PlayerState.Paused || playerState == PlayerState.Prepared || mAliyunVodPlayer.isPlaying()) {
+        if (mGestureView != null) {
+            mGestureView.show();
+        }
+
+        if (mPlayerState == IPlayer.paused || mPlayerState == IPlayer.prepared) {
             mAliyunVodPlayer.start();
         }
 
@@ -2155,13 +2046,11 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mControlView != null) {
             mControlView.setPlayState(ControlView.PlayState.NotPlaying);
         }
-
         if (mAliyunVodPlayer == null) {
             return;
         }
 
-        PlayerState playerState = mAliyunVodPlayer.getPlayerState();
-        if (playerState == PlayerState.Started || mAliyunVodPlayer.isPlaying()) {
+        if (mPlayerState == IPlayer.started || mPlayerState == IPlayer.prepared) {
             mAliyunVodPlayer.pause();
         }
     }
@@ -2171,20 +2060,20 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     private void stop() {
         Boolean hasLoadedEnd = null;
-        AliyunMediaInfo mediaInfo = null;
-        if(mAliyunVodPlayer != null && hasLoadEnd != null){
+        MediaInfo mediaInfo = null;
+        if (mAliyunVodPlayer != null && hasLoadEnd != null) {
             mediaInfo = mAliyunVodPlayer.getMediaInfo();
             hasLoadedEnd = hasLoadEnd.get(mediaInfo);
         }
 
-        if (mAliyunVodPlayer != null && hasLoadedEnd != null) {
+        if (mAliyunVodPlayer != null) {
             mAliyunVodPlayer.stop();
-
         }
+
         if (mControlView != null) {
             mControlView.setPlayState(ControlView.PlayState.NotPlaying);
         }
-        if(hasLoadEnd != null){
+        if (hasLoadEnd != null) {
             hasLoadEnd.remove(mediaInfo);
         }
     }
@@ -2198,11 +2087,27 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         if (mAliyunVodPlayer == null) {
             return;
         }
+
         inSeek = true;
-        mAliyunVodPlayer.seekTo(position);
+        realySeekToFunction(position);
+    }
+
+    private void realySeekToFunction(int position) {
+        isAutoAccurate(position);
         mAliyunVodPlayer.start();
         if (mControlView != null) {
             mControlView.setPlayState(ControlView.PlayState.Playing);
+        }
+    }
+
+    /**
+     * 判断是否开启精准seek
+     */
+    private void isAutoAccurate(int position) {
+        if (getDuration() <= ACCURATE) {
+            mAliyunVodPlayer.seekTo(position, IPlayer.SeekMode.Accurate);
+        } else {
+            mAliyunVodPlayer.seekTo(position, IPlayer.SeekMode.Inaccurate);
         }
     }
 
@@ -2234,7 +2139,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void enableNativeLog() {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.enableNativeLog();
+            mAliyunVodPlayer.enableLog(true);
         }
     }
 
@@ -2243,7 +2148,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void disableNativeLog() {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.disableNativeLog();
+            mAliyunVodPlayer.enableLog(false);
         }
     }
 
@@ -2252,11 +2157,11 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param executorService 线程池
      */
-    public void setThreadExecutorService(ExecutorService executorService) {
-        if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setThreadExecutorService(executorService);
-        }
-    }
+//    public void setThreadExecutorService(ExecutorService executorService) {
+//        if (mAliyunVodPlayer != null) {
+//            mAliyunVodPlayer.setThreadExecutorService(executorService);
+//        }
+//    }
 
     /**
      * 获取SDK版本号
@@ -2264,7 +2169,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @return SDK版本号
      */
     public String getSDKVersion() {
-        return AliyunVodPlayer.getSDKVersion();
+        return AliPlayerFactory.getSdkVersion();
     }
 
     /**
@@ -2294,7 +2199,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public Map<String, String> getAllDebugInfo() {
         if (mAliyunVodPlayer != null) {
-            return mAliyunVodPlayer.getAllDebugInfo();
+//            return mAliyunVodPlayer.getAllDebugInfo();
         }
         return null;
     }
@@ -2304,7 +2209,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param listener 监听器
      */
-    public void setLockPortraitMode(IAliyunVodPlayer.LockPortraitListener listener) {
+    public void setLockPortraitMode(LockPortraitListener listener) {
         mLockPortraitListener = listener;
     }
 
@@ -2313,7 +2218,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @return 竖屏监听器
      */
-    public IAliyunVodPlayer.LockPortraitListener getLockPortraitMode() {
+    public LockPortraitListener getLockPortraitMode() {
         return mLockPortraitListener;
     }
 
@@ -2326,6 +2231,11 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (((mCurrentScreenMode == AliyunScreenMode.Full)) && (keyCode != KeyEvent.KEYCODE_HOME)
+                && keyCode != KeyEvent.KEYCODE_VOLUME_UP && keyCode != KeyEvent.KEYCODE_VOLUME_DOWN) {
+            changedToPortrait(true);
+            return false;
+        }
         if (mIsFullScreenLocked && (keyCode != KeyEvent.KEYCODE_HOME)) {
             return false;
         }
@@ -2337,12 +2247,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @return 图片
      */
-    public Bitmap snapShot() {
+    public void snapShot() {
         if (mAliyunVodPlayer != null) {
-            return mAliyunVodPlayer.snapShot();
+            mAliyunVodPlayer.snapshot();
         }
-
-        return null;
     }
 
     /**
@@ -2352,7 +2260,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void setCirclePlay(boolean circlePlay) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setCirclePlay(circlePlay);
+            mAliyunVodPlayer.setLoop(circlePlay);
         }
     }
 
@@ -2361,9 +2269,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param mode 镜像模式
      */
-    public void setRenderMirrorMode(IAliyunVodPlayer.VideoMirrorMode mode) {
+    public void setRenderMirrorMode(IPlayer.MirrorMode mode) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setRenderMirrorMode(mode);
+            mAliyunVodPlayer.setMirrorMode(mode);
         }
     }
 
@@ -2372,9 +2280,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param rotate 旋转角度
      */
-    public void setRenderRotate(IAliyunVodPlayer.VideoRotate rotate) {
+    public void setRenderRotate(IPlayer.RotateMode rotate) {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.setRenderRotate(rotate);
+            mAliyunVodPlayer.setRotateMode(rotate);
         }
     }
 
@@ -2382,13 +2290,11 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 播放按钮点击listener
      */
     public interface OnPlayStateBtnClickListener {
-        void onPlayBtnClick(PlayerState playerState);
+        void onPlayBtnClick(int playerState);
     }
 
     /**
      * 设置播放状态点击监听
-     *
-     * @param listener
      */
     public void setOnPlayStateBtnClickListener(OnPlayStateBtnClickListener listener) {
         this.onPlayStateBtnClickListener = listener;
@@ -2401,7 +2307,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
 
     public interface OnSeekStartListener {
-        void onSeekStart();
+        void onSeekStart(int position);
     }
 
     public void setOnSeekStartListener(OnSeekStartListener listener) {
@@ -2428,11 +2334,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
     /**
      * 设置播放器view点击事件监听，目前只对外暴露下载按钮和投屏按钮
-     *
-     * @param mOnPlayerViewClickListener
      */
     public void setmOnPlayerViewClickListener(
-        OnPlayerViewClickListener mOnPlayerViewClickListener) {
+            OnPlayerViewClickListener mOnPlayerViewClickListener) {
         this.mOnPlayerViewClickListener = mOnPlayerViewClickListener;
     }
 
@@ -2452,7 +2356,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private OnOrientationChangeListener orientationChangeListener;
 
     public void setOrientationChangeListener(
-        OnOrientationChangeListener listener) {
+            OnOrientationChangeListener listener) {
         this.orientationChangeListener = listener;
     }
 
@@ -2460,7 +2364,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * 断网/连网监听
      */
     private class MyNetConnectedListener implements NetWatchdog.NetConnectedListener {
-        public MyNetConnectedListener(AliyunVodPlayerView aliyunVodPlayerView) {}
+        public MyNetConnectedListener(AliyunVodPlayerView aliyunVodPlayerView) {
+        }
 
         @Override
         public void onReNetConnected(boolean isReconnect) {
@@ -2496,6 +2401,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         void onNetUnConnected();
     }
 
+    public interface OnFinishListener {
+        void onFinishClick();
+    }
+
     /**
      * 横屏下显示更多
      */
@@ -2504,8 +2413,557 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     public void setOnShowMoreClickListener(
-        ControlView.OnShowMoreClickListener listener) {
+            ControlView.OnShowMoreClickListener listener) {
         this.mOutOnShowMoreClickListener = listener;
+    }
+
+    public interface OnScreenBrightnessListener {
+        void onScreenBrightness(int brightness);
+    }
+
+    public void setOnScreenBrightness(OnScreenBrightnessListener listener) {
+        this.mOnScreenBrightnessListener = listener;
+    }
+
+    /**
+     * 获取当前播放器正在播放的媒体信息
+     */
+    public MediaInfo getCurrentMediaInfo() {
+        return mAliyunMediaInfo;
+    }
+
+    /**
+     * 设置当前屏幕亮度
+     */
+    public void setScreenBrightness(int screenBrightness) {
+        this.mScreenBrightness = screenBrightness;
+    }
+
+    public int getScreenBrightness() {
+        return this.mScreenBrightness;
+    }
+
+    /** ------------------- 播放器回调 --------------------------- */
+
+    /**
+     * 广告视频播放器准备对外接口监听
+     */
+    public static class VideoPlayerPreparedListener implements IPlayer.OnPreparedListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerPreparedListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onPrepared() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerPrepared();
+            }
+        }
+    }
+
+    /**
+     * 原视频准备完成
+     */
+    private void sourceVideoPlayerPrepared() {
+        //需要将mThumbnailPrepareSuccess重置,否则会出现缩略图错乱的问题
+        mThumbnailPrepareSuccess = false;
+        if (mThumbnailView != null) {
+            mThumbnailView.setThumbnailPicture(null);
+        }
+
+        if (mAliyunVodPlayer == null) {
+            return;
+        }
+        mAliyunMediaInfo = mAliyunVodPlayer.getMediaInfo();
+
+        if (mAliyunMediaInfo == null) {
+            return;
+        }
+        List<Thumbnail> thumbnailList = mAliyunMediaInfo.getThumbnailList();
+        if (thumbnailList != null && thumbnailList.size() > 0) {
+
+            mThumbnailHelper = new ThumbnailHelper(thumbnailList.get(0).mURL);
+
+            mThumbnailHelper.setOnPrepareListener(new ThumbnailHelper.OnPrepareListener() {
+                @Override
+                public void onPrepareSuccess() {
+                    mThumbnailPrepareSuccess = true;
+                }
+
+                @Override
+                public void onPrepareFail() {
+                    mThumbnailPrepareSuccess = false;
+                }
+            });
+
+            mThumbnailHelper.prepare();
+
+            mThumbnailHelper.setOnThumbnailGetListener(new ThumbnailHelper.OnThumbnailGetListener() {
+                @Override
+                public void onThumbnailGetSuccess(long l, ThumbnailBitmapInfo thumbnailBitmapInfo) {
+                    if (thumbnailBitmapInfo != null && thumbnailBitmapInfo.getThumbnailBitmap() != null) {
+                        Bitmap thumbnailBitmap = thumbnailBitmapInfo.getThumbnailBitmap();
+                        mThumbnailView.setTime(TimeFormater.formatMs(l));
+                        mThumbnailView.setThumbnailPicture(thumbnailBitmap);
+                    }
+                }
+
+                @Override
+                public void onThumbnailGetFail(long l, String s) {
+
+                }
+            });
+        }
+
+        //防止服务器信息和实际不一致
+        mSourceDuration = mAliyunVodPlayer.getDuration();
+        mAliyunMediaInfo.setDuration((int) mSourceDuration);
+        TrackInfo currentTrack = mAliyunVodPlayer.currentTrack(TrackInfo.Type.TYPE_VOD);
+        String currentQuality = "FD";
+        if (currentTrack != null) {
+            currentQuality = currentTrack.getVodDefinition();
+        }
+        mControlView.setMediaInfo(mAliyunMediaInfo, currentQuality);
+        mControlView.setHideType(ViewAction.HideType.Normal);
+        mGestureView.setHideType(ViewAction.HideType.Normal);
+        mGestureView.show();
+        if (mTipsView != null) {
+            mTipsView.hideNetLoadingTipView();
+        }
+
+        mSurfaceView.setVisibility(View.VISIBLE);
+
+        //准备成功之后可以调用start方法开始播放
+        if (mOutPreparedListener != null) {
+            mOutPreparedListener.onPrepared();
+        }
+    }
+
+    private static class VideoPlayerErrorListener implements IPlayer.OnErrorListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerErrorListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onError(ErrorInfo errorInfo) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerError(errorInfo);
+            }
+        }
+    }
+
+    /**
+     * 原视频错误监听
+     */
+    private void sourceVideoPlayerError(ErrorInfo errorInfo) {
+
+        if (mTipsView != null) {
+            mTipsView.hideAll();
+        }
+        //出错之后解锁屏幕，防止不能做其他操作，比如返回。
+        lockScreen(false);
+
+        //errorInfo.getExtra()展示为null,修改为显示errorInfo.getCode的十六进制的值
+        showErrorTipView(errorInfo.getCode().getValue(), Integer.toHexString(errorInfo.getCode().getValue()), errorInfo.getMsg());
+
+        if (mOutErrorListener != null) {
+            mOutErrorListener.onError(errorInfo);
+        }
+    }
+
+    /**
+     * 播放器加载状态监听
+     */
+    private static class VideoPlayerLoadingStatusListener implements IPlayer.OnLoadingStatusListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerLoadingStatusListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onLoadingBegin() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerLoadingBegin();
+            }
+        }
+
+        @Override
+        public void onLoadingProgress(int percent, float v) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerLoadingProgress(percent);
+            }
+        }
+
+        @Override
+        public void onLoadingEnd() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerLoadingEnd();
+            }
+        }
+    }
+
+    /**
+     * 原视频开始加载
+     */
+    private void sourceVideoPlayerLoadingBegin() {
+        if (mTipsView != null) {
+            mTipsView.showBufferLoadingTipView();
+        }
+    }
+
+    /**
+     * 原视频开始加载进度
+     */
+    private void sourceVideoPlayerLoadingProgress(int percent) {
+
+        if (mTipsView != null) {
+            //视频广告,并且广告视频在播放状态,不要展示loading
+            mTipsView.updateLoadingPercent(percent);
+
+            if (percent == 100) {
+                mTipsView.hideBufferLoadingTipView();
+            }
+        }
+    }
+
+    /**
+     * 原视频加载结束
+     */
+    private void sourceVideoPlayerLoadingEnd() {
+
+        if (mTipsView != null) {
+            mTipsView.hideBufferLoadingTipView();
+        }
+        if (isPlaying()) {
+            mTipsView.hideErrorTipView();
+        }
+        hasLoadEnd.put(mAliyunMediaInfo, true);
+        vodPlayerLoadEndHandler.sendEmptyMessage(1);
+    }
+
+    /**
+     * 播放器状态改变监听
+     */
+    private static class VideoPlayerStateChangedListener implements IPlayer.OnStateChangedListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerStateChangedListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+
+        @Override
+        public void onStateChanged(int newState) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerStateChanged(newState);
+            }
+        }
+    }
+
+
+    /**
+     * 原视频状态改变监听
+     */
+    private void sourceVideoPlayerStateChanged(int newState) {
+        mPlayerState = newState;
+        if (newState == IPlayer.stopped) {
+            if (mOnStoppedListener != null) {
+                mOnStoppedListener.onStop();
+            }
+        } else if (newState == IPlayer.started) {
+            if (mControlView != null) {
+                mControlView.setPlayState(ControlView.PlayState.Playing);
+            }
+        }
+    }
+
+    /**
+     * 播放器播放完成监听
+     */
+    private static class VideoPlayerCompletionListener implements IPlayer.OnCompletionListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerCompletionListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onCompletion() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerCompletion();
+            }
+        }
+    }
+
+    /**
+     * 原视频播放完成
+     */
+    private void sourceVideoPlayerCompletion() {
+        inSeek = false;
+        //如果当前播放资源是本地资源时, 再显示replay
+        if (mTipsView != null && isLocalSource()) {
+            //隐藏其他的动作,防止点击界面去进行其他操作
+            mGestureView.hide(ViewAction.HideType.End);
+            mControlView.hide(ViewAction.HideType.End);
+            mTipsView.showReplayTipView();
+        }
+        if (mOutCompletionListener != null) {
+            mOutCompletionListener.onCompletion();
+        }
+    }
+
+    /**
+     * 播放器Info监听
+     */
+    private static class VideoPlayerInfoListener implements IPlayer.OnInfoListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerInfoListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onInfo(InfoBean infoBean) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerInfo(infoBean);
+            }
+        }
+    }
+
+    /**
+     * 原视频Info
+     */
+    private void sourceVideoPlayerInfo(InfoBean infoBean) {
+        if (infoBean.getCode() == InfoCode.AutoPlayStart) {
+            //自动播放开始,需要设置播放状态
+            if (mControlView != null) {
+                mControlView.setPlayState(ControlView.PlayState.Playing);
+            }
+            if (mOutAutoPlayListener != null) {
+                mOutAutoPlayListener.onAutoPlayStarted();
+            }
+        } else if (infoBean.getCode() == InfoCode.BufferedPosition) {
+            //更新bufferedPosition
+            mVideoBufferedPosition = infoBean.getExtraValue();
+            mControlView.setVideoBufferPosition((int) mVideoBufferedPosition);
+        } else if (infoBean.getCode() == InfoCode.CurrentPosition) {
+            //更新currentPosition
+            mCurrentPosition = infoBean.getExtraValue();
+            long min = mCurrentPosition / 1000 / 60;
+            long sec = mCurrentPosition / 1000 % 60;
+            if (mControlView != null && !inSeek && mPlayerState == IPlayer.started) {
+                mControlView.setVideoPosition((int) mCurrentPosition);
+            }
+        } else if (infoBean.getCode() == InfoCode.AutoPlayStart) {
+            //自动播放开始,需要设置播放状态
+            if (mControlView != null) {
+                mControlView.setPlayState(ControlView.PlayState.Playing);
+            }
+            if (mOutAutoPlayListener != null) {
+                mOutAutoPlayListener.onAutoPlayStarted();
+            }
+        } else {
+            if (mOutInfoListener != null) {
+                mOutInfoListener.onInfo(infoBean);
+            }
+        }
+    }
+
+    /**
+     * 播放器Render监听
+     */
+    private static class VideoPlayerRenderingStartListener implements IPlayer.OnRenderingStartListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerRenderingStartListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onRenderingStart() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerOnVideoRenderingStart();
+            }
+        }
+    }
+
+    /**
+     * 原视频onVideoRenderingStart
+     */
+    private void sourceVideoPlayerOnVideoRenderingStart() {
+        mCoverView.setVisibility(GONE);
+        if (mOutFirstFrameStartListener != null) {
+            mOutFirstFrameStartListener.onRenderingStart();
+        }
+    }
+
+    /**
+     * 播放器TrackChanged监听
+     */
+    private static class VideoPlayerTrackChangedListener implements IPlayer.OnTrackChangedListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerTrackChangedListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onChangedSuccess(TrackInfo trackInfo) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerTrackInfoChangedSuccess(trackInfo);
+            }
+        }
+
+        @Override
+        public void onChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerTrackInfoChangedFail(trackInfo, errorInfo);
+            }
+        }
+    }
+
+    /**
+     * 原视频 trackInfoChangedSuccess
+     */
+    private void sourceVideoPlayerTrackInfoChangedSuccess(TrackInfo trackInfo) {
+        //清晰度切换监听
+        if (trackInfo.getType() == TrackInfo.Type.TYPE_VOD) {
+            //切换成功后就开始播放
+            mControlView.setCurrentQuality(trackInfo.getVodDefinition());
+            start();
+
+            if (mTipsView != null) {
+                mTipsView.hideNetLoadingTipView();
+            }
+            if (mOutChangeQualityListener != null) {
+                mOutChangeQualityListener.onChangeQualitySuccess(TrackInfo.Type.TYPE_VOD.name());
+            }
+        }
+    }
+
+    public PlayerConfig getPlayerConfig() {
+        if (mAliyunVodPlayer != null) {
+            return mAliyunVodPlayer.getConfig();
+        }
+        return null;
+    }
+
+    public void setPlayerConfig(PlayerConfig playerConfig) {
+        if (mAliyunVodPlayer != null) {
+            mAliyunVodPlayer.setConfig(playerConfig);
+        }
+    }
+
+    /**
+     * 原视频 trackInfochangedFail
+     */
+    private void sourceVideoPlayerTrackInfoChangedFail(TrackInfo trackInfo, ErrorInfo errorInfo) {
+        //失败的话，停止播放，通知上层
+        if (mTipsView != null) {
+            mTipsView.hideNetLoadingTipView();
+        }
+        stop();
+        if (mOutChangeQualityListener != null) {
+            mOutChangeQualityListener.onChangeQualityFail(0, errorInfo.getMsg());
+        }
+    }
+
+    /**
+     * 播放器seek完成监听
+     */
+    private static class VideoPlayerOnSeekCompleteListener implements IPlayer.OnSeekCompleteListener {
+
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerOnSeekCompleteListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onSeekComplete() {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerSeekComplete();
+            }
+        }
+    }
+
+    /**
+     * 原视频seek完成
+     */
+    private void sourceVideoPlayerSeekComplete() {
+        inSeek = false;
+
+        if (mOuterSeekCompleteListener != null) {
+            mOuterSeekCompleteListener.onSeekComplete();
+        }
+    }
+
+    /**
+     * SEI监听
+     */
+    private static class VideoPlayerOnSeiDataListener implements IPlayer.OnSeiDataListener {
+        private WeakReference<AliyunVodPlayerView> weakReference;
+
+        public VideoPlayerOnSeiDataListener(AliyunVodPlayerView aliyunVodPlayerView) {
+            weakReference = new WeakReference<>(aliyunVodPlayerView);
+        }
+
+        @Override
+        public void onSeiData(int var1, byte[] var2) {
+            AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
+            if (aliyunVodPlayerView != null) {
+                aliyunVodPlayerView.sourceVideoPlayerSeiData(var1, var2);
+            }
+        }
+    }
+
+    /**
+     * SEI事件出现
+     *
+     * @param i 类型
+     * @param s 内容
+     */
+    private void sourceVideoPlayerSeiData(int i, byte[] s) {
+        if (mOutSeiDataListener != null) {
+            mOutSeiDataListener.onSeiData(i, s);
+        }
+    }
+
+    /**
+     * ------------------- 播放器回调 end---------------------------
+     */
+    private void hideSystemUI() {
+        AliyunVodPlayerView.this.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
     public void setTimePointList(List<Long> list) {

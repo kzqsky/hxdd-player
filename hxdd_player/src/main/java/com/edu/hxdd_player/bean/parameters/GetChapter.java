@@ -15,5 +15,8 @@ public class GetChapter extends BaseParameters {
     public String validTime;
 
     public boolean isQuestion = true; // 默认是true 不需要弹题 改为false
-
+    /**
+     * 给下载传递用
+     */
+    public String id;
 }

@@ -5,7 +5,6 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,7 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.aliyun.vodplayer.media.IAliyunVodPlayer;
+import com.aliyun.player.nativeclass.TrackInfo;
+import com.aliyun.vodplayerview.listener.QualityValue;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
@@ -39,7 +39,7 @@ public class QualityView extends FrameLayout implements ITheme {
     private ListView mListView;
     private BaseAdapter mAdapter;
     //adapter的数据源
-    private List<String> mQualityItems;
+    private List<TrackInfo> mQualityItems;
     //当前播放的清晰度，高亮显示
     private String currentQuality;
     //清晰度项的点击事件
@@ -47,7 +47,7 @@ public class QualityView extends FrameLayout implements ITheme {
     //是否是mts源
     private boolean isMtsSource = false;
     //默认的主题色
-    private int themeColorResId = R.color.alivc_blue;
+    private int themeColorResId = R.color.alivc_player_theme_blue;
 
 
     public QualityView(@NonNull Context context) {
@@ -97,15 +97,15 @@ public class QualityView extends FrameLayout implements ITheme {
     public void setTheme(AliyunVodPlayerView.Theme theme) {
         //更新主题
         if (theme == AliyunVodPlayerView.Theme.Blue) {
-            themeColorResId = R.color.alivc_blue;
+            themeColorResId = R.color.alivc_player_theme_blue;
         } else if (theme == AliyunVodPlayerView.Theme.Green) {
-            themeColorResId = R.color.alivc_green;
+            themeColorResId = R.color.alivc_player_theme_green;
         } else if (theme == AliyunVodPlayerView.Theme.Orange) {
-            themeColorResId = R.color.alivc_orange;
+            themeColorResId = R.color.alivc_player_theme_orange;
         } else if (theme == AliyunVodPlayerView.Theme.Red) {
-            themeColorResId = R.color.alivc_red;
+            themeColorResId = R.color.alivc_player_theme_red;
         } else {
-            themeColorResId = R.color.alivc_blue;
+            themeColorResId = R.color.alivc_player_theme_blue;
         }
 
         if (mAdapter != null) {
@@ -126,7 +126,7 @@ public class QualityView extends FrameLayout implements ITheme {
      * @param qualities 所有支持的清晰度
      * @param currentQuality 当前的清晰度
      */
-    public void setQuality(List<String> qualities, String currentQuality) {
+    public void setQuality(List<TrackInfo> qualities, String currentQuality) {
         //排序之后显示出来
         mQualityItems = sortQuality(qualities);
         this.currentQuality = currentQuality;
@@ -143,55 +143,101 @@ public class QualityView extends FrameLayout implements ITheme {
         isMtsSource = isMts;
     }
 
-    private List<String> sortQuality(List<String> qualities) {
+
+    /**
+     * SQ，HQ，FD，LD，SD，HD，2K，4K，OD
+     */
+    private List<TrackInfo> sortQuality(List<TrackInfo> qualities) {
 
         //MTS的源不需要排序
         if (isMtsSource) {
             return qualities;
         }
 
-        String ld = null, sd = null, hd = null, fd = null, k2 = null, k4 = null, od = null;
-        for (String quality : qualities) {
-            if (IAliyunVodPlayer.QualityValue.QUALITY_FLUENT.equals(quality)) {
-                fd = IAliyunVodPlayer.QualityValue.QUALITY_FLUENT;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_LOW.equals(quality)) {
-                ld = IAliyunVodPlayer.QualityValue.QUALITY_LOW;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_STAND.equals(quality)) {
-                sd = IAliyunVodPlayer.QualityValue.QUALITY_STAND;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_HIGH.equals(quality)) {
-                hd = IAliyunVodPlayer.QualityValue.QUALITY_HIGH;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_2K.equals(quality)) {
-                k2 = IAliyunVodPlayer.QualityValue.QUALITY_2K;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_4K.equals(quality)) {
-                k4 = IAliyunVodPlayer.QualityValue.QUALITY_4K;
-            } else if (IAliyunVodPlayer.QualityValue.QUALITY_ORIGINAL.equals(quality)) {
-                od = IAliyunVodPlayer.QualityValue.QUALITY_ORIGINAL;
+        TrackInfo ld = null, sd = null, hd = null, fd = null, k2 = null, k4 = null, od = null,sq = null,hq = null;
+        for (TrackInfo quality : qualities) {
+            if (QualityValue.QUALITY_FLUENT.equals(quality.getVodDefinition())) {
+//                fd = QualityValue.QUALITY_FLUENT;
+                fd = quality;
+            } else if (QualityValue.QUALITY_LOW.equals(quality.getVodDefinition())) {
+//                ld = QualityValue.QUALITY_LOW;
+                ld = quality;
+            } else if (QualityValue.QUALITY_STAND.equals(quality.getVodDefinition())) {
+//                sd = QualityValue.QUALITY_STAND;
+                sd = quality;
+            } else if (QualityValue.QUALITY_HIGH.equals(quality.getVodDefinition())) {
+//                hd = QualityValue.QUALITY_HIGH;
+                hd = quality;
+            } else if (QualityValue.QUALITY_2K.equals(quality.getVodDefinition())) {
+//                k2 = QualityValue.QUALITY_2K;
+                k2 = quality;
+            } else if (QualityValue.QUALITY_4K.equals(quality.getVodDefinition())) {
+//                k4 = QualityValue.QUALITY_4K;
+                k4 = quality;
+            } else if (QualityValue.QUALITY_ORIGINAL.equals(quality.getVodDefinition())) {
+//                od = QualityValue.QUALITY_ORIGINAL;
+                od = quality;
+            } else if (QualityValue.QUALITY_SQ.equals(quality.getVodDefinition())) {
+                sq = quality;
+            } else if(QualityValue.QUALITY_HQ.equals(quality.getVodDefinition())){
+                hq = quality;
             }
         }
 
         //清晰度按照fd,ld,sd,hd,2k,4k,od排序
-        List<String> sortedQuality = new LinkedList<String>();
-        if (!TextUtils.isEmpty(fd)) {
+        List<TrackInfo> sortedQuality = new LinkedList<>();
+//        if (!TextUtils.isEmpty(fd)) {
+//            sortedQuality.add(fd);
+//        }
+//
+//        if (!TextUtils.isEmpty(ld)) {
+//            sortedQuality.add(ld);
+//        }
+//        if (!TextUtils.isEmpty(sd)) {
+//            sortedQuality.add(sd);
+//        }
+//        if (!TextUtils.isEmpty(hd)) {
+//            sortedQuality.add(hd);
+//        }
+//
+//        if (!TextUtils.isEmpty(k2)) {
+//            sortedQuality.add(k2);
+//        }
+//        if (!TextUtils.isEmpty(k4)) {
+//            sortedQuality.add(k4);
+//        }
+//        if (!TextUtils.isEmpty(od)) {
+//            sortedQuality.add(od);
+//        }
+        if(sq != null){
+            sortedQuality.add(sq);
+        }
+
+        if(hq != null){
+            sortedQuality.add(hq);
+        }
+
+        if (fd != null) {
             sortedQuality.add(fd);
         }
 
-        if (!TextUtils.isEmpty(ld)) {
+        if (ld != null) {
             sortedQuality.add(ld);
         }
-        if (!TextUtils.isEmpty(sd)) {
+        if (sd != null) {
             sortedQuality.add(sd);
         }
-        if (!TextUtils.isEmpty(hd)) {
+        if (hd != null) {
             sortedQuality.add(hd);
         }
 
-        if (!TextUtils.isEmpty(k2)) {
+        if (k2 != null) {
             sortedQuality.add(k2);
         }
-        if (!TextUtils.isEmpty(k4)) {
+        if (k4 != null) {
             sortedQuality.add(k4);
         }
-        if (!TextUtils.isEmpty(od)) {
+        if (od != null) {
             sortedQuality.add(od);
         }
 
@@ -207,7 +253,7 @@ public class QualityView extends FrameLayout implements ITheme {
 
         FrameLayout.LayoutParams listViewParam = (LayoutParams) mListView.getLayoutParams();
         listViewParam.width = anchor.getWidth();
-        listViewParam.height = getResources().getDimensionPixelSize(R.dimen.alivc_rate_item_height) * mQualityItems.size();
+        listViewParam.height = getResources().getDimensionPixelSize(R.dimen.alivc_player_rate_item_height) * mQualityItems.size();
         int[] location = new int[2];
         anchor.getLocationInWindow(location);
         listViewParam.leftMargin = location[0];
@@ -245,9 +291,9 @@ public class QualityView extends FrameLayout implements ITheme {
     public interface OnQualityClickListener {
         /**
          * 清晰度点击事件
-         * @param quality 点中的清晰度
+         * @param qualityTrackInfo 点中的清晰度
          */
-        void onQualityClick(String quality);
+        void onQualityClick(TrackInfo qualityTrackInfo);
     }
 
     /**
@@ -277,13 +323,14 @@ public class QualityView extends FrameLayout implements ITheme {
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView view = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.ratetype_item, null);
             if (mQualityItems != null) {
-                String quality = mQualityItems.get(position);
+                TrackInfo trackInfo = mQualityItems.get(position);
+                String quality = trackInfo.getVodDefinition();
                 view.setText(QualityItem.getItem(getContext(), quality, isMtsSource).getName());
                 //默认白色，当前清晰度为主题色。
                 if (quality.equals(currentQuality)) {
                     view.setTextColor(ContextCompat.getColor(getContext(), themeColorResId));
                 } else {
-                    view.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_white));
+                    view.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_common_font_white_light));
                 }
             }
             return view;

@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.alivc.player.AliyunErrorCode;
-import com.alivc.player.VcPlayerLog;
+import com.aliyun.player.bean.ErrorCode;
+import com.aliyun.utils.VcPlayerLog;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 
@@ -62,7 +62,13 @@ public class TipsView extends RelativeLayout implements ITheme {
         @Override
         public void onRetryClick() {
             if (mOnTipClickListener != null) {
-                mOnTipClickListener.onRetryPlay();
+                //鉴权过期
+                if (mErrorCode == ErrorCode.ERROR_SERVER_POP_UNKNOWN.getValue()) {
+                    mOnTipClickListener.onRefreshSts();
+                } else {
+                    mOnTipClickListener.onRetryPlay();
+                }
+
             }
         }
     };
@@ -116,7 +122,7 @@ public class TipsView extends RelativeLayout implements ITheme {
      * @param errorEvent 错误事件
      * @param errorMsg   错误消息
      */
-    public void showErrorTipView(int errorCode, int errorEvent, String errorMsg) {
+    public void showErrorTipView(int errorCode, String errorEvent, String errorMsg) {
         if (mErrorView == null) {
             mErrorView = new ErrorView(getContext());
             mErrorView.setOnRetryClickListener(onRetryClickListener);
@@ -139,7 +145,7 @@ public class TipsView extends RelativeLayout implements ITheme {
      * 显示错误提示,不显示错误码
      * @param msg   错误信息
      */
-    public void showErrorTipViewWithoutCode(String msg){
+    public void showErrorTipViewWithoutCode(String msg) {
         if (mErrorView == null) {
             mErrorView = new ErrorView(getContext());
             mErrorView.updateTipsWithoutCode(msg);
@@ -240,6 +246,10 @@ public class TipsView extends RelativeLayout implements ITheme {
      */
     public void hideBufferLoadingTipView() {
         if (mBufferLoadingView != null && mBufferLoadingView.getVisibility() == VISIBLE) {
+            /*
+                隐藏loading时,重置百分比,避免loading再次展示时,loading进度不是从0开始
+             */
+            mBufferLoadingView.updateLoadingPercent(0);
             mBufferLoadingView.setVisibility(INVISIBLE);
         }
     }
@@ -252,6 +262,7 @@ public class TipsView extends RelativeLayout implements ITheme {
             mNetLoadingView.setVisibility(INVISIBLE);
         }
     }
+
 
     /**
      * 隐藏重播的tip
@@ -298,10 +309,11 @@ public class TipsView extends RelativeLayout implements ITheme {
      */
     public void hideNetErrorTipView() {
         VcPlayerLog.d(TAG, " hideNetErrorTipView errorCode = " + mErrorCode);
-        if (mErrorView != null && mErrorView.getVisibility() == VISIBLE
-                && mErrorCode == AliyunErrorCode.ALIVC_ERROR_LOADING_TIMEOUT.getCode()) {
-            mErrorView.setVisibility(INVISIBLE);
-        }
+        //TODO
+//        if (mErrorView != null && mErrorView.getVisibility() == VISIBLE
+//                && mErrorCode == AliyunErrorCode.ALIVC_ERROR_LOADING_TIMEOUT.getCode()) {
+//            mErrorView.setVisibility(INVISIBLE);
+//        }
     }
 
 
@@ -342,6 +354,11 @@ public class TipsView extends RelativeLayout implements ITheme {
          * 重播
          */
         void onReplay();
+
+        /**
+         * 刷新sts
+         */
+        void onRefreshSts();
     }
 
     /**

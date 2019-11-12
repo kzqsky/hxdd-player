@@ -60,7 +60,7 @@
         </LinearLayout>
          <LinearLayout
            android:layout_width="match_parent"
-           android:layout_height="15dp" android:layout_marginTop="8dp"
+           android:layout_height="wrap_content" android:layout_marginTop="8dp"
            android:orientation="horizontal">
 
            <View
@@ -78,7 +78,7 @@
                android:paddingRight="5dp"
                android:text="@string/alivc_speed"
                android:textColor="@color/alivc_white"
-               android:textSize="12sp" />
+               android:textSize="15sp" />
 
            <View
                android:layout_width="0dp"
@@ -93,8 +93,8 @@
             android:layout_width="match_parent"
             android:orientation="horizontal"
             android:weightSum="4"
-            android:layout_marginTop="32dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:layout_height="wrap_content"
             >
             <RadioButton
@@ -104,6 +104,7 @@
                 android:layout_height="match_parent"
                 android:button="@null"
                 android:text="1.0X"
+                android:textSize="14sp"
                 android:gravity="center"
                 android:textColor="@color/alivc_speed_text_color_blue"
                 />
@@ -116,6 +117,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="1.25X"
+                android:textSize="14sp"
                 android:textColor="@color/alivc_speed_text_color_blue"
                 />
             <RadioButton
@@ -126,6 +128,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="1.5X"
+                android:textSize="14sp"
                 android:textColor="@color/alivc_speed_text_color_blue"
                 />
             <RadioButton
@@ -135,6 +138,7 @@
                 android:layout_height="match_parent"
                 android:button="@null"
                 android:text="2.0X"
+                android:textSize="14sp"
                 android:gravity="center"
                 android:textColor="@color/alivc_speed_text_color_blue"
                 />
@@ -149,6 +153,7 @@
            android:layout_width="match_parent"
            android:orientation="vertical"
            android:layout_weight="1"
+           android:visibility="gone"
            android:layout_height="wrap_content">
 
            <LinearLayout

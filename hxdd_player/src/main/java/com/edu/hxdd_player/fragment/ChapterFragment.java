@@ -10,8 +10,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.ChapterAdapter;
@@ -21,12 +21,15 @@ import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.utils.LiveDataBus;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChapterFragment extends Fragment {
     private RecyclerView recyclerView;
+    private TextView tvDownload;
+    private View viewLine;
     ChapterAdapter chapterAdapter;
     GetChapter getChapter;
 
@@ -68,15 +71,25 @@ public class ChapterFragment extends Fragment {
         chapterAdapter = new ChapterAdapter(null);
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(chapterAdapter);
-        chapterAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (chapterAdapter.isMedia(position)) {
-                    chapterAdapter.checked(position);
-                    ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
+        chapterAdapter.setOnItemClickListener((adapter, view1, position) -> {
+            if (chapterAdapter.isMedia(position)) {
+                ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
+                if (chapterAdapter.downloadMode) {//下载模式 废弃了
+                    getChapter.id = chapterBean.id;
+                    LiveDataBus.get().with("download").setValue(getChapter);
+                } else {
+                    chapterAdapter.checked(position);//播放模式
                     getMedia(chapterBean.id);
                 }
             }
+        });
+        tvDownload = view.findViewById(R.id.tv_download);
+        viewLine = view.findViewById(R.id.line);
+//        viewLine.setBackgroundColor(StartPlayerUtils.getColorPrimary());
+        tvDownload.setTextColor(StartPlayerUtils.getColorPrimary());
+
+        tvDownload.setOnClickListener(v -> {
+            chapterAdapter.changeMode();
         });
     }
 
@@ -98,6 +111,7 @@ public class ChapterFragment extends Fragment {
                 else {
                     setLast(chapterAdapter.getCheckedIndex(getChapter.catalogId));
                 }
+                LiveDataBus.get().with("chatper").setValue(data);
             }
 
             @Override
@@ -113,8 +127,10 @@ public class ChapterFragment extends Fragment {
         ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
+
                 LiveDataBus.get().with("Catalog").setValue(data);
             }
         });
     }
+
 }

@@ -15,8 +15,8 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.alivc.player.VcPlayerLog;
-import com.aliyun.vodplayer.media.IAliyunVodPlayer;
+import com.aliyun.utils.VcPlayerLog;
+import com.aliyun.vodplayerview.listener.LockPortraitListener;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.widget.AliyunScreenMode;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
@@ -65,7 +65,7 @@ public class SpeedView extends RelativeLayout implements ITheme {
     //选中的倍速的指示点的方块
     private int mSpeedDrawable = R.drawable.alivc_speed_dot_blue;
     //选中的倍速的指示点的文字
-    private int mSpeedTextColor = R.color.alivc_blue;
+    private int mSpeedTextColor = R.color.alivc_player_theme_blue;
 
     public SpeedView(Context context) {
         super(context);
@@ -186,20 +186,20 @@ public class SpeedView extends RelativeLayout implements ITheme {
     public void setTheme(AliyunVodPlayerView.Theme theme) {
 
         mSpeedDrawable = R.drawable.alivc_speed_dot_blue;
-        mSpeedTextColor = R.color.alivc_blue;
+        mSpeedTextColor = R.color.alivc_player_theme_blue;
         //根据主题变化对应的颜色
         if (theme == AliyunVodPlayerView.Theme.Blue) {
             mSpeedDrawable = R.drawable.alivc_speed_dot_blue;
-            mSpeedTextColor = R.color.alivc_blue;
+            mSpeedTextColor = R.color.alivc_player_theme_blue;
         } else if (theme == AliyunVodPlayerView.Theme.Green) {
             mSpeedDrawable = R.drawable.alivc_speed_dot_green;
-            mSpeedTextColor = R.color.alivc_green;
+            mSpeedTextColor = R.color.alivc_player_theme_green;
         } else if (theme == AliyunVodPlayerView.Theme.Orange) {
             mSpeedDrawable = R.drawable.alivc_speed_dot_orange;
-            mSpeedTextColor = R.color.alivc_orange;
+            mSpeedTextColor = R.color.alivc_player_theme_orange;
         } else if (theme == AliyunVodPlayerView.Theme.Red) {
             mSpeedDrawable = R.drawable.alivc_speed_dot_red;
-            mSpeedTextColor = R.color.alivc_red;
+            mSpeedTextColor = R.color.alivc_player_theme_red;
         }
 
         updateBtnTheme();
@@ -214,7 +214,7 @@ public class SpeedView extends RelativeLayout implements ITheme {
             button.setTextColor(ContextCompat.getColor(getContext(),mSpeedTextColor));
         } else {
             button.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            button.setTextColor(ContextCompat.getColor(getContext(),R.color.alivc_white));
+            button.setTextColor(ContextCompat.getColor(getContext(),R.color.alivc_common_font_white_light));
         }
     }
 
@@ -281,7 +281,7 @@ public class SpeedView extends RelativeLayout implements ITheme {
         } else if (screenMode == AliyunScreenMode.Full) {
             //如果是全屏的，就显示一半
             AliyunVodPlayerView parentView = (AliyunVodPlayerView) getParent();
-            IAliyunVodPlayer.LockPortraitListener lockPortraitListener = parentView.getLockPortraitMode();
+            LockPortraitListener lockPortraitListener = parentView.getLockPortraitMode();
             if (lockPortraitListener == null) {
                 //没有设置这个监听，说明不是固定模式，按正常的界面显示就OK
                 speedViewParam.width = getWidth() / 2;

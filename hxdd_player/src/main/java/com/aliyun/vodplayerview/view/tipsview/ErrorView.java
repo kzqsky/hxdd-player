@@ -15,10 +15,11 @@ import com.edu.hxdd_player.R;
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
  */
+
 /**
  * 错误提示对话框。出错的时候会显示。
  */
-public class ErrorView extends RelativeLayout implements ITheme{
+public class ErrorView extends RelativeLayout implements ITheme {
     private static final String TAG = ErrorView.class.getSimpleName();
     //错误信息
     private TextView mMsgView;
@@ -51,13 +52,13 @@ public class ErrorView extends RelativeLayout implements ITheme{
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) getContext()
-                .getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                  .getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Resources resources = getContext().getResources();
 
         View view = inflater.inflate(R.layout.alivc_dialog_error, null);
 
-        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_dialog_err_width);
-        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_dialog_err_height);
+        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_err_width);
+        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_err_height);
 
         LayoutParams params = new LayoutParams(viewWidth, viewHeight);
         addView(view, params);
@@ -84,7 +85,7 @@ public class ErrorView extends RelativeLayout implements ITheme{
      * @param errorEvent 错误事件
      * @param errMsg 错误码
      */
-    public void updateTips(int errorCode, int errorEvent,String errMsg) {
+    public void updateTips(int errorCode, String errorEvent, String errMsg) {
         mMsgView.setText(errMsg);
         mCodeView.setText(getContext().getString(R.string.alivc_error_code) + errorCode + " - " + errorEvent);
     }
@@ -92,7 +93,7 @@ public class ErrorView extends RelativeLayout implements ITheme{
     /**
      * 更新提示文字,不包含错误码
      */
-    public void updateTipsWithoutCode(String errMsg){
+    public void updateTipsWithoutCode(String errMsg) {
         mMsgView.setText(errMsg);
         mCodeView.setVisibility(View.GONE);
     }
@@ -103,23 +104,23 @@ public class ErrorView extends RelativeLayout implements ITheme{
      */
     @Override
     public void setTheme(AliyunVodPlayerView.Theme theme) {
-        if(theme == AliyunVodPlayerView.Theme.Blue){
+        if (theme == AliyunVodPlayerView.Theme.Blue) {
             mRetryView.setBackgroundResource(R.drawable.alivc_rr_bg_blue);
-            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_blue,0,0,0);
-            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_blue));
-        }else if(theme == AliyunVodPlayerView.Theme.Green){
+            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_blue, 0, 0, 0);
+            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_blue));
+        } else if (theme == AliyunVodPlayerView.Theme.Green) {
             mRetryView.setBackgroundResource(R.drawable.alivc_rr_bg_green);
-            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_green,0,0,0);
-            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_green));
-        }else if(theme == AliyunVodPlayerView.Theme.Orange){
+            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_green, 0, 0, 0);
+            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_green));
+        } else if (theme == AliyunVodPlayerView.Theme.Orange) {
             mRetryView.setBackgroundResource(R.drawable.alivc_rr_bg_orange);
-            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_orange,0,0,0);
-            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_orange));
-        }else if(theme == AliyunVodPlayerView.Theme.Red){
+            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_orange, 0, 0, 0);
+            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_orange));
+        } else if (theme == AliyunVodPlayerView.Theme.Red) {
             mRetryView.setBackgroundResource(R.drawable.alivc_rr_bg_red);
             //这个重试图片是白色。。很尴尬
-            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_red,0,0,0);
-            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_red));
+            mRetryBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.alivc_refresh_red, 0, 0, 0);
+            mRetryBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_red));
         }
     }
 

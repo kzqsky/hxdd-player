@@ -80,8 +80,7 @@ public class GestureDialogManager {
      * 显示亮度对话框
      * @param parent 显示在哪个view中间
      */
-    public void showBrightnessDialog(View parent) {
-        int currentBrightness = BrightnessDialog.getActivityBrightness(mActivity);
+    public void showBrightnessDialog(View parent, int currentBrightness) {
 
         if (mBrightnessDialog == null) {
             mBrightnessDialog = new BrightnessDialog(mActivity, currentBrightness);
@@ -114,12 +113,19 @@ public class GestureDialogManager {
         mBrightnessDialog = null;
     }
 
+    public void initDialog(Activity activity, float currentPercent){
+        this.mActivity = activity;
+        if (mVolumeDialog == null) {
+            mVolumeDialog = new VolumeDialog(activity, currentPercent);
+        }
+    }
+
     /**
      * 显示音量对话框
      * @param parent  显示在哪个view中间
      * @param currentPercent 当前音量百分比
      */
-    public void showVolumeDialog(View parent, int currentPercent) {
+    public void showVolumeDialog(View parent, float currentPercent) {
         if (mVolumeDialog == null) {
             mVolumeDialog = new VolumeDialog(mActivity, currentPercent);
         }
@@ -135,8 +141,8 @@ public class GestureDialogManager {
      * @param changePercent 变化的百分比
      * @return 最终的音量百分比
      */
-    public int updateVolumeDialog(int changePercent) {
-        int targetVolume = mVolumeDialog.getTargetVolume(changePercent);
+    public float updateVolumeDialog(int changePercent) {
+        float targetVolume = mVolumeDialog.getTargetVolume(changePercent);
         mVolumeDialog.updateVolume(targetVolume);
         return targetVolume;
     }

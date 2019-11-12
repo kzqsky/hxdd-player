@@ -80,6 +80,7 @@
     <string name="download_downloading">下载中</string>
     <string name="download_pause">暂停中</string>
     <string name="download_error">下载出错</string>
+    <string name="download_ok">下载完成</string>
     <string name="alivc_delete_confirm">确认删除选择的视频吗？</string>
     <string name="download_no_downloaded">你还没有离线视频</string>
     <string name="download_no_downloaded_tips">可点击下载按钮添加视频</string>
@@ -99,4 +100,61 @@
     <string name="alivc_speed">倍速播放</string>
     <string name="alivc_video_download_finish_tips">该视频下载完成</string>
     <string name="alivc_video_downloading_tips">该视频正在下载</string>
+
+    <!--quality-->
+    <string name="alivc_fd_definition">流畅</string>
+    <string name="alivc_ld_definition">标清</string>
+    <string name="alivc_sd_definition">高清</string>
+    <string name="alivc_hd_definition">超清</string>
+    <string name="alivc_k2_definition">2k</string>
+    <string name="alivc_k4_definition">4k</string>
+    <string name="alivc_od_definition">原画</string>
+    <string name="alivc_sq_definition">低音质</string>
+    <string name="alivc_hq_definition">高音质</string>
+
+    <!--mts-->
+    <string name="alivc_mts_xld_definition">极速</string>
+    <string name="alivc_mts_ld_definition">流畅</string>
+    <string name="alivc_mts_sd_definition">标清</string>
+    <string name="alivc_mts_fhd_definition">超清</string>
+    <string name="alivc_mts_hd_definition">高清</string>
+
+
+    <string name="alivc_video_not_support_download">此类型的视频不支持下载</string>
+    <string name="alivc_not_choose_video">请至少选择一个视频</string>
+    <string name="alivc_marquee_test">阿里云播放器跑马灯演示</string>
+    <string name="alivc_tips_trailer">您只能试看5分钟</string>
+    <string name="alivc_tips_trailer_end">对不起试看结束</string>
+
+
+    <string name="alivc_common_no_camera_permission">没有权限使用摄像头，请开启摄像头权限</string>
+    <string name="alivc_common_no_record_bluetooth_permission">没有权限使用蓝牙，请开启蓝牙权限</string>
+    <string name="alivc_common_no_record_audio_permission">没有权限使用录音，请开启录音权限</string>
+    <string name="alivc_common_no_read_phone_state_permission">没有读取用户数据的权限，请开启该权限</string>
+    <string name="alivc_common_no_write_external_storage_permission">没有文件写权限，请开启该权限</string>
+    <string name="alivc_common_no_read_external_storage_permission">没有文件读权限，请开启该权限</string>
+
+    <string name="alivc_common_note">提示</string>
+    <string name="alivc_common_confirm">确认</string>
+
+    <string name="alivc_common_no_permission">没有权限</string>
+
+
+    <string name="alivc_common_operate_success">操作成功</string>
+    <string name="alivc_common_operate_fail">操作失败</string>
+    <string name="alivc_common_loading">正在加载</string>
+    <string name="alivc_common_device_memory_not_enough">设备内存不足，请及时清理</string>
+    <string name="alivc_common_creating_video_remind">正在进行视频合成，确定要放弃吗？</string>
+
+
+
+    <string name="alivc_common_download">下载</string>
+    <string name="alivc_common_cancel">取消</string>
+    <string name="alivc_common_no_free_memory">剩余磁盘空间不足</string>
+    <string name="alivc_player_redownload">获取下载信息失败，请重新下载</string>
+    <string name="alivc_player_get_sts_failed">获取sts信息失败</string>
+    <string name="alivc_danmaku_text_1">我是弹幕，您也可以点击画笔发布弹幕</string>
+    <string name="alivc_danmaku_text_2">这个视频非常好看</string>
+    <string name="alivc_danmaku_text_3">哈哈哈</string>
+    <string name="alivc_player_delete_failed">删除失败</string>
 </resources>

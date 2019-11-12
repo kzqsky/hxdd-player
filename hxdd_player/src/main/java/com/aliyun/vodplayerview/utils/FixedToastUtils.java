@@ -47,7 +47,7 @@ public class FixedToastUtils {
         return mToast;
     }
 
-    public static Toast show(Context context,int resId){
+    public static Toast show(Context context, int resId){
         return show(context,context.getResources().getString(resId));
     }
 

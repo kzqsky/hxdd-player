@@ -45,8 +45,8 @@ public class LoadingView extends RelativeLayout {
 
         View view = inflater.inflate(R.layout.alivc_dialog_loading, null);
 
-        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_dialog_loading_width);
-        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_dialog_loading_width);
+        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_palyer_dialog_loading_width);
+        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_palyer_dialog_loading_width);
 
         LayoutParams params = new LayoutParams(viewWidth, viewHeight);
         addView(view, params);

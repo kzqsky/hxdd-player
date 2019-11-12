@@ -41,9 +41,14 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
         }
     }
 
+    //    java.net.ConnectException: Failed to connect to /192.168.10.118:8888
     @Override
     public void onFailure(Call<BaseBean<T>> call, Throwable t) {
-        ToastUtils.showLong("获取失败,请重试");
+        if (t instanceof java.net.ConnectException) {
+            ToastUtils.showLong("无法连接服务器");
+        } else {
+            ToastUtils.showLong("获取失败,请重试");
+        }
     }
 
     protected abstract void onResult(T data);

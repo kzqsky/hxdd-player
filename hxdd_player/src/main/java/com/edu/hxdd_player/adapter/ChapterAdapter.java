@@ -19,7 +19,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     public static final int TYPE_LEVEL_4 = 4;
 
     public int selectIndex = -1;
-//    public int lastSelect = 0;
+    //    public int lastSelect = 0;
+    public boolean downloadMode = false;
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
@@ -31,15 +32,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         super(data);
         addItemType(TYPE_LEVEL_1, R.layout.hxdd_player_item_expandable_lv1);
         addItemType(TYPE_LEVEL_2, R.layout.hxdd_player_item_expandable_lv2);
-//        addItemType(TYPE_LEVEL_3, R.layout.item_expandable_lv3);
-//        addItemType(TYPE_LEVEL_4, R.layout.item_expandable_lv4);
-//        addItemType(5, R.layout.item_expandable_lv4);
-//        addItemType(6, R.layout.item_expandable_lv4);
-//        addItemType(7, R.layout.item_expandable_lv4);
-//        addItemType(8, R.layout.item_expandable_lv4);
-//        addItemType(9, R.layout.item_expandable_lv4);
-//        addItemType(10, R.layout.item_expandable_lv4);
     }
+
 
     @Override
     protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
@@ -64,37 +58,27 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setGone(R.id.hxdd_player_imageView, true);
                 }
                 ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
-                if (helper.getAdapterPosition() == selectIndex) {
+                if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
                     helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
                     helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
-//                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_p);
                     imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                 } else {
                     helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
                     helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
-//                    helper.setImageResource(R.id.imageView, R.drawable.ic_play_n);
                     imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
                 }
-//                helper.getView(R.id.imageView).setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        int pos = helper.getAdapterPosition();
-//                        if (baseItem.isExpanded()) {
-//                            collapse(pos);
-//                        } else {
-//                            expand(pos);
-//                        }
-//                    }
-//                });
+
+                if (downloadMode) {
+                    imageView.setImageResource(R.drawable.icon_donwload);
+                } else {
+                    imageView.setImageResource(R.drawable.ic_play_n);
+                }
                 break;
 
         }
     }
 
     public void checked(int index) {
-//        clearCheck();
-//        Item2 item2 = (Item2) mData.get(index);
-//        item2.checked = true;
         selectIndex = index;
         notifyDataSetChanged();
     }
@@ -119,23 +103,11 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         return true;
     }
 
-//    public void lastChecked(String code) {
-//        lastChecked(code, 0);
-//    }
-//
-//    public void lastChecked(String code, int index) {
-//        for (int i = index; i < mData.size(); i++) {
-//            BaseItem baseItem = (BaseItem) mData.get(i);
-//            if (TextUtils.isEmpty(code) || code.equals(baseItem.code)) {
-//                checked(i);
-//                break;
-//            } else if (code.startsWith(baseItem.code)) {
-//                expand(i);
-//                lastChecked(code, ++i);
-//                break;
-//            }
-//        }
-//    }
-
-
+    private void setDownloadMode(boolean isDownloadMode) {
+        this.downloadMode = isDownloadMode;
+        notifyDataSetChanged();
+    }
+    public void changeMode(){
+        setDownloadMode(!downloadMode);
+    }
 }

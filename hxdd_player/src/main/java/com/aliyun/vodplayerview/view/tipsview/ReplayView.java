@@ -47,8 +47,8 @@ public class ReplayView extends RelativeLayout implements ITheme {
         Resources resources = getContext().getResources();
 
         View view = inflater.inflate(R.layout.alivc_dialog_replay, null);
-        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_dialog_err_width);
-        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_dialog_err_height);
+        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_err_width);
+        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_err_height);
 
 
         LayoutParams params = new LayoutParams(viewWidth, viewHeight);
@@ -72,16 +72,16 @@ public class ReplayView extends RelativeLayout implements ITheme {
         //更新主题
         if (theme == AliyunVodPlayerView.Theme.Blue) {
             mReplayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_blue);
-            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_blue));
+            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_blue));
         } else if (theme == AliyunVodPlayerView.Theme.Green) {
             mReplayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_green);
-            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_green));
+            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_green));
         } else if (theme == AliyunVodPlayerView.Theme.Orange) {
             mReplayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_orange);
-            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_orange));
+            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_orange));
         } else if (theme == AliyunVodPlayerView.Theme.Red) {
             mReplayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_red);
-            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_red));
+            mReplayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_red));
         }
     }
 

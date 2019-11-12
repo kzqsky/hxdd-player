@@ -114,16 +114,16 @@ public class GuideView extends LinearLayout implements ITheme {
      */
     @Override
     public void setTheme(AliyunVodPlayerView.Theme theme) {
-        int colorRes = R.color.alivc_blue;
+        int colorRes = R.color.alivc_player_theme_blue;
 
         if (theme == AliyunVodPlayerView.Theme.Blue) {
-            colorRes = R.color.alivc_blue;
+            colorRes = R.color.alivc_player_theme_blue;
         } else if (theme == AliyunVodPlayerView.Theme.Green) {
-            colorRes = R.color.alivc_green;
+            colorRes = R.color.alivc_player_theme_green;
         } else if (theme == AliyunVodPlayerView.Theme.Orange) {
-            colorRes = R.color.alivc_orange;
+            colorRes = R.color.alivc_player_theme_orange;
         } else if (theme == AliyunVodPlayerView.Theme.Red) {
-            colorRes = R.color.alivc_red;
+            colorRes = R.color.alivc_player_theme_red;
         }
 
         int color = ContextCompat.getColor(getContext(), colorRes);

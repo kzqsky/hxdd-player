@@ -63,6 +63,7 @@ public class AlivcShowMoreDialog extends Dialog {
         super.setContentView(view);
     }
 
+
     public void setLayoutBySreenMode(AliyunScreenMode aliyunScreenMode){
         if (aliyunScreenMode == AliyunScreenMode.Small){
             WindowManager.LayoutParams params = getWindow().getAttributes();
@@ -95,8 +96,8 @@ public class AlivcShowMoreDialog extends Dialog {
             return;
         }
         TranslateAnimation translateAnimation = new TranslateAnimation(
-            Animation.RELATIVE_TO_SELF,0f,Animation.RELATIVE_TO_SELF,0f,
-            Animation.RELATIVE_TO_SELF,1f,Animation.RELATIVE_TO_SELF,0f);
+            Animation.RELATIVE_TO_SELF,0f, Animation.RELATIVE_TO_SELF,0f,
+            Animation.RELATIVE_TO_SELF,1f, Animation.RELATIVE_TO_SELF,0f);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
         AnimationSet animationSet = new AnimationSet(true);
         animationSet.addAnimation(translateAnimation);

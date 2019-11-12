@@ -10,17 +10,16 @@ import android.widget.TextView;
 
 import com.edu.hxdd_player.R;
 
+public class ShowMoreView extends LinearLayout implements View.OnClickListener, RadioGroup.OnCheckedChangeListener {
 
-public class ShowMoreView extends LinearLayout implements View.OnClickListener,RadioGroup.OnCheckedChangeListener {
-
-    private  Context context;
+    private Context context;
     private SeekBar seekLight;
     private SeekBar seekVoice;
     private TextView tvDonwload;
     private TextView tvCastScreen;
     private TextView tvBarrage;
     private RadioGroup rgSpeed;
-    private  AliyunShowMoreValue moreValue;
+    private AliyunShowMoreValue moreValue;
     private OnDownloadButtonClickListener mOnDownloadButtonClickListener;
     private OnSpeedCheckedChangedListener mOnSpeedCheckedChangedListener;
     private OnLightSeekChangeListener mOnLightSeekChangeListener;
@@ -231,6 +230,24 @@ public class ShowMoreView extends LinearLayout implements View.OnClickListener,R
 
     public void setOnVoiceSeekChangeListener(OnVoiceSeekChangeListener listener) {
         this.mOnVoiceSeekChangeListener = listener;
+    }
+
+    /**
+     * 设置音量
+     */
+    public void setVoiceVolume(float volume){
+        if(seekVoice != null){
+            seekVoice.setProgress((int) (volume * 100));
+        }
+    }
+
+    /**
+     * 设置亮度
+     */
+    public void setBrightness(int value){
+        if(seekLight != null){
+            seekLight.setProgress(value);
+        }
     }
 }
 

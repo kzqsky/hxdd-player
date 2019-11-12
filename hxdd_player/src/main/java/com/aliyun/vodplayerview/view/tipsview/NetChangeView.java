@@ -47,8 +47,8 @@ public class NetChangeView extends RelativeLayout implements ITheme {
         Resources resources = getContext().getResources();
 
         View view = inflater.inflate(R.layout.alivc_dialog_netchange, null);
-        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_dialog_netchange_width);
-        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_dialog_netchange_height);
+        int viewWidth = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_netchange_width);
+        int viewHeight = resources.getDimensionPixelSize(R.dimen.alivc_player_dialog_netchange_height);
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(viewWidth, viewHeight);
         addView(view, params);
@@ -80,16 +80,16 @@ public class NetChangeView extends RelativeLayout implements ITheme {
         //更新停止播放按钮的主题
         if (theme == AliyunVodPlayerView.Theme.Blue) {
             mStopPlayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_blue);
-            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_blue));
+            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_blue));
         } else if (theme == AliyunVodPlayerView.Theme.Green) {
             mStopPlayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_green);
-            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_green));
+            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_green));
         } else if (theme == AliyunVodPlayerView.Theme.Orange) {
             mStopPlayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_orange);
-            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_orange));
+            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_orange));
         } else if (theme == AliyunVodPlayerView.Theme.Red) {
             mStopPlayBtn.setBackgroundResource(R.drawable.alivc_rr_bg_red);
-            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_red));
+            mStopPlayBtn.setTextColor(ContextCompat.getColor(getContext(), R.color.alivc_player_theme_red));
         }
     }
 

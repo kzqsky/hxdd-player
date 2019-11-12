@@ -2,7 +2,10 @@ package com.edu.hxdd_player.activity;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +22,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 
 public class ExamTestActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
-
+    private static String[] PERMISSIONS_STORAGE = {
+            "android.permission.READ_EXTERNAL_STORAGE",
+            "android.permission.WRITE_EXTERNAL_STORAGE"
+    };
     TextView textView;
     TimeUtil timeUtil;
 
@@ -28,7 +34,6 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hxdd_player_activity_exam_test);
 
-        StartPlayerUtils.setColorPrimary(Color.RED);
 
         findViewById(R.id.hxdd_player_button).setOnClickListener(v -> {
             ExamFragment examFragment = ExamFragment.newInstance(buildQuestion());
@@ -74,21 +79,30 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "34ecc5f4ed0fb3f82e3bfd272836af4f";
-            getChapter.timestamp = "1560991549020";
+            getChapter.publicKey = "d82cb041514eb4bc087bf781dc6712c4";
+            getChapter.timestamp = "1573176871308";
             getChapter.businessLineCode = "ld_gk";
-            getChapter.coursewareCode = "1335_ept";
-            getChapter.courseCode = "00020";
-            getChapter.catalogId = "314972019177291776";
-            getChapter.clientCode = "111222";
-            getChapter.userId = "360104";
+            getChapter.coursewareCode = "2216_ept";
+            getChapter.courseCode = "04732";
+            getChapter.catalogId = "314972266083385344";
+            getChapter.clientCode = "123456";
+            getChapter.userId = "123456654";
             getChapter.userName = "李亚飞测试";
             getChapter.validTime = "0";
-            getChapter.lastTime = "759";
+            getChapter.lastTime = "0";
             getChapter.isQuestion = true;
 
-            StartPlayerUtils.play(this, getChapter, Color.GREEN);
+//            StartPlayerUtils.play(this, getChapter, Color.BLUE);
+            new StartPlayerUtils(this,getChapter)
+                    .colorPrimary(Color.RED)
+                    .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
+                    .downLoad(false)
+                    .play();
+
         });
+
+        ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE,
+                1);
     }
 
 
@@ -149,5 +163,13 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
     @Override
     public void cancel(Question question) {
         Toast.makeText(this, "作答取消", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

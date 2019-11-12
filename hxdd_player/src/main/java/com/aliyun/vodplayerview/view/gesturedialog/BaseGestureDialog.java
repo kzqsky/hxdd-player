@@ -1,6 +1,5 @@
 package com.aliyun.vodplayerview.view.gesturedialog;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,6 +9,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.edu.hxdd_player.R;
+
 
 
 
@@ -41,7 +41,7 @@ public class BaseGestureDialog extends PopupWindow {
         mImageView = (ImageView) view.findViewById(R.id.gesture_image);
 
         //设置对话框宽高
-        mDialogWidthAndHeight = context.getResources().getDimensionPixelSize(R.dimen.alivc_gesture_dialog_size);
+        mDialogWidthAndHeight = context.getResources().getDimensionPixelSize(R.dimen.alivc_player_gesture_dialog_size);
         setWidth(mDialogWidthAndHeight);
         setHeight(mDialogWidthAndHeight);
     }

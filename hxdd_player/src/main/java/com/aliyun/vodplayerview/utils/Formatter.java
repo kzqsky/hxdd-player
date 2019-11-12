@@ -1,6 +1,9 @@
 package com.aliyun.vodplayerview.utils;
 
+import android.text.TextUtils;
+
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * @Author: lifujun@alibaba-inc.com
@@ -67,5 +70,42 @@ public class Formatter {
         String substring = s.substring(3);
         return  substring;
 
+    }
+
+    /**
+     * 把 00:00:00 格式转成时间戳
+     * @param formatTime    00:00:00 时间格式
+     * @return 时间戳(毫秒)
+     */
+    public static int getIntTime(String formatTime) {
+        if (TextUtils.isEmpty(formatTime)) {
+            return 0;
+        }
+
+        String[] tmp = formatTime.split(":");
+        if (tmp.length < 3) {
+            return 0;
+        }
+        int second = Integer.valueOf(tmp[0]) * 3600 + Integer.valueOf(tmp[1]) * 60 + Integer.valueOf(tmp[2]);
+
+        return second * 1000;
+    }
+
+    /**
+     * 把时间戳转换成 00:00:00 格式
+     * @param timeMs    时间戳
+     * @return 00:00:00 时间格式
+     */
+    public static String getStringTime(int timeMs) {
+        StringBuilder formatBuilder = new StringBuilder();
+        java.util.Formatter formatter = new java.util.Formatter(formatBuilder, Locale.getDefault());
+
+        int totalSeconds = timeMs / 1000;
+        int seconds = totalSeconds % 60;
+        int minutes = (totalSeconds / 60) % 60;
+        int hours = totalSeconds / 3600;
+
+        formatBuilder.setLength(0);
+        return formatter.format("%02d:%02d:%02d", hours, minutes, seconds).toString();
     }
 }
