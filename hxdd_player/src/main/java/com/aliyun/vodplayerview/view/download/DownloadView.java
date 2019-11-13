@@ -340,13 +340,25 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
             aliyunDownloadMediaInfo = new AliyunDownloadMediaInfo();
             aliyunDownloadMediaInfo.setNewPlayerId(chapterBean.id);
             aliyunDownloadMediaInfo.setNewPlayerTitle(chapterBean.title);
-            aliyunDownloadMediaInfo.setStatus(AliyunDownloadMediaInfo.Status.NoDownload);
+            if (chapterBean.isMedia == 0) {
+                aliyunDownloadMediaInfo.setStatus(AliyunDownloadMediaInfo.Status.UnableDownload);
+            } else {
+                aliyunDownloadMediaInfo.setStatus(AliyunDownloadMediaInfo.Status.NoDownload);
+            }
             alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(aliyunDownloadMediaInfo);
             list.add(alivcDownloadMediaInfo);
         }
         alivcDownloadingMediaInfos.clear();
         alivcDownloadingMediaInfos.addAll(list);
         addSection(tag, title, alivcDownloadingMediaInfos);
+        sectionAdapter.notifyDataSetChanged();
+    }
+
+    public void cleanCheck() {
+        if (section != null && sectionAdapter != null) {
+            section.cleanCheck();
+            sectionAdapter.notifyDataSetChanged();
+        }
     }
 
     private void addSection(String tag, String title, final ArrayList<AlivcDownloadMediaInfo> alivcDownloadMediaInfos) {
@@ -404,7 +416,13 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
                     if (tag.equals(DOWNLOADING_TAG)) {
                         // 点击下载中的视频
                         if (onDownloadItemClickListener != null) {
-                            onDownloadItemClickListener.onDownloadingItemClick(alivcDownloadMediaInfos, positionInSection);
+                            AlivcDownloadMediaInfo alivcDownloadMediaInfo = alivcDownloadMediaInfos.get(positionInSection);
+                            if (alivcDownloadMediaInfo.getAliyunDownloadMediaInfo().getStatus() != AliyunDownloadMediaInfo.Status.UnableDownload)//不能下载的，不做回调
+                                onDownloadItemClickListener.onDownloadingItemClick(alivcDownloadMediaInfos, positionInSection);
+
+                            if (alivcDownloadMediaInfo.getAliyunDownloadMediaInfo().getStatus() == AliyunDownloadMediaInfo.Status.Complete) {
+                                sectionAdapter.notifyDataSetChanged();
+                            }
                         }
                     }
                 }

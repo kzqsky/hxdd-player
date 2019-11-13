@@ -355,7 +355,12 @@ public class AliyunDownloadMediaInfo {
         /**
          * 未点击下载
          */
-        NoDownload;
+        NoDownload,
+        /**
+         * 无法下载
+         */
+        UnableDownload;
+
         private Status() {
         }
     }

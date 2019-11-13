@@ -55,6 +55,7 @@ public class ChapterFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.hxdd_player_layout_recyclerview, container, false);
         initView(view);
+        initLiveData();
         if (getChapter != null) {
             getData();
         }
@@ -91,6 +92,14 @@ public class ChapterFragment extends Fragment {
         tvDownload.setOnClickListener(v -> {
             chapterAdapter.changeMode();
         });
+    }
+
+    private void initLiveData() {
+        LiveDataBus.get()
+                .with("localVideo", Object.class)
+                .observe(this, catalog -> {
+                    chapterAdapter.checked(-1);
+                });
     }
 
     private void setLast(int index) {

@@ -108,9 +108,16 @@ public class DownLoadFragment extends Fragment {
 //                });
         LiveDataBus.get().with("chatper", Object.class).observe(this, list -> {
             chapterList = (List<ChapterBean>) list;
-
             downloadView.initDownloadList(chapterList);
         });
+
+        LiveDataBus.get()
+                .with("urlVideo", Object.class)
+                .observe(this, catalog -> {
+                    if (downloadView != null)
+                        downloadView.cleanCheck();
+                });
+
     }
 
     private void getMedia(String vid, boolean newAdd) {
@@ -130,7 +137,7 @@ public class DownLoadFragment extends Fragment {
         ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
-                data.savePath= aliyunDownloadInfo.getSavePath();
+                data.savePath = aliyunDownloadInfo.getSavePath();
                 LiveDataBus.get().with("Catalog").setValue(data);
             }
         });
@@ -216,7 +223,8 @@ public class DownLoadFragment extends Fragment {
             int permission = ContextCompat.checkSelfPermission(getContext(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (permission != PackageManager.PERMISSION_GRANTED) {
-
+                if (getActivity() == null)
+                    return;
                 ActivityCompat.requestPermissions(getActivity(), PERMISSIONS_STORAGE,
                         REQUEST_EXTERNAL_STORAGE);
             } else {

@@ -661,11 +661,11 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      * 更新标题栏的标题文字
      */
     private void updateTitleView() {
-        if (mAliyunMediaInfo != null && mAliyunMediaInfo.getTitle() != null && !("null".equals(mAliyunMediaInfo.getTitle()))) {
-            mTitlebarText.setText(mAliyunMediaInfo.getTitle());
-        } else {
+//        if (mAliyunMediaInfo != null && mAliyunMediaInfo.getTitle() != null && !("null".equals(mAliyunMediaInfo.getTitle()))) {
+//            mTitlebarText.setText(mAliyunMediaInfo.getTitle());
+//        } else {
             mTitlebarText.setText("");
-        }
+//        }
     }
 
     /**

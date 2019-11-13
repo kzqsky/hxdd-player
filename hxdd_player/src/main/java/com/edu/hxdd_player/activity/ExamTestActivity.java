@@ -96,7 +96,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             new StartPlayerUtils(this,getChapter)
                     .colorPrimary(Color.RED)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
-                    .downLoad(false)
+                    .downLoad(true)
                     .play();
 
         });

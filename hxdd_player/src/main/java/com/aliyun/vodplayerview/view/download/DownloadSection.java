@@ -36,6 +36,8 @@ public class DownloadSection extends StatelessSection {
     private final String title;
     private final String tag;
     private WeakReference<Context> context;
+    private Context mContext;
+    public int checkIndex = -1;
 
     public DownloadSection(Context context, String tag, String title,
                            ArrayList<AlivcDownloadMediaInfo> alivcDownloadMediaInfos) {
@@ -43,12 +45,16 @@ public class DownloadSection extends StatelessSection {
                 .itemResourceId(R.layout.alivc_download_item)
 //              .headerResourceId(R.layout.alivc_download_section_item)
                 .build());
+        mContext = context;
         this.context = new WeakReference<Context>(context);
         this.tag = tag;
         this.title = title;
         this.alivcDownloadMediaInfos = alivcDownloadMediaInfos;
     }
 
+    public void cleanCheck() {
+        checkIndex = -1;
+    }
 
     @Override
     public ViewHolder getHeaderViewHolder(View view) {
@@ -82,9 +88,10 @@ public class DownloadSection extends StatelessSection {
         itemViewHolder.cbSelect.setVisibility(alivcDownloadMediaInfos.get(position).isEditState() ? View.VISIBLE : View.GONE);
         itemViewHolder.cbSelect.setChecked(alivcDownloadMediaInfos.get(position).isCheckedState());
         AliyunDownloadMediaInfo.Status status = mediaInfo.getStatus();
-        if (status == AliyunDownloadMediaInfo.Status.NoDownload || status == AliyunDownloadMediaInfo.Status.Start) {
+        if (status == AliyunDownloadMediaInfo.Status.NoDownload || status == AliyunDownloadMediaInfo.Status.Start || status == AliyunDownloadMediaInfo.Status.UnableDownload) {
             itemViewHolder.cbSelect.setVisibility(View.GONE);
         }
+
 
         itemViewHolder.iv_download.setColorFilter(StartPlayerUtils.getColorPrimary());
         /**
@@ -123,6 +130,14 @@ public class DownloadSection extends StatelessSection {
 //            itemViewHolder.tvDownloadVideoStats.setText(context.get().getResources().getString(R.string.download_error));
             //下载出错 暂时不显示文字
             itemViewHolder.iv_download.setVisibility(View.GONE);
+        } else if (status == AliyunDownloadMediaInfo.Status.UnableDownload) {
+            itemViewHolder.tvDownloadVideoStats.setText("");
+            itemViewHolder.iv_download.setVisibility(View.GONE);
+        }
+        if (checkIndex == position) {
+            itemViewHolder.tvVideoTitle.setTextColor(StartPlayerUtils.getColorPrimary());
+        } else {
+            itemViewHolder.tvVideoTitle.setTextColor(mContext.getResources().getColor(R.color.text));
         }
 
         itemViewHolder.llDownloadItemRootView.setOnClickListener(new OnClickListener() {
@@ -132,6 +147,10 @@ public class DownloadSection extends StatelessSection {
                 if (onSectionItemClickListener != null) {
                     if (adapterPosition < 0) {
                         return;
+                    }
+                    if (mediaInfo.getStatus() == AliyunDownloadMediaInfo.Status.Complete) {
+                        checkIndex = adapterPosition;
+                        itemViewHolder.tvVideoTitle.setTextColor(StartPlayerUtils.getColorPrimary());
                     }
                     onSectionItemClickListener.onItemClick(adapterPosition, tag);
                 }

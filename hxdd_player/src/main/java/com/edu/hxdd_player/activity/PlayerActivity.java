@@ -129,8 +129,6 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     setMedia(catalog);
                     getQuestionMap();
                 });
-
-
     }
 
     private void getQuestionMap() {
@@ -151,12 +149,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 vidAuth.setVid(media.mediaSource);
                 vidAuth.setPlayAuth(media.playAuth);
                 mAliyunVodPlayerView.setAuthInfo(vidAuth);
+                LiveDataBus.get().with("urlVideo").setValue(null);
             } else {
                 //播放本地缓存视频
                 UrlSource urlSource = new UrlSource();
                 urlSource.setUri(catalog.savePath);
                 urlSource.setTitle(catalog.title);
                 mAliyunVodPlayerView.setLocalSource(urlSource);
+                LiveDataBus.get().with("localVideo").setValue(null);
             }
         } else {
             String url = media.serverCluster + "/" + media.mediaSource + "_sd.mp4";
