@@ -77,12 +77,6 @@ public class DownloadSection extends StatelessSection {
         final DownloadInfoItemViewHolder itemViewHolder = (DownloadInfoItemViewHolder) holder;
         AliyunDownloadMediaInfo mediaInfo = alivcDownloadMediaInfos.get(position).getAliyunDownloadMediaInfo();
 
-//        new ImageLoaderImpl().loadImage(this.context.get(), mediaInfo.getCoverUrl(), new ImageLoaderOptions.Builder()
-//                                        .crossFade()
-//                                        .centerCrop()
-//                                        .placeholder(R.color.alivc_common_bg_cyan_light).build()
-//                                       ).into(itemViewHolder.ivVideoCover);
-
         itemViewHolder.tvVideoTitle.setText(mediaInfo.getNewPlayerTitle());
 
         itemViewHolder.cbSelect.setVisibility(alivcDownloadMediaInfos.get(position).isEditState() ? View.VISIBLE : View.GONE);

@@ -30,6 +30,10 @@ public class StartPlayerUtils {
      * 是否有下载视频功能
      */
     private static boolean HAS_DOWNLOAD = true;
+    /**
+     * 是否显示弹题点
+     */
+    private static boolean HAS_POINT = true;
 
     Context context;
     GetChapter getChapter;
@@ -85,6 +89,16 @@ public class StartPlayerUtils {
     }
 
     /**
+     * 是否显示弹题点(默认显示)
+     * @param point
+     * @return
+     */
+    public StartPlayerUtils point(boolean point) {
+        HAS_POINT = point;
+        return this;
+    }
+
+    /**
      * 播放
      */
     public void play() {
@@ -112,5 +126,9 @@ public class StartPlayerUtils {
 
     public static boolean getHasDownload() {
         return HAS_DOWNLOAD;
+    }
+
+    public static boolean getPoint() {
+        return HAS_POINT;
     }
 }

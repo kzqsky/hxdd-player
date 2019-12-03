@@ -8,6 +8,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 
 import com.aliyun.vodplayerview.utils.DensityUtil;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class TimePointSeekBar extends android.support.v7.widget.AppCompatSeekBar
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         try {
-            if (mList != null) {
+            if (mList != null && StartPlayerUtils.getPoint()) {//增加是否显示弹题点控制
                 Rect rect = getProgressDrawable().getBounds();
                 for (long point : mList) {
                     float scale = point * 1000f / getMax();
