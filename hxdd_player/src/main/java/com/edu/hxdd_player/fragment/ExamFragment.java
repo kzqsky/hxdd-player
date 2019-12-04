@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.fragment;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,7 @@ import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
+import com.edu.hxdd_player.utils.ScreenUtils;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.view.exam.ExamQuestionAnswer;
 import com.edu.hxdd_player.view.exam.ExamQuestionItem;
@@ -55,6 +58,8 @@ public class ExamFragment extends AppCompatDialogFragment {
     private ArrayList<ExamQuestionItemView> mItemList;
 
     private ExamFragmentCallback mCallback;
+    int width;
+    int height;
 
     public static ExamFragment newInstance(String question) {
         ExamFragment fragment = new ExamFragment();
@@ -68,7 +73,34 @@ public class ExamFragment extends AppCompatDialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE); /** 去4.4,5.1空Title */
+
         return inflater.inflate(R.layout.hxdd_player_fragment_exam, container, false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        changeSize();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        changeSize();
+    }
+
+    private void changeSize(){
+        width = ScreenUtils.getScreenWidth(getContext());
+        height = ScreenUtils.getScreenHeight(getContext());
+        Configuration mConfiguration = this.getResources().getConfiguration(); //获取设置的配置信息
+        int ori = mConfiguration.orientation;
+        if (ori == mConfiguration.ORIENTATION_LANDSCAPE) {
+            getDialog().getWindow().setLayout((int) (width * 0.8), (int) (height * 0.93));
+        } else {
+            getDialog().getWindow().setLayout((int) (width * 0.95), (int) (height * 0.8));
+        }
+
     }
 
     @Override
@@ -86,7 +118,6 @@ public class ExamFragment extends AppCompatDialogFragment {
         mTextCommit.setTextColor(StartPlayerUtils.getColorPrimary());
         mTextCancel.setTextColor(StartPlayerUtils.getColorPrimary());
         mTextConfirm.setTextColor(StartPlayerUtils.getColorPrimary());
-
 
 
         try {
@@ -301,8 +332,8 @@ public class ExamFragment extends AppCompatDialogFragment {
         TextView textView = new TextView(getContext());
         textView.setTextColor(getContext().getResources().getColor(R.color.text));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimension(R.dimen.exam_textsize));
-        textView.setPadding(0,DensityUtil.dip2px(getContext(),5),0,DensityUtil.dip2px(getContext(),5));
-        textView .setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+        textView.setPadding(0, DensityUtil.dip2px(getContext(), 5), 0, DensityUtil.dip2px(getContext(), 5));
+        textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
         switch (mQuestionBean.questionType) {
             case 1:
                 textView.setText("单选题");

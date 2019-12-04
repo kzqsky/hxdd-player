@@ -29,11 +29,11 @@ public class ExamQuestionItemView extends LinearLayout {
         setGravity(Gravity.CENTER_VERTICAL);
         //构造选项圆
         mCircleView = new AnswerSheetCircleView(getContext(),
-                35, 17,
+                26, 14,
                 DensityUtil.dip2px(getContext(), 0),
+                DensityUtil.dip2px(getContext(), 5),
                 DensityUtil.dip2px(getContext(), 10),
-                DensityUtil.dip2px(getContext(), 10),
-                DensityUtil.dip2px(getContext(), 10));
+                DensityUtil.dip2px(getContext(), 5));
         mCircleView.setClickable(false);
 //        mCircleView.setTextColor(getResources().getColor(R.color.primary));
         addView(mCircleView);

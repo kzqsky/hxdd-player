@@ -6,7 +6,7 @@
     <LinearLayout
         android:id="@+id/hxdd_player_layout_button"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
