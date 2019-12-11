@@ -2,7 +2,6 @@ package com.edu.hxdd_player.bean.media;
 
 import com.google.gson.Gson;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class Question {
     public List<QuestionOption> optionList;   // 选项对象
     public String  userAnswer;                //用来保存用户选择答案
     public boolean isPass;                    //考核点是否通过(弹题是否选择正确)
-
+    public String rightAnswer;                //正确答案
     @Override
     public String toString() {
         return new Gson().toJson(this);

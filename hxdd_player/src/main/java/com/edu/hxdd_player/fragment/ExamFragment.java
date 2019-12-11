@@ -12,7 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
+import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.ScreenUtils;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.view.exam.ExamQuestionAnswer;
@@ -90,7 +93,7 @@ public class ExamFragment extends AppCompatDialogFragment {
         changeSize();
     }
 
-    private void changeSize(){
+    private void changeSize() {
         width = ScreenUtils.getScreenWidth(getContext());
         height = ScreenUtils.getScreenHeight(getContext());
         Configuration mConfiguration = this.getResources().getConfiguration(); //获取设置的配置信息
@@ -196,7 +199,7 @@ public class ExamFragment extends AppCompatDialogFragment {
         if (mLayoutQuestion != null) {
             mLayoutQuestion.removeAllViews();
         }
-        buildType();
+        buildType(false);
         buildTitle();
         buildItem();
     }
@@ -208,11 +211,13 @@ public class ExamFragment extends AppCompatDialogFragment {
         if (mLayoutQuestion != null) {
             mLayoutQuestion.removeAllViews();
         }
-        buildType();
+        judge();
+        buildType(true);
         buildTitle();
         buildResultItem();
         buildAnswer();
         buildParse();
+
     }
 
 
@@ -259,25 +264,31 @@ public class ExamFragment extends AppCompatDialogFragment {
     }
 
     /**
+     * 判题并保存到 mQuestionBean
+     */
+    private void judge() {
+        StringBuilder sb = new StringBuilder();
+        for (QuestionOption choice : mQuestionBean.optionList) {
+            if (choice.correct) {
+                sb.append(choice.quesValue);
+            }
+        }
+
+        String answer = sb.toString();
+        mQuestionBean.rightAnswer = answer;
+        if (answer.equals(mQuestionBean.userAnswer)) {
+            mQuestionBean.isPass = true;
+        } else {
+            mQuestionBean.isPass = false;
+        }
+    }
+
+    /**
      * 单选答案
      */
     private void buildAnswer() {
         try {
-            StringBuilder sb = new StringBuilder();
-            for (QuestionOption choice : mQuestionBean.optionList) {
-                if (choice.correct) {
-                    sb.append(choice.quesValue);
-                }
-            }
-
-            String answer = sb.toString();
-            if (answer.equals(mQuestionBean.userAnswer)) {
-                mQuestionBean.isPass = true;
-            } else {
-                mQuestionBean.isPass = false;
-            }
-
-            mTxtAnswer.setText(mExamQuestionAnswer.builderAnswer(getContext(), answer, mQuestionBean.userAnswer));
+            mTxtAnswer.setText(mExamQuestionAnswer.builderAnswer(getContext(), mQuestionBean.rightAnswer, mQuestionBean.userAnswer));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -328,7 +339,10 @@ public class ExamFragment extends AppCompatDialogFragment {
         mQuestionBean.userAnswer = sb.toString();
     }
 
-    private void buildType() {
+    private void buildType(boolean result) {
+        RelativeLayout relativeLayout = new RelativeLayout(getContext());
+        relativeLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         TextView textView = new TextView(getContext());
         textView.setTextColor(getContext().getResources().getColor(R.color.text));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getContext().getResources().getDimension(R.dimen.exam_textsize));
@@ -342,6 +356,26 @@ public class ExamFragment extends AppCompatDialogFragment {
                 textView.setText("多选题");
                 break;
         }
-        mLayoutQuestion.addView(textView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        relativeLayout.addView(textView);
+
+        if (result) {
+            ImageView imageView = new ImageView(getContext());
+            if (mQuestionBean.isPass) {
+                imageView.setImageResource(R.mipmap.right_image);
+            } else {
+                imageView.setImageResource(R.mipmap.wrong_image);
+            }
+//            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(DensityUtils.dp2px(getContext(),40),
+//                    DensityUtils.dp2px(getContext(),40));
+//            imageView.setLayoutParams(layoutParams);
+
+            RelativeLayout.LayoutParams layoutParams2 = new RelativeLayout.LayoutParams(DensityUtils.dp2px(getContext(), 40), DensityUtils.dp2px(getContext(), 40));
+            layoutParams2.addRule(RelativeLayout.ALIGN_PARENT_END);
+            relativeLayout.addView(imageView, layoutParams2);
+        }
+
+        mLayoutQuestion.addView(relativeLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
+
+
 }
