@@ -387,11 +387,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             }
             questionTime = ss;
             if (questionMap != null && questionMap.containsKey(ss)) {
-                Log.e("test","map 1");
                 videoPause();
-                Log.e("test","videoPause 1");
                 showQuestion(questionMap.get(ss));
-                Log.e("test","showQuestion 1");
             }
         });
 
