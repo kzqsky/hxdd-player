@@ -16,7 +16,7 @@ android {
     defaultConfig {
 //        applicationId "com.edu.hxdd_player"
         multiDexEnabled true
-        minSdkVersion 21
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -73,7 +73,7 @@ dependencies {
     implementation "com.android.support.constraint:constraint-layout:1.1.0"
 
 
-    implementation 'com.aliyun.sdk.android:AliyunPlayer:4.7.1-full'
+    implementation 'com.aliyun.sdk.android:AliyunPlayer:4.7.3-full'
     implementation 'com.alivc.conan:AlivcConan:+'
     implementation 'com.aliyun.dpa:oss-android-sdk:+'
 //    implementation 'com.aliyun.video.android:core:+'
