@@ -14,6 +14,7 @@ import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.callback.TimeCallBack;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TimeUtil;
@@ -79,8 +80,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "f1021cfd9916de0faa606a2a031c1a48";
-            getChapter.timestamp = "1584004483690";
+            getChapter.publicKey = "df16a84f9ea7d7236c4c2354a99f1ba3";
+            getChapter.timestamp = "1586484947475";
             getChapter.businessLineCode = "ld_gk";
             getChapter.coursewareCode = "2216_ept";
             getChapter.courseCode = "04732";
@@ -97,6 +98,14 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
+                    .callBackTime(10, new TimeCallBack() {
+                        @Override
+                        public void onTime() {
+//                            Intent intent=new Intent(ExamTestActivity.this,ExamTestActivity.class);
+//                            startActivity(intent);
+                            Toast.makeText(ExamTestActivity.this,"时间回调",Toast.LENGTH_LONG).show();
+                        }
+                    })
                     .play();
 
         });

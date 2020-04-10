@@ -19,4 +19,8 @@ public class GetChapter extends BaseParameters {
      * 给下载传递用
      */
     public String id;
+    /**
+     * 课件服务器地址
+     */
+    public String serverUrl;
 }

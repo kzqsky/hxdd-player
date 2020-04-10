@@ -1,6 +1,7 @@
 package com.edu.hxdd_player.api.net;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -21,13 +22,16 @@ public class RetrofitFactory {
     private static OkHttpClient client;
     private static Retrofit retrofit;
 
-        private static final String HOST = "http://cws.edu-edu.com";//测试地址
+    private static String HOST = "http://cws.edu-edu.com";//测试地址
 //    private static final String HOST = "http://dpxapp1.0.entengdz.com";//正式地址
 //    private static final String HOST = BuildConfig.URL;
 
-    public static Retrofit getInstance(Context context) {
-        if (retrofit == null)
+    public static Retrofit getInstance(Context context, String serverUrl) {
+        if (retrofit == null) {
+            if (!TextUtils.isEmpty(serverUrl))
+                HOST = serverUrl;
             initRetrofit(context);
+        }
         return retrofit;
     }
 

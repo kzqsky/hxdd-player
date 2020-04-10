@@ -16,14 +16,14 @@ public class ApiUtils {
     private Api api;
     private static Context context;
 
-    private ApiUtils(Context context) {
-        api = RetrofitFactory.getInstance(context).create(Api.class);
+    private ApiUtils(Context context, String serverUrl) {
+        api = RetrofitFactory.getInstance(context, serverUrl).create(Api.class);
         this.context = context;
     }
 
-    public static ApiUtils getInstance(Context context) {
+    public static ApiUtils getInstance(Context context, String serverUrl) {
         if (instance == null)
-            instance = new ApiUtils(context);
+            instance = new ApiUtils(context, serverUrl);
         return instance;
     }
 

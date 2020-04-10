@@ -395,6 +395,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
             recordTime = time;
+            if (StartPlayerUtils.getCallBackTime() != 0 && time % StartPlayerUtils.getCallBackTime() == 0) {
+                if (StartPlayerUtils.timeCallBack != null)
+                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
+
+            }
+
             if (time % 60 == 0) {
                 videoRecord(time);
             }
@@ -410,6 +416,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
             timeUtil_record.stop();
+            LiveDataBus.get().with("playNext").setValue(null);
         });
         //播放错误
         mAliyunVodPlayerView.setOnErrorListener(errorInfo -> {
@@ -497,7 +504,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void uploadRecord(PutLearnRecords putLearnRecords) {
-        ApiUtils.getInstance(this).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
                 if (data.catalogId.equals(mCatalog.id))

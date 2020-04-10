@@ -38,6 +38,9 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
                 ToastUtils.showLong(baseBean.message);
                 onApiFailure();
             }
+        } else {
+            ToastUtils.showLong("服务器错误");
+            onApiFailure();
         }
     }
 

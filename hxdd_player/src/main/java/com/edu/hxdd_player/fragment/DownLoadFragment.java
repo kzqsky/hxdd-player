@@ -122,7 +122,7 @@ public class DownLoadFragment extends Fragment {
 
     private void getMedia(String vid, boolean newAdd) {
 //        getChapter.catalogId = vid;
-        ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, vid, new ApiCall<Catalog>() {
+        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, vid, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
                 toDownload(data, newAdd);
@@ -134,7 +134,7 @@ public class DownLoadFragment extends Fragment {
      * 播放本地
      */
     private void toPlay(AliyunDownloadMediaInfo aliyunDownloadInfo) {
-        ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
+        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
                 data.savePath = aliyunDownloadInfo.getSavePath();

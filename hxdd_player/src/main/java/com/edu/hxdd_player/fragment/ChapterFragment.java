@@ -100,6 +100,11 @@ public class ChapterFragment extends Fragment {
                 .observe(this, catalog -> {
                     chapterAdapter.checked(-1);
                 });
+
+        LiveDataBus.get().with("playNext").observe(this, catalog -> {
+            ChapterBean chapterBean = chapterAdapter.checkNext();
+            getMedia(chapterBean.id);
+        });
     }
 
     private void setLast(int index) {
@@ -109,7 +114,7 @@ public class ChapterFragment extends Fragment {
     }
 
     private void getData() {
-        ApiUtils.getInstance(getContext()).getChapter(getChapter, new ApiCall<List<ChapterBean>>() {
+        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapter(getChapter, new ApiCall<List<ChapterBean>>() {
             @Override
             protected void onResult(List<ChapterBean> data) {
                 ArrayList<MultiItemEntity> res = new ArrayList<>();
@@ -133,7 +138,7 @@ public class ChapterFragment extends Fragment {
     }
 
     private void getMedia(String catalogId) {
-        ApiUtils.getInstance(getContext()).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
+        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
 

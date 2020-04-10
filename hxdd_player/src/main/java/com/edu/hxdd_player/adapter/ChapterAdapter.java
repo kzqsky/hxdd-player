@@ -95,6 +95,26 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         return 0;
     }
 
+    /**
+     * 用于继续播放
+     *
+     * @return
+     */
+    public ChapterBean checkNext() {
+        if (selectIndex == getItemCount() - 1) {
+            selectIndex = 0;
+        } else {
+            selectIndex++;
+        }
+
+        if (isMedia(selectIndex)) {
+            notifyDataSetChanged();
+            return (ChapterBean) getItem(selectIndex);
+        } else {
+            return checkNext();
+        }
+    }
+
     public boolean isMedia(int index) {
         ChapterBean baseItem = (ChapterBean) getData().get(index);
         if (baseItem.isMedia == 0) { //代表沒有媒体
@@ -107,7 +127,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         this.downloadMode = isDownloadMode;
         notifyDataSetChanged();
     }
-    public void changeMode(){
+
+    public void changeMode() {
         setDownloadMode(!downloadMode);
     }
 }

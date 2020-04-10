@@ -15,25 +15,30 @@ import com.edu.hxdd_player.bean.parameters.GetChapter;
 public class DownLoadService extends Service {
 
     private AliyunDownloadManager downloadManager;
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         initDownLoad();
         initAction();
         return START_STICKY;
     }
-    private void initDownLoad(){
+
+    private void initDownLoad() {
 
     }
-    private void initAction(){
+
+    private void initAction() {
 //        LiveDataBus.get()
 ////                .with("download", GetChapter.class)
 ////                .observe(this, chapter -> {
@@ -41,8 +46,9 @@ public class DownLoadService extends Service {
 ////                    getMedia(chapter);
 ////                });
     }
+
     private void getMedia(GetChapter getChapter) {
-        ApiUtils.getInstance(this).getChapterDetail(getChapter, getChapter.id, new ApiCall<Catalog>() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).getChapterDetail(getChapter, getChapter.id, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
                 toDownload(data);

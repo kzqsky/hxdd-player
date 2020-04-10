@@ -8,6 +8,7 @@ import android.support.annotation.ColorInt;
 
 import com.edu.hxdd_player.activity.PlayerActivity;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.callback.TimeCallBack;
 
 public class StartPlayerUtils {
     /**
@@ -34,7 +35,11 @@ public class StartPlayerUtils {
      * 是否显示弹题点
      */
     private static boolean HAS_POINT = true;
-
+    /**
+     * 回调时间，目前用于隔多少秒进行人脸识别
+     */
+    private static int CALL_BACK_TIME = 0;
+    public static TimeCallBack timeCallBack;
     Context context;
     GetChapter getChapter;
 
@@ -45,6 +50,7 @@ public class StartPlayerUtils {
 
     /**
      * 配色
+     *
      * @param colorPrimary
      * @return
      */
@@ -60,6 +66,7 @@ public class StartPlayerUtils {
         COLOR_PRIMARY_DARK = colorPrimaryDark;
         return this;
     }
+
     /**
      * 预留色
      */
@@ -70,6 +77,7 @@ public class StartPlayerUtils {
 
     /**
      * 视频保存路径
+     *
      * @param videoPath
      * @return
      */
@@ -80,6 +88,7 @@ public class StartPlayerUtils {
 
     /**
      * 是否有下载视频功能（默认是）
+     *
      * @param downLoad
      * @return
      */
@@ -90,11 +99,24 @@ public class StartPlayerUtils {
 
     /**
      * 是否显示弹题点(默认显示)
+     *
      * @param point
      * @return
      */
     public StartPlayerUtils point(boolean point) {
         HAS_POINT = point;
+        return this;
+    }
+
+    /**
+     * 是否显示弹题点(默认显示)
+     *
+     * @param time
+     * @return
+     */
+    public StartPlayerUtils callBackTime(int time, TimeCallBack callBack) {
+        CALL_BACK_TIME = time;
+        timeCallBack = callBack;
         return this;
     }
 
@@ -130,5 +152,9 @@ public class StartPlayerUtils {
 
     public static boolean getPoint() {
         return HAS_POINT;
+    }
+
+    public static int getCallBackTime() {
+        return CALL_BACK_TIME;
     }
 }
