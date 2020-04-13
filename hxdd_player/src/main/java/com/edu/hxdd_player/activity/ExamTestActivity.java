@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
@@ -101,9 +102,9 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .callBackTime(10, new TimeCallBack() {
                         @Override
                         public void onTime() {
-//                            Intent intent=new Intent(ExamTestActivity.this,ExamTestActivity.class);
-//                            startActivity(intent);
-                            Toast.makeText(ExamTestActivity.this,"时间回调",Toast.LENGTH_LONG).show();
+                            Intent intent=new Intent(ExamTestActivity.this,ExamTestActivity.class);
+                            startActivity(intent);
+//                            Toast.makeText(ExamTestActivity.this,"时间回调",Toast.LENGTH_LONG).show();
                         }
                     })
                     .play();

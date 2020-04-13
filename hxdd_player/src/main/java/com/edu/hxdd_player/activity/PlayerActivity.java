@@ -174,6 +174,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onResume();
+
+            timeUtil_question.resume();
+            timeUtil_record.resume();
         }
         if (tabLayout != null) {
             //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
@@ -395,7 +398,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
             recordTime = time;
+            Log.e("test", "timeUtil_record: " + time);
             if (StartPlayerUtils.getCallBackTime() != 0 && time % StartPlayerUtils.getCallBackTime() == 0) {
+                Log.e("test", "StartPlayerUtils.getCallBackTime() == 0");
                 if (StartPlayerUtils.timeCallBack != null)
                     runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
 
