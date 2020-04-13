@@ -398,12 +398,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
             recordTime = time;
-            Log.e("test", "timeUtil_record: " + time);
+//            Log.e("test", "timeUtil_record: " + time);
             if (StartPlayerUtils.getCallBackTime() != 0 && time % StartPlayerUtils.getCallBackTime() == 0) {
-                Log.e("test", "StartPlayerUtils.getCallBackTime() == 0");
+//                Log.e("test", "StartPlayerUtils.getCallBackTime() == 0");
                 if (StartPlayerUtils.timeCallBack != null)
                     runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
-
             }
 
             if (time % 60 == 0) {
