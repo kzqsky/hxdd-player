@@ -27,6 +27,7 @@ import com.aliyun.vodplayerview.view.more.AliyunShowMoreValue;
 import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
+import com.blankj.utilcode.util.ToastUtils;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
@@ -500,6 +501,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         PutLearnRecords putLearnRecords =
                 PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint, videoTime, lastTime, recordTime);
         uploadRecord(putLearnRecords);
+        ToastUtils.showLong("开始发送弹题记录:"+putLearnRecords.toString());
     }
 
     private void videoRecord(long accumulativeTime) {
@@ -513,11 +515,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void uploadRecord(PutLearnRecords putLearnRecords) {
+
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
                 if (data.catalogId.equals(mCatalog.id))
                     learnRecordId = data.learnRecordId;
+//                ToastUtils.showLong("弹题记录发送完毕");
             }
         });
 
