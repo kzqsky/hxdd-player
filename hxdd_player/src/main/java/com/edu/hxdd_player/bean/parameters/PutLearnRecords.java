@@ -26,6 +26,14 @@ public class PutLearnRecords extends BaseParameters {
         return records;
     }
 
+
+    public static PutLearnRecords getQuestionRecord(String learnRecordId, GetChapter getChapter, String catalogId, boolean isPass, long questionId, String examinePoint) {
+        PutLearnRecords records = getPublic(learnRecordId, getChapter, catalogId);
+        records.isPass = isPass;
+        records.questionId = questionId;
+        records.examinePoint = examinePoint;
+        return records;
+    }
     public static PutLearnRecords getQuestionRecord(String learnRecordId, GetChapter getChapter, String catalogId, boolean isPass, long questionId, String examinePoint, long videoTime, long lastTime, long accumulativeTime) {
         PutLearnRecords records = getPublic(learnRecordId, getChapter, catalogId);
         records.isPass = isPass;
