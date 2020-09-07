@@ -27,7 +27,6 @@ import com.aliyun.vodplayerview.view.more.AliyunShowMoreValue;
 import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
-import com.blankj.utilcode.util.ToastUtils;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
@@ -493,20 +492,19 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void questionResult(Question question) {
-//        long videoTime=0l;
-//        if (mCatalog != null)
-//            videoTime = mCatalog.mediaDuration;
-//        long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
-//
-//        PutLearnRecords putLearnRecords =
-//                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint, videoTime, lastTime, recordTime);
-//        uploadRecord(putLearnRecords);
+        long videoTime=0l;
+        if (mCatalog != null)
+            videoTime = mCatalog.mediaDuration;
+        long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
 
         PutLearnRecords putLearnRecords =
-                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint);
+                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint, videoTime, lastTime, recordTime);
         uploadRecord(putLearnRecords);
+//        PutLearnRecords putLearnRecords =
+//                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint);
+//        uploadRecord(putLearnRecords);
 
-        ToastUtils.showLong("开始发送弹题记录:"+putLearnRecords.toString());
+//        ToastUtils.showLong("开始发送弹题记录:"+putLearnRecords.toString());
     }
 
     private void videoRecord(long accumulativeTime) {
