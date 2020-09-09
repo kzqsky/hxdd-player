@@ -647,7 +647,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 mAliyunVodPlayer.setDataSource(mAliyunLocalSource);
                 mAliyunVodPlayer.prepare();
             } else {
-                mAliyunVodPlayer.setDataSource(mAliyunVidSts);
+                mAliyunVodPlayer.setDataSource(mAliyunPlayAuth);
                 mAliyunVodPlayer.prepare();
             }
             isAutoAccurate(currentPosition);

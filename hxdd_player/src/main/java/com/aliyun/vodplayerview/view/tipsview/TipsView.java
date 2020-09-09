@@ -134,7 +134,11 @@ public class TipsView extends RelativeLayout implements ITheme {
         hideNetChangeTipView();
 
         mErrorCode = errorCode;
-        mErrorView.updateTips(errorCode, errorEvent, errorMsg);
+        if (errorCode == ErrorCode.ERROR_NETWORK_CONNECT_TIMEOUT.getValue() || errorCode == ErrorCode.ERROR_LOADING_TIMEOUT.getValue()) {
+            mErrorView.updateTipsWithoutCode("网络不好，请重试");
+        } else {
+            mErrorView.updateTips(errorCode, errorEvent, errorMsg);
+        }
         mErrorView.setVisibility(VISIBLE);
 
 
@@ -143,7 +147,8 @@ public class TipsView extends RelativeLayout implements ITheme {
 
     /**
      * 显示错误提示,不显示错误码
-     * @param msg   错误信息
+     *
+     * @param msg 错误信息
      */
     public void showErrorTipViewWithoutCode(String msg) {
         if (mErrorView == null) {

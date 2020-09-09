@@ -105,6 +105,10 @@ public class ChapterFragment extends Fragment {
             ChapterBean chapterBean = chapterAdapter.checkNext();
             getMedia(chapterBean.id);
         });
+        LiveDataBus.get().with("refreshVid").observe(this, catalog -> {
+            ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
+            getMedia(chapterBean.id);
+        });
     }
 
     private void setLast(int index) {
