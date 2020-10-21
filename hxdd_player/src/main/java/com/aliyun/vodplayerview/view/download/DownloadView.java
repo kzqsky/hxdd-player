@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Handler;
 
 import static com.aliyun.vodplayerview.view.download.DownloadSection.DOWNLOADED_TAG;
 import static com.aliyun.vodplayerview.view.download.DownloadSection.DOWNLOADING_TAG;
@@ -350,8 +351,16 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
         }
         alivcDownloadingMediaInfos.clear();
         alivcDownloadingMediaInfos.addAll(list);
-        addSection(tag, title, alivcDownloadingMediaInfos);
-        sectionAdapter.notifyDataSetChanged();
+
+        //延迟一会执行
+        new android.os.Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addSection(tag, title, alivcDownloadingMediaInfos);
+                sectionAdapter.notifyDataSetChanged();
+            }
+        },350);
+
     }
 
     public void cleanCheck() {
