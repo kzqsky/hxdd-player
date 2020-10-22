@@ -106,8 +106,10 @@ public class ChapterFragment extends Fragment {
             getMedia(chapterBean.id);
         });
         LiveDataBus.get().with("refreshVid").observe(this, catalog -> {
-            ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
-            getMedia(chapterBean.id);
+            if (chapterAdapter.getData() != null && chapterAdapter.getData().size() > 0 && chapterAdapter.selectIndex >= 0) {
+                ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
+                getMedia(chapterBean.id);
+            }
         });
     }
 
