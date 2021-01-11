@@ -3,7 +3,7 @@ package com.aliyun.vodplayerview.view.function;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 
 import com.aliyun.vodplayerview.utils.DensityUtil;
@@ -14,7 +14,7 @@ import com.edu.hxdd_player.R;
  *
  * @author hanyu
  */
-public class MutiSeekBarView extends android.support.v7.widget.AppCompatSeekBar {
+public class MutiSeekBarView extends androidx.appcompat.widget.AppCompatSeekBar {
 
     /**
      * 画笔

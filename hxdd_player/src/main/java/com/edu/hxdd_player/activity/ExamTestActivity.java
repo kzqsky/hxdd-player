@@ -3,10 +3,10 @@ package com.edu.hxdd_player.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,8 +79,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "69eb5bb974ad9e981be9501b7e0b8097";
-            getChapter.timestamp = "1598859592110";
+            getChapter.publicKey = "a4a2c1d50a2f76a89101f98beb4bd18a";
+            getChapter.timestamp = "1605511018673";
             getChapter.businessLineCode = "ld_gk";
             getChapter.coursewareCode = "2216_ept";
             getChapter.courseCode = "04732";
@@ -91,7 +91,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.validTime = "0";
             getChapter.lastTime = "0";
             getChapter.isQuestion = true;
-
+            getChapter.serverUrl="https://cwstest.edu-edu.com:7443";
 //            StartPlayerUtils.play(this, getChapter, Color.BLUE);
             new StartPlayerUtils(this,getChapter)
                     .colorPrimary(Color.BLUE)

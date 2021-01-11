@@ -1,6 +1,6 @@
 package com.aliyun.vodplayerview.widget;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
@@ -544,8 +546,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     private void initGestureDialogManager() {
         Context context = getContext();
-        if (context instanceof Activity) {
-            mGestureDialogManager = new GestureDialogManager((Activity) context);
+        if (context instanceof AppCompatActivity) {
+            mGestureDialogManager = new GestureDialogManager((AppCompatActivity) context);
         }
     }
 
@@ -582,8 +584,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 stop();
 
                 Context context = getContext();
-                if (context instanceof Activity) {
-                    ((Activity) context).finish();
+                if (context instanceof AppCompatActivity) {
+                    ((AppCompatActivity) context).finish();
                 }
             }
 
@@ -839,8 +841,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     //小屏状态下，就结束活动
                     Context context = getContext();
-                    if (context instanceof Activity) {
-                        ((Activity) context).finish();
+                    if (context instanceof AppCompatActivity) {
+                        ((AppCompatActivity) context).finish();
                     }
                 }
 
@@ -1446,15 +1448,15 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         }
 
         Context context = getContext();
-        if (context instanceof Activity) {
+        if (context instanceof AppCompatActivity) {
             if (finalScreenMode == AliyunScreenMode.Full) {
                 if (getLockPortraitMode() == null) {
                     //不是固定竖屏播放。
-//                    ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+//                    ((AppCompatActivity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     if (isReverse) {
-                        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+                        ((AppCompatActivity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
                     } else {
-                        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                        ((AppCompatActivity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     }
 
                     //SCREEN_ORIENTATION_LANDSCAPE只能固定一个横屏方向
@@ -1468,7 +1470,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
                 if (getLockPortraitMode() == null) {
                     //不是固定竖屏播放。
-                    ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    ((AppCompatActivity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 } else {
                     //如果是固定全屏，那么直接设置view的布局，宽高
                     ViewGroup.LayoutParams aliVcVideoViewLayoutParams = getLayoutParams();
