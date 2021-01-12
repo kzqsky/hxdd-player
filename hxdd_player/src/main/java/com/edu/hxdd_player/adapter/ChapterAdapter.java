@@ -37,7 +37,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
 
 
     @Override
-    protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
+    protected void convert(BaseViewHolder helper, MultiItemEntity item) {
         final ChapterBean baseItem = (ChapterBean) item;
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_1:
@@ -55,25 +55,26 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setGone(R.id.hxdd_player_txt_time, false);
                     helper.setGone(R.id.hxdd_player_imageView, false);
                 } else {
-                    helper.setGone(R.id.hxdd_player_txt_time, true);
-                    helper.setGone(R.id.hxdd_player_imageView, true);
-                }
-                ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
-                if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
-                    helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
-                    helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
-                    imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
-                } else {
-                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                    helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
-                    imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    helper.setVisible(R.id.hxdd_player_txt_time, true);
+                    helper.setVisible(R.id.hxdd_player_imageView, true);
+                    ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
+                    if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
+                        helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
+                        helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
+                        imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
+                    } else {
+                        helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                        helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
+                        imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    }
+
+                    if (downloadMode) {
+                        imageView.setImageResource(R.drawable.icon_donwload);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_play_n);
+                    }
                 }
 
-                if (downloadMode) {
-                    imageView.setImageResource(R.drawable.icon_donwload);
-                } else {
-                    imageView.setImageResource(R.drawable.ic_play_n);
-                }
                 break;
 
         }
