@@ -3,12 +3,13 @@ package com.edu.hxdd_player.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
@@ -92,8 +93,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.lastTime = "0";
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
-            getChapter.hintPoint = 0;
-            getChapter.drag = 1;
+            getChapter.hintPoint = 1;
+            getChapter.drag = 0;
 //            StartPlayerUtils.play(this, getChapter, Color.BLUE);
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
