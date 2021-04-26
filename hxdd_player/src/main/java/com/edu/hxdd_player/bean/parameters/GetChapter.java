@@ -23,4 +23,12 @@ public class GetChapter extends BaseParameters {
      * 课件服务器地址
      */
     public String serverUrl;
+    /**
+     * 拖拽进度条, 默认为 0 允许拖拽, 1 为不允许拖拽
+     */
+    public int drag;
+    /**
+     *提示点 (默认为 1 显示提示点, 0 则隐藏)
+     */
+    public int hintPoint;
 }

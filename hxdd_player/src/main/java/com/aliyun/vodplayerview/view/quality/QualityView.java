@@ -85,6 +85,7 @@ public class QualityView extends FrameLayout implements ITheme {
                 hide();
                 //回调监听
                 if (mOnQualityClickListener != null && mQualityItems != null) {
+                    //设置清晰度
                     mOnQualityClickListener.onQualityClick(mQualityItems.get(position));
                 }
             }

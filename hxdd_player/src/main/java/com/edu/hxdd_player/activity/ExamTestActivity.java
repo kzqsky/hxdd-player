@@ -49,7 +49,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         timeUtil.setCallback(new TimeUtil.TimeUtilCallback() {
             @Override
             public void time(long time) {
-                textView.setText(time+"");
+                textView.setText(time + "");
             }
         });
         findViewById(R.id.hxdd_player_button3).setOnClickListener(v -> {
@@ -79,8 +79,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "a4a2c1d50a2f76a89101f98beb4bd18a";
-            getChapter.timestamp = "1605511018673";
+            getChapter.publicKey = "aa4c58359fd5c28ddc6e40b9a581ae9a";
+            getChapter.timestamp = "1619419358555";
             getChapter.businessLineCode = "ld_gk";
             getChapter.coursewareCode = "2216_ept";
             getChapter.courseCode = "04732";
@@ -90,10 +90,12 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.userName = "李亚飞测试";
             getChapter.validTime = "0";
             getChapter.lastTime = "0";
+            getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
-            getChapter.serverUrl="https://cwstest.edu-edu.com:7443";
+            getChapter.hintPoint = 0;
+            getChapter.drag = 1;
 //            StartPlayerUtils.play(this, getChapter, Color.BLUE);
-            new StartPlayerUtils(this,getChapter)
+            new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)

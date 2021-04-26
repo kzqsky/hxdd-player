@@ -63,6 +63,7 @@ import com.aliyun.vodplayerview.view.speed.SpeedView;
 import com.aliyun.vodplayerview.view.thumbnail.ThumbnailView;
 import com.aliyun.vodplayerview.view.tipsview.TipsView;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -734,7 +735,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnSeekListener(new ControlView.OnSeekListener() {
             @Override
             public void onSeekEnd(int position) {
-
+                if (!StartPlayerUtils.canSeek()) {
+                    return;
+                }
                 if (mControlView != null) {
                     mControlView.setVideoPosition(position);
                 }
@@ -754,6 +757,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
             @Override
             public void onSeekStart(int position) {
+                if (!StartPlayerUtils.canSeek()) {
+                    return;
+                }
                 //拖动开始
                 inSeek = true;
                 if (mThumbnailPrepareSuccess) {
@@ -763,6 +769,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
             @Override
             public void onProgressChanged(int progress) {
+                if (!StartPlayerUtils.canSeek()) {
+                    return;
+                }
                 requestBitmapByPosition(progress);
             }
         });
@@ -1092,6 +1101,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 }
 
                 if (mGestureDialogManager != null) {
+                    if (!StartPlayerUtils.canSeek()) {
+                        return;
+                    }
                     inSeek = true;
                     mControlView.setVideoPosition(targetPosition);
                     requestBitmapByPosition(targetPosition);
@@ -1138,6 +1150,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                     mGestureDialogManager.dismissBrightnessDialog();
                     mGestureDialogManager.dismissVolumeDialog();
                     if (inSeek) {
+                        if (!StartPlayerUtils.canSeek()) {
+                            return;
+                        }
                         int seekPosition = mControlView.getVideoPosition();
                         if (seekPosition >= mAliyunVodPlayer.getDuration()) {
                             seekPosition = (int) (mAliyunVodPlayer.getDuration() - 1000);

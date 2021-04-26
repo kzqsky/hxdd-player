@@ -47,7 +47,7 @@ public class TimePointSeekBar extends androidx.appcompat.widget.AppCompatSeekBar
     protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         try {
-            if (mList != null && StartPlayerUtils.getPoint()) {//增加是否显示弹题点控制
+            if (mList != null && StartPlayerUtils.isShowPoint()) {//增加是否显示弹题点控制
                 Rect rect = getProgressDrawable().getBounds();
                 for (long point : mList) {
                     float scale = point * 1000f / getMax();
