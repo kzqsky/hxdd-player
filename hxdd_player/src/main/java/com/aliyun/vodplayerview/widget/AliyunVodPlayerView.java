@@ -36,7 +36,7 @@ import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidSts;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
-import com.aliyun.utils.VcPlayerLog;
+
 import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.listener.LockPortraitListener;
 import com.aliyun.vodplayerview.listener.OnAutoPlayListener;
@@ -353,7 +353,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     private void onWifiTo4G() {
-        VcPlayerLog.d(TAG, "onWifiTo4G");
+
 
         //如果已经显示错误了，那么就不用显示网络变化的提示了。
         if (mTipsView.isErrorShow()) {
@@ -377,7 +377,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     private void on4GToWifi() {
-        VcPlayerLog.d(TAG, "on4GToWifi");
+
         //如果已经显示错误了，那么就不用显示网络变化的提示了。
         if (mTipsView.isErrorShow()) {
             return;
@@ -390,7 +390,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     }
 
     private void onNetDisconnected() {
-        VcPlayerLog.d(TAG, "onNetDisconnected");
+
         //网络断开。
         // NOTE： 由于安卓这块网络切换的时候，有时候也会先报断开。所以这个回调是不准确的。
     }
@@ -562,7 +562,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mTipsView.setOnTipClickListener(new TipsView.OnTipClickListener() {
             @Override
             public void onContinuePlay() {
-                VcPlayerLog.d(TAG, "playerState = " + mPlayerState);
                 //继续播放。如果没有prepare或者stop了，需要重新prepare
                 mTipsView.hideAll();
                 if (mPlayerState == IPlayer.paused || mPlayerState == IPlayer.prepared) {
@@ -621,7 +620,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         inSeek = false;
 
         int currentPosition = mControlView.getVideoPosition();
-        VcPlayerLog.d(TAG, " currentPosition = " + currentPosition);
 
         if (mTipsView != null) {
             mTipsView.hideAll();
@@ -1200,7 +1198,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                VcPlayerLog.d(TAG, " surfaceCreated = surfaceHolder = " + surfaceHolder);
+
                 if (mAliyunVodPlayer != null) {
                     mAliyunVodPlayer.setDisplay(surfaceHolder);
                     //防止黑屏
@@ -1211,9 +1209,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             @Override
             public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width,
                                        int height) {
-                VcPlayerLog.d(TAG,
-                        " surfaceChanged surfaceHolder = " + surfaceHolder + " ,  width = " + width + " , height = "
-                                + height);
+
                 if (mAliyunVodPlayer != null) {
                     mAliyunVodPlayer.redraw();
                 }
@@ -1221,7 +1217,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-                VcPlayerLog.d(TAG, " surfaceDestroyed = surfaceHolder = " + surfaceHolder);
+
                 if (mAliyunVodPlayer != null) {
                     mAliyunVodPlayer.setDisplay(null);
                 }
@@ -1234,7 +1230,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     private void initAliVcPlayer() {
         mAliyunVodPlayer = AliPlayerFactory.createAliPlayer(getContext().getApplicationContext());
-        mAliyunVodPlayer.enableLog(false);
+//        mAliyunVodPlayer.enableLog(false);
         //设置准备回调
         mAliyunVodPlayer.setOnPreparedListener(new VideoPlayerPreparedListener(this));
         //播放器出错监听
@@ -1437,7 +1433,6 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @param targetMode
      */
     public void changeScreenMode(AliyunScreenMode targetMode, boolean isReverse) {
-        VcPlayerLog.d(TAG, "mIsFullScreenLocked = " + mIsFullScreenLocked + " ， targetMode = " + targetMode);
 
         AliyunScreenMode finalScreenMode = targetMode;
 
@@ -2156,7 +2151,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void enableNativeLog() {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.enableLog(true);
+//            mAliyunVodPlayer.enableLog(true);
         }
     }
 
@@ -2165,7 +2160,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     public void disableNativeLog() {
         if (mAliyunVodPlayer != null) {
-            mAliyunVodPlayer.enableLog(false);
+//            mAliyunVodPlayer.enableLog(false);
         }
     }
 

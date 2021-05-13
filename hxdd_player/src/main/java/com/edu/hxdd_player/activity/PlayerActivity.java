@@ -9,7 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import com.aliyun.vodplayerview.view.more.AliyunShowMoreValue;
 import com.aliyun.vodplayerview.view.more.ShowMoreView;
 import com.aliyun.vodplayerview.view.more.SpeedValue;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
+import com.bumptech.glide.Glide;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
@@ -72,12 +74,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     long recordTime;
 
     long questionTime;
+    ImageView image_logo;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hxdd_player_activity_player);
         mAliyunVodPlayerView = findViewById(R.id.hxdd_player_player_view);
+        image_logo = findViewById(R.id.image_logo);
         initPlayer();
         getIntentData();
         initTab();
@@ -89,6 +93,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     private void getIntentData() {
         getChapter = (GetChapter) getIntent().getSerializableExtra("data");
+        if (TextUtils.isEmpty(getChapter.logoUrl)) {
+            image_logo.setVisibility(View.GONE);
+        } else {
+            image_logo.setVisibility(View.VISIBLE);
+
+            Glide.with(PlayerActivity.this).load(getChapter.logoUrl).into(image_logo);
+            image_logo.setAlpha(0.5f);
+        }
     }
 
     private void initPlayer() {
@@ -145,7 +157,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         mAliyunVodPlayerView.setTimePointList(new ArrayList<>(questionMap.keySet()));
     }
 
-//    boolean isfirst = true;
+    //    boolean isfirst = true;
     private void setMedia(Catalog catalog) {
         Media media = catalog.media;
         if ("aliyunCode".equals(media.serverType)) {
@@ -246,7 +258,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 mAliyunVodPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
                 //设置view的布局，宽高之类
-                LinearLayout.LayoutParams aliVcVideoViewLayoutParams = (LinearLayout.LayoutParams) mAliyunVodPlayerView
+                RelativeLayout.LayoutParams aliVcVideoViewLayoutParams = (RelativeLayout.LayoutParams) mAliyunVodPlayerView
                         .getLayoutParams();
                 aliVcVideoViewLayoutParams.height = (int) (ScreenUtils.getWidth(this) * 9.0f / 16);
                 aliVcVideoViewLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -269,7 +281,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 }
 
                 //设置view的布局，宽高
-                LinearLayout.LayoutParams aliVcVideoViewLayoutParams = (LinearLayout.LayoutParams) mAliyunVodPlayerView
+                RelativeLayout.LayoutParams aliVcVideoViewLayoutParams = (RelativeLayout.LayoutParams) mAliyunVodPlayerView
                         .getLayoutParams();
                 aliVcVideoViewLayoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
                 aliVcVideoViewLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;

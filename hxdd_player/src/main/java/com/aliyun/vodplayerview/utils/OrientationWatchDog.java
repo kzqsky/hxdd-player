@@ -4,7 +4,7 @@ import android.content.Context;
 import android.hardware.SensorManager;
 import android.view.OrientationEventListener;
 
-import com.aliyun.utils.VcPlayerLog;
+
 
 
 /*
@@ -52,7 +52,7 @@ public class OrientationWatchDog {
      * 开始监听
      */
     public void startWatch() {
-        VcPlayerLog.e(TAG, "startWatch");
+
         if (mLandOrientationListener == null) {
             mLandOrientationListener = new OrientationEventListener(mContext, SensorManager.SENSOR_DELAY_NORMAL) {
                 @Override
@@ -71,12 +71,12 @@ public class OrientationWatchDog {
 
                     if (isLand) {
                         if (mOrientationListener != null && (orientation < 100 && orientation > 80)) {
-                            VcPlayerLog.d(TAG, "ToLandForward");
+
                             mOrientationListener.changedToLandReverseScape(mLastOrientation == Orientation.Port
                                     || mLastOrientation == Orientation.Land_Forward);
                             mLastOrientation = Orientation.Land_Reverse;
                         }else if(mOrientationListener != null && (orientation < 280 && orientation > 260)){
-                            VcPlayerLog.d(TAG, "ToLandReverse");
+
                             mOrientationListener.changedToLandForwardScape(mLastOrientation == Orientation.Port
                                     || mLastOrientation == Orientation.Land_Reverse);
                             mLastOrientation = Orientation.Land_Forward;
@@ -84,7 +84,7 @@ public class OrientationWatchDog {
                         }
                     } else if (isPort) {
                         if (mOrientationListener != null) {
-                            VcPlayerLog.d(TAG, "ToPort");
+
                             mOrientationListener.changedToPortrait(mLastOrientation == Orientation.Land_Reverse
                                     || mLastOrientation == Orientation.Land_Forward);
                         }
@@ -102,7 +102,7 @@ public class OrientationWatchDog {
      * 结束监听
      */
     public void stopWatch() {
-        VcPlayerLog.e(TAG, "stopWatch");
+
         if (mLandOrientationListener != null) {
             mLandOrientationListener.disable();
         }
@@ -112,7 +112,7 @@ public class OrientationWatchDog {
      * 销毁监听
      */
     public void destroy() {
-        VcPlayerLog.e(TAG, "onDestroy");
+
         stopWatch();
         mLandOrientationListener = null;
     }

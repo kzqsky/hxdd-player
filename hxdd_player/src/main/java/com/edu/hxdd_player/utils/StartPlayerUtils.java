@@ -94,9 +94,8 @@ public class StartPlayerUtils {
         return this;
     }
 
-
     /**
-     * 是否显示弹题点(默认显示)
+     * 定时回调任务
      *
      * @param time
      * @return

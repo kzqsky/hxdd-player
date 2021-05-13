@@ -2,7 +2,7 @@ package com.aliyun.vodplayerview.view.gesturedialog;
 
 import android.app.Activity;
 
-import com.aliyun.utils.VcPlayerLog;
+
 import com.edu.hxdd_player.R;
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -39,7 +39,6 @@ public class VolumeDialog extends BaseGestureDialog {
      */
     public float getTargetVolume(int changePercent) {
 
-        VcPlayerLog.d(TAG, "changePercent = " + changePercent + " , initVolume  = " + initVolume);
         float newVolume = initVolume - changePercent;
         if (newVolume > 100) {
             newVolume = 100;

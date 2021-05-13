@@ -5,8 +5,6 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,9 +14,11 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+
 import com.aliyun.player.nativeclass.MediaInfo;
 import com.aliyun.player.nativeclass.TrackInfo;
-import com.aliyun.utils.VcPlayerLog;
 import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.utils.TimeFormater;
@@ -629,7 +629,6 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
      */
     private void updateChangeQualityBtn() {
         if (mLargeChangeQualityBtn != null) {
-            VcPlayerLog.d(TAG, "mCurrentQuality = " + mCurrentQuality + " , isMts Source = " + isMtsSource + " , mForceQuality = " + mForceQuality);
             mLargeChangeQualityBtn.setText(QualityItem.getItem(getContext(), mCurrentQuality, isMtsSource).getName());
             mLargeChangeQualityBtn.setVisibility(mForceQuality ? GONE : VISIBLE);
         }

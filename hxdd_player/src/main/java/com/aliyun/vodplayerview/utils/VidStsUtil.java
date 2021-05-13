@@ -3,7 +3,6 @@ package com.aliyun.vodplayerview.utils;
 import android.os.AsyncTask;
 
 import com.aliyun.player.source.VidSts;
-import com.aliyun.utils.VcPlayerLog;
 import com.aliyun.vodplayerview.playlist.vod.core.AliyunVodHttpCommon;
 
 import org.json.JSONObject;
@@ -27,7 +26,7 @@ public class VidStsUtil {
             JSONObject securityTokenInfo = jsonObject.getJSONObject("data");
             if (securityTokenInfo == null) {
 
-                VcPlayerLog.e(TAG, "SecurityTokenInfo == null ");
+
                 return null;
             }
 
@@ -36,8 +35,7 @@ public class VidStsUtil {
             String securityToken = securityTokenInfo.getString("securityToken");
             String expiration = securityTokenInfo.getString("expiration");
 
-            VcPlayerLog.e("radish", "accessKeyId = " + accessKeyId + " , accessKeySecret = " + accessKeySecret +
-                    " , securityToken = " + securityToken + " ,expiration = " + expiration);
+
 
             VidSts vidSts = new VidSts();
             vidSts.setVid(videoId);
@@ -47,7 +45,7 @@ public class VidStsUtil {
             return vidSts;
 
         } catch (Exception e) {
-            VcPlayerLog.e(TAG, "e = " + e.getMessage());
+
             return null;
         }
     }

@@ -1,12 +1,13 @@
 package com.aliyun.vodplayerview.view.function;
 
 import android.content.Context;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.Nullable;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
@@ -17,7 +18,6 @@ import com.aliyun.player.source.UrlSource;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidMps;
 import com.aliyun.player.source.VidSts;
-import com.aliyun.utils.VcPlayerLog;
 
 /**
  * 视频广告View
@@ -103,7 +103,7 @@ public class AdvVideoView extends RelativeLayout {
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
-                VcPlayerLog.d(TAG, " surfaceCreated = surfaceHolder = " + surfaceHolder);
+
                 if (mAdvVideoAliyunVodPlayer != null) {
                     mAdvVideoAliyunVodPlayer.setDisplay(surfaceHolder);
                     //防止黑屏
@@ -115,8 +115,7 @@ public class AdvVideoView extends RelativeLayout {
             @Override
             public void surfaceChanged(SurfaceHolder surfaceHolder, int format, int width,
                                        int height) {
-                VcPlayerLog.d(TAG,
-                        " surfaceChanged surfaceHolder = " + surfaceHolder + " ,  width = " + width + " , height = " + height);
+
                 if (mAdvVideoAliyunVodPlayer != null) {
                     mAdvVideoAliyunVodPlayer.redraw();
                 }
@@ -124,7 +123,7 @@ public class AdvVideoView extends RelativeLayout {
 
             @Override
             public void surfaceDestroyed(SurfaceHolder surfaceHolder) {
-                VcPlayerLog.d(TAG, " surfaceDestroyed = surfaceHolder = " + surfaceHolder);
+
                 if (mAdvVideoAliyunVodPlayer != null) {
                     mAdvVideoAliyunVodPlayer.setDisplay(null);
                 }
