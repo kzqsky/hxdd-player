@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Environment;
-import android.support.annotation.ColorInt;
+import androidx.annotation.ColorInt;
 
 import com.edu.hxdd_player.activity.PlayerActivity;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
@@ -94,9 +94,8 @@ public class StartPlayerUtils {
         return this;
     }
 
-
     /**
-     * 是否显示弹题点(默认显示)
+     * 定时回调任务
      *
      * @param time
      * @return

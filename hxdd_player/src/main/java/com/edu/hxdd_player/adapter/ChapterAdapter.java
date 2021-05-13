@@ -1,11 +1,12 @@
 package com.edu.hxdd_player.adapter;
 
-import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
+import androidx.core.content.ContextCompat;
+
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
@@ -36,7 +37,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
 
 
     @Override
-    protected void convert(final BaseViewHolder helper, MultiItemEntity item) {
+    protected void convert(BaseViewHolder helper, MultiItemEntity item) {
         final ChapterBean baseItem = (ChapterBean) item;
         switch (helper.getItemViewType()) {
             case TYPE_LEVEL_1:
@@ -51,28 +52,29 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case 10:
                 helper.setText(R.id.hxdd_player_txt_title, baseItem.title).setText(R.id.hxdd_player_txt_time, baseItem.getMediaDuration());
                 if (baseItem.isMedia == 0) { //代表沒有媒体
-                    helper.setGone(R.id.hxdd_player_txt_time, false);
-                    helper.setGone(R.id.hxdd_player_imageView, false);
-                } else {
                     helper.setGone(R.id.hxdd_player_txt_time, true);
                     helper.setGone(R.id.hxdd_player_imageView, true);
-                }
-                ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
-                if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
-                    helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
-                    helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
-                    imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                 } else {
-                    helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
-                    helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
-                    imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
+                    helper.setVisible(R.id.hxdd_player_txt_time, true);
+                    helper.setVisible(R.id.hxdd_player_imageView, true);
+                    ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
+                    if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
+                        helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
+                        helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
+                        imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
+                    } else {
+                        helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                        helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
+                        imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                    }
+
+                    if (downloadMode) {
+                        imageView.setImageResource(R.drawable.icon_donwload);
+                    } else {
+                        imageView.setImageResource(R.drawable.ic_play_n);
+                    }
                 }
 
-                if (downloadMode) {
-                    imageView.setImageResource(R.drawable.icon_donwload);
-                } else {
-                    imageView.setImageResource(R.drawable.ic_play_n);
-                }
                 break;
 
         }

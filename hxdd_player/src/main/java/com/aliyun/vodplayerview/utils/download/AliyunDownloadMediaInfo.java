@@ -6,7 +6,7 @@ import com.aliyun.player.bean.ErrorCode;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.utils.JsonUtil;
-import com.aliyun.utils.VcPlayerLog;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -251,7 +251,7 @@ public class AliyunDownloadMediaInfo {
                 jsonObject.put("encript", info.isEncripted());
                 return jsonObject;
             } catch (JSONException var3) {
-                VcPlayerLog.e(TAG, "e : " + var3.getMessage());
+
                 return null;
             }
         }
@@ -266,7 +266,7 @@ public class AliyunDownloadMediaInfo {
             try {
                 jsonArray = new JSONArray(infoContent);
             } catch (JSONException var8) {
-                VcPlayerLog.d(TAG, " e..." + var8);
+
             }
 
             if (jsonArray == null) {
@@ -281,7 +281,7 @@ public class AliyunDownloadMediaInfo {
                         AliyunDownloadMediaInfo info = getInfoFromJson(jsonObject);
                         infos.add(info);
                     } catch (JSONException var7) {
-                        VcPlayerLog.d(TAG, " e..." + var7);
+
                     }
                 }
 

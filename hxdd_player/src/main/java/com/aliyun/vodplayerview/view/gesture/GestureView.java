@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.aliyun.utils.VcPlayerLog;
+
 import com.aliyun.vodplayerview.view.interfaces.ViewAction;
 import com.aliyun.vodplayerview.widget.AliyunScreenMode;
 /*
@@ -188,9 +188,9 @@ public class GestureView extends View implements ViewAction {
     public void show() {
         if (mHideType == HideType.End) {
             //如果是由于错误引起的隐藏，那就不能再展现了
-            VcPlayerLog.d(TAG, "show END");
+
         } else {
-            VcPlayerLog.d(TAG, "show ");
+
             setVisibility(VISIBLE);
         }
     }

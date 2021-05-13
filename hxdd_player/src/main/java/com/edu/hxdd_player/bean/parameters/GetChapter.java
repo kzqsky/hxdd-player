@@ -31,4 +31,8 @@ public class GetChapter extends BaseParameters {
      *提示点 (默认为 1 显示提示点, 0 则隐藏)
      */
     public int hintPoint;
+    /**
+     * 水印 url
+     */
+    public String logoUrl;
 }

@@ -12,7 +12,7 @@ import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.List;
 
-public class TimePointSeekBar extends android.support.v7.widget.AppCompatSeekBar {
+public class TimePointSeekBar extends androidx.appcompat.widget.AppCompatSeekBar {
 
     private List<Long> mList;
     private int mPaintColor = Color.WHITE;

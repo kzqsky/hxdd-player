@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.aliyun.utils.VcPlayerLog;
+
 import com.edu.hxdd_player.R;
 
 /*
@@ -58,7 +58,7 @@ public class BrightnessDialog extends BaseGestureDialog {
                 //解决三星某些手机亮度值等于0自动锁屏的bug
                 screenBrightness = 0.1f;
             }
-            VcPlayerLog.d(TAG, "getActivityBrightness layoutParams.screenBrightness = " + screenBrightness);
+
             return (int) (screenBrightness * 100);
         }
         return 0;
@@ -71,9 +71,7 @@ public class BrightnessDialog extends BaseGestureDialog {
      */
     public int getTargetBrightnessPercent(int changePercent) {
 
-        VcPlayerLog.d(TAG, "changePercent = " + changePercent + " , mCurrentBrightness  = " + mCurrentBrightness);
-
-        int newBrightness = mCurrentBrightness - changePercent;
+            int newBrightness = mCurrentBrightness - changePercent;
         if (newBrightness > 100) {
             newBrightness = 100;
         } else if (newBrightness < 0) {

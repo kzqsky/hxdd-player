@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.aliyun.player.bean.ErrorCode;
-import com.aliyun.utils.VcPlayerLog;
 import com.aliyun.vodplayerview.theme.ITheme;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 
@@ -313,7 +312,7 @@ public class TipsView extends RelativeLayout implements ITheme {
      * 隐藏网络错误tip
      */
     public void hideNetErrorTipView() {
-        VcPlayerLog.d(TAG, " hideNetErrorTipView errorCode = " + mErrorCode);
+
         //TODO
 //        if (mErrorView != null && mErrorView.getVisibility() == VISIBLE
 //                && mErrorCode == AliyunErrorCode.ALIVC_ERROR_LOADING_TIMEOUT.getCode()) {

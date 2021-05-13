@@ -1,7 +1,7 @@
 package com.edu.hxdd_player.utils;
 
-import android.support.annotation.IntDef;
-import android.support.annotation.RestrictTo;
+import androidx.annotation.IntDef;
+import androidx.annotation.RestrictTo;
 import android.util.Log;
 
 import com.edu.hxdd_player.BuildConfig;
@@ -11,7 +11,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static android.support.annotation.RestrictTo.Scope.LIBRARY;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 /**
  * 计时工具类，时间单位为秒
