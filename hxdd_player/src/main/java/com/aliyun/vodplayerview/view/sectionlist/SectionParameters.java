@@ -1,6 +1,7 @@
 package com.aliyun.vodplayerview.view.sectionlist;
 
-import androidx.annotation.LayoutRes;
+
+import android.support.annotation.LayoutRes;
 
 /**
  * Class used as constructor parameters of {@link Section}.

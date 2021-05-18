@@ -1,6 +1,7 @@
 package com.aliyun.svideo.common.utils;
 
-import androidx.annotation.NonNull;
+
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 /**

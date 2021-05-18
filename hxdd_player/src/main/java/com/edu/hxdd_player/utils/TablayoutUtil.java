@@ -1,6 +1,7 @@
 package com.edu.hxdd_player.utils;
 
-import com.google.android.material.tabs.TabLayout;
+
+import android.support.design.widget.TabLayout;
 import android.view.View;
 import android.widget.LinearLayout;
 

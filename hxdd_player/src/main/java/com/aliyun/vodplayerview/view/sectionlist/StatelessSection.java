@@ -1,6 +1,7 @@
 package com.aliyun.vodplayerview.view.sectionlist;
 
-import androidx.recyclerview.widget.RecyclerView;
+
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**

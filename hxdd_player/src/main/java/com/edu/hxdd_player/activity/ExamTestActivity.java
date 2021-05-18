@@ -3,13 +3,12 @@ package com.edu.hxdd_player.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.media.Question;
@@ -80,8 +79,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "1aea73ed31377376b13490d5de92625a";
-            getChapter.timestamp = "1620873612661";
+            getChapter.publicKey = "a834ea969730eb86104c2a2d4f4a04a9";
+            getChapter.timestamp = "1621304497931";
             getChapter.businessLineCode = "ld_gk";
             getChapter.coursewareCode = "2216_ept";
             getChapter.courseCode = "04732";
@@ -94,7 +93,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
-            getChapter.drag = 0;
+            getChapter.drag = 1;
             getChapter.logoUrl="https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png";
 //
             new StartPlayerUtils(this, getChapter)

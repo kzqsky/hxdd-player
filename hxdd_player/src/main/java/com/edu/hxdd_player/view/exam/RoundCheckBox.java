@@ -1,9 +1,9 @@
 package com.edu.hxdd_player.view.exam;
 
 import android.content.Context;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 
-import androidx.appcompat.widget.AppCompatCheckBox;
 
 public class RoundCheckBox extends AppCompatCheckBox {
 
@@ -12,7 +12,7 @@ public class RoundCheckBox extends AppCompatCheckBox {
     }
 
     public  RoundCheckBox(Context context, AttributeSet attrs) {
-        this(context, attrs, androidx.appcompat.R.attr.radioButtonStyle);
+        this(context, attrs, android.support.v7.appcompat.R.attr.radioButtonStyle);
     }
 
     public  RoundCheckBox(Context context, AttributeSet attrs, int defStyleAttr) {

@@ -1,11 +1,11 @@
 package com.edu.hxdd_player.utils;
 
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -75,28 +75,26 @@ public final class LiveDataBus {
 
         private Map<Observer, Observer> observerMap = new HashMap<>();
 
-
         @Override
-        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
+        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
             super.observe(owner, observer);
             try {
-                hook( observer);
+                hook(observer);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-
         @Override
-        public void observeForever(@NonNull Observer<? super T> observer) {
+        public void observeForever(@NonNull Observer<T> observer) {
             if (!observerMap.containsKey(observer)) {
                 observerMap.put(observer, new ObserverWrapper(observer));
             }
-            super.observeForever(observer);
+            super.observeForever(observerMap.get(observer));
         }
 
         @Override
-        public void removeObserver(@NonNull Observer<? super T> observer) {
+        public void removeObserver(@NonNull Observer<T> observer) {
             Observer realObserver = null;
             if (observerMap.containsKey(observer)) {
                 realObserver = observerMap.remove(observer);
@@ -106,7 +104,7 @@ public final class LiveDataBus {
             super.removeObserver(realObserver);
         }
 
-        private void hook(@NonNull  Observer<? super T>  observer) throws Exception {
+        private void hook(@NonNull Observer<T> observer) throws Exception {
             //get wrapper's version
             Class<LiveData> classLiveData = LiveData.class;
             Field fieldObservers = classLiveData.getDeclaredField("mObservers");

@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -18,8 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.aliyun.player.AliPlayer;
 import com.aliyun.player.AliPlayerFactory;
@@ -36,7 +35,6 @@ import com.aliyun.player.source.VidAuth;
 import com.aliyun.player.source.VidSts;
 import com.aliyun.thumbnail.ThumbnailBitmapInfo;
 import com.aliyun.thumbnail.ThumbnailHelper;
-
 import com.aliyun.vodplayerview.constants.PlayParameter;
 import com.aliyun.vodplayerview.listener.LockPortraitListener;
 import com.aliyun.vodplayerview.listener.OnAutoPlayListener;

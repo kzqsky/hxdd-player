@@ -1,12 +1,11 @@
 package com.edu.hxdd_player.adapter;
 
+import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
-import androidx.core.content.ContextCompat;
-
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
@@ -63,9 +62,9 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                         helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
                         imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                     } else {
-                        helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                        helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
-                        imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                        helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
+                        helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
+                        imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
                     }
 
                     if (downloadMode) {

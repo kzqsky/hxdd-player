@@ -3,7 +3,7 @@ package com.edu.hxdd_player.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 
 import com.aliyun.player.source.VidAuth;
 import com.aliyun.vodplayerview.utils.download.AliyunDownloadManager;

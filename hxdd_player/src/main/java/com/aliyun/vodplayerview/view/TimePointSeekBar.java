@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.v7.widget.AppCompatSeekBar;
 import android.util.AttributeSet;
 
 import com.aliyun.vodplayerview.utils.DensityUtil;
@@ -12,7 +13,7 @@ import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.List;
 
-public class TimePointSeekBar extends androidx.appcompat.widget.AppCompatSeekBar {
+public class TimePointSeekBar extends AppCompatSeekBar {
 
     private List<Long> mList;
     private int mPaintColor = Color.WHITE;

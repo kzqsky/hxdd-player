@@ -1,8 +1,9 @@
 package com.aliyun.svideo.common.utils.image;
 
 import android.graphics.drawable.Drawable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 
 /**
  * @author cross_ly

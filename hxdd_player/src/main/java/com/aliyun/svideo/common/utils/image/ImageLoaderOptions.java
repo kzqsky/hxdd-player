@@ -2,7 +2,8 @@ package com.aliyun.svideo.common.utils.image;
 
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.DrawableRes;
+import android.support.annotation.DrawableRes;
+
 
 /**
  * @author cross_ly

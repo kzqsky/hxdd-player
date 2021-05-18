@@ -1,6 +1,8 @@
 package com.aliyun.vodplayerview.view.speed;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -12,9 +14,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.aliyun.vodplayerview.listener.LockPortraitListener;
 import com.aliyun.vodplayerview.theme.ITheme;

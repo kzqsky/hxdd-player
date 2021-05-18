@@ -2,8 +2,8 @@ package com.aliyun.vodplayerview.view.download;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;

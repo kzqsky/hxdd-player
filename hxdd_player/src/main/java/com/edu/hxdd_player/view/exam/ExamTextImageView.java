@@ -2,7 +2,7 @@ package com.edu.hxdd_player.view.exam;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.Html;
 import android.text.Spanned;
