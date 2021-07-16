@@ -100,6 +100,40 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             Glide.with(PlayerActivity.this).load(getChapter.logoUrl).into(image_logo);
             image_logo.setAlpha(0.5f);
+
+            image_logo.setAlpha(getChapter.logoAlpha);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
+            layoutParams.width = getChapter.logoWidth;
+            layoutParams.height = getChapter.logoHeight;
+            if (getChapter.logoPosition == 1) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            } else if (getChapter.logoPosition == 2) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL,R.id.hxdd_player_player_view);
+            } else if (getChapter.logoPosition == 3) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            } else if (getChapter.logoPosition == 4) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+                layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            } else if (getChapter.logoPosition == 5) {
+                layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT);
+            } else if (getChapter.logoPosition == 6) {
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+                layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
+            } else if (getChapter.logoPosition == 7) {
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
+            } else if (getChapter.logoPosition == 8) {
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+            } else if (getChapter.logoPosition == 9) {
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
+            }
+
+            image_logo.setLayoutParams(layoutParams);
         }
     }
 
