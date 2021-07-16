@@ -80,8 +80,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "1aea73ed31377376b13490d5de92625a";
-            getChapter.timestamp = "1620873612661";
+            getChapter.publicKey = "ced62780f3301766d95d996db6bd6ed";
+            getChapter.timestamp = "1626418806228";
             getChapter.businessLineCode = "ld_gk";
             getChapter.coursewareCode = "2216_ept";
             getChapter.courseCode = "04732";
@@ -95,8 +95,11 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
             getChapter.drag = 0;
-            getChapter.logoUrl="https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png";
-//
+            getChapter.logoUrl = "https://www.baidu.com/img/flexible/logo/pc/result.png?qq-pf-to=pcqq.c2c";
+            getChapter.logoPosition = 7;
+            getChapter.logoAlpha = 0.6f;
+            getChapter.logoWidth = 130;
+            getChapter.logoHeight = 130;
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")

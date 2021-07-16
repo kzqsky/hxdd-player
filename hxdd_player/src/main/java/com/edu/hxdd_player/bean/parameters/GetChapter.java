@@ -35,4 +35,9 @@ public class GetChapter extends BaseParameters {
      * 水印 url
      */
     public String logoUrl;
+
+    public int logoPosition;
+    public float logoAlpha;
+    public int logoWidth;
+    public int logoHeight;
 }

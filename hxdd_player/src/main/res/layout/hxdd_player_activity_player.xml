@@ -5,17 +5,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.aliyun.vodplayerview.widget.AliyunVodPlayerView
-        android:id="@+id/hxdd_player_player_view"
+    <RelativeLayout
+        android:id="@+id/layout_video"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentTop="true" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true">
+
+        <com.aliyun.vodplayerview.widget.AliyunVodPlayerView
+            android:id="@+id/hxdd_player_player_view"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <ImageView
+            android:id="@+id/image_logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp" />
+    </RelativeLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/hxdd_player_tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/hxdd_player_player_view"
+        android:layout_below="@+id/layout_video"
         android:background="@color/white"
         app:tabIndicatorHeight="3dp"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
@@ -28,13 +40,5 @@
         android:layout_below="@+id/hxdd_player_tabs"
         android:layout_alignParentBottom="true" />
 
-    <ImageView
-        android:id="@+id/image_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="35dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:foregroundGravity="top"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp" />
+
 </RelativeLayout>
