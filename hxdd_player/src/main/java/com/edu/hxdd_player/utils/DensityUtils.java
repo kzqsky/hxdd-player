@@ -32,16 +32,16 @@ public class DensityUtils {
 //                spVal, BaseApplication.getInstance().getResources().getDisplayMetrics());
 //    }
 //
-//    /**
-//     * px转dp
-//     *
-//     * @param pxVal
-//     * @return
-//     */
-//    public static float px2dp(float pxVal) {
-//        final float scale = BaseApplication.getInstance().getResources().getDisplayMetrics().density;
-//        return (pxVal / scale);
-//    }
+    /**
+     * px转dp
+     *
+     * @param pxVal
+     * @return
+     */
+    public static float px2dp(Context context,float pxVal) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (pxVal / scale);
+    }
 //
 //    /**
 //     * px转sp

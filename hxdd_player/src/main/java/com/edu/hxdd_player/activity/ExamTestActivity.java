@@ -94,11 +94,11 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
             getChapter.drag = 1;
-            getChapter.logoUrl="https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png";
-            getChapter.logoPosition = 3;
+            getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
+            getChapter.logoPosition = 1;
             getChapter.logoAlpha = 0.6f;
-            getChapter.logoWidth = 130;
-            getChapter.logoHeight = 130;
+            getChapter.logoWidth = 240;
+            getChapter.logoHeight = 72;
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")

@@ -45,6 +45,7 @@ import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.DownLoadFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
@@ -103,8 +104,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             image_logo.setAlpha(getChapter.logoAlpha);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
-            layoutParams.width = getChapter.logoWidth;
-            layoutParams.height = getChapter.logoHeight;
+            layoutParams.width = DensityUtils.dp2px(this, getChapter.logoWidth);
+            layoutParams.height = DensityUtils.dp2px(this, getChapter.logoHeight);
+
             if (getChapter.logoPosition == 1) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
