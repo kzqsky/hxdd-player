@@ -102,8 +102,16 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Glide.with(PlayerActivity.this).load(getChapter.logoUrl).into(image_logo);
             image_logo.setAlpha(getChapter.logoAlpha);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
+
+//            layoutParams.width = DensityUtils.px2dp(this, getChapter.logoWidth);
+//            layoutParams.height = DensityUtils.px2dp(this, getChapter.logoHeight);
+
             layoutParams.width = DensityUtils.dp2px(this, getChapter.logoWidth);
             layoutParams.height = DensityUtils.dp2px(this, getChapter.logoHeight);
+
+//            layoutParams.width =  getChapter.logoWidth;
+//            layoutParams.height = getChapter.logoHeight;
+
             if (getChapter.logoPosition == 1) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
