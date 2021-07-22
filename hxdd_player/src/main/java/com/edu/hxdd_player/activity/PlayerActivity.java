@@ -44,6 +44,7 @@ import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.DownLoadFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
@@ -101,14 +102,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Glide.with(PlayerActivity.this).load(getChapter.logoUrl).into(image_logo);
             image_logo.setAlpha(getChapter.logoAlpha);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
-            layoutParams.width = getChapter.logoWidth;
-            layoutParams.height = getChapter.logoHeight;
+            layoutParams.width = DensityUtils.dp2px(this, getChapter.logoWidth);
+            layoutParams.height = DensityUtils.dp2px(this, getChapter.logoHeight);
             if (getChapter.logoPosition == 1) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             } else if (getChapter.logoPosition == 2) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.hxdd_player_player_view);
             } else if (getChapter.logoPosition == 3) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
@@ -121,13 +122,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
                 layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
             } else if (getChapter.logoPosition == 7) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             } else if (getChapter.logoPosition == 8) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             } else if (getChapter.logoPosition == 9) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
             }
 
