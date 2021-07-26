@@ -51,8 +51,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case 10:
                 helper.setText(R.id.hxdd_player_txt_title, baseItem.title).setText(R.id.hxdd_player_txt_time, baseItem.getMediaDuration());
                 if (baseItem.isMedia == 0) { //代表沒有媒体
-                    helper.setGone(R.id.hxdd_player_txt_time, true);
-                    helper.setGone(R.id.hxdd_player_imageView, true);
+                    helper.setGone(R.id.hxdd_player_txt_time, false);
+                    helper.setGone(R.id.hxdd_player_imageView, false);
                 } else {
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
                     helper.setVisible(R.id.hxdd_player_imageView, true);
