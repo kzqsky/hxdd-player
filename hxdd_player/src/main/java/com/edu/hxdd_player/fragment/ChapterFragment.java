@@ -114,9 +114,14 @@ public class ChapterFragment extends Fragment {
     }
 
     private void setLast(int index) {
-        chapterAdapter.selectIndex = index;
-        ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(index);
-        getMedia(chapterBean.id);
+        if (chapterAdapter.isMedia(index)) {
+            chapterAdapter.selectIndex = index;
+            ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(index);
+            getMedia(chapterBean.id);
+        } else {
+            ChapterBean chapterBean = chapterAdapter.checkNext();
+            getMedia(chapterBean.id);
+        }
     }
 
     private void getData() {
