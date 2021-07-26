@@ -1,16 +1,17 @@
 package com.edu.hxdd_player.fragment;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
@@ -114,9 +115,14 @@ public class ChapterFragment extends Fragment {
     }
 
     private void setLast(int index) {
-        chapterAdapter.selectIndex = index;
-        ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(index);
-        getMedia(chapterBean.id);
+        if (chapterAdapter.isMedia(index)) {
+            chapterAdapter.selectIndex = index;
+            ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(index);
+            getMedia(chapterBean.id);
+        } else {
+            ChapterBean chapterBean = chapterAdapter.checkNext();
+            getMedia(chapterBean.id);
+        }
     }
 
     private void getData() {
