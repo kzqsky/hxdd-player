@@ -117,6 +117,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     }
 
     public boolean isMedia(int index) {
+        if (getData() == null || getData().size() == 0)
+            return false;
         ChapterBean baseItem = (ChapterBean) getData().get(index);
         if (baseItem.isMedia == 0) { //代表沒有媒体
             return false;

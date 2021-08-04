@@ -79,8 +79,8 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "99e8e3c5cb92b20b0b72105ba8854e5e";
-            getChapter.timestamp = "1627265404335";
+            getChapter.publicKey = "c3e0d811294d29a0cd36158e10b53d7e";
+            getChapter.timestamp = "1628060611687";
             getChapter.businessLineCode = "Id_zk";
             getChapter.coursewareCode = "2523_ept";
             getChapter.courseCode = "03708";

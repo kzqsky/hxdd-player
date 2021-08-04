@@ -112,7 +112,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             } else if (getChapter.logoPosition == 2) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, R.id.hxdd_player_player_view);
             } else if (getChapter.logoPosition == 3) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
@@ -125,13 +125,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
                 layoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
             } else if (getChapter.logoPosition == 7) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_START);
             } else if (getChapter.logoPosition == 8) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
             } else if (getChapter.logoPosition == 9) {
-                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM,R.id.hxdd_player_player_view);
+                layoutParams.addRule(RelativeLayout.ALIGN_BOTTOM, R.id.hxdd_player_player_view);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_END);
             }
 
@@ -276,7 +276,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (timeUtil_record != null) {
             timeUtil_record.stop();
         }
-
+        mCatalog = null;
+        getChapter = null;
         super.onDestroy();
     }
 
@@ -566,8 +567,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void videoRecord(long accumulativeTime) {
-        if (mCatalog == null)
+        if (mCatalog == null) {
             return;
+        }
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         PutLearnRecords putLearnRecords =
