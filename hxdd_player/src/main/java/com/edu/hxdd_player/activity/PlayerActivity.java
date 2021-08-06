@@ -278,6 +278,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
         mCatalog = null;
         getChapter = null;
+        LiveDataBus.get().clear();
         super.onDestroy();
     }
 
