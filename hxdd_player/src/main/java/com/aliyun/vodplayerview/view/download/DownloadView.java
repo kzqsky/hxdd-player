@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aliyun.svideo.common.utils.ThreadUtils;
 import com.aliyun.vodplayerview.utils.FixedToastUtils;
 import com.aliyun.vodplayerview.utils.download.AliyunDownloadMediaInfo;
 import com.aliyun.vodplayerview.view.download.DownloadSection.OnSectionItemClickListener;
@@ -256,45 +257,24 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
             return;
         }
 
-        // TODO: 2018/4/18 这不是一个正确的做法，做排序没有多大意义 业务需要永远保证正在下载的section在前
-        //Collections.sort(alldownloadMediaInfos, new Comparator<AliyunDownloadMediaInfo>() {
-        //    @Override
-        //    public int compare(AliyunDownloadMediaInfo o1, AliyunDownloadMediaInfo o2) {
-        //        if (o1.getStatus() == Status.Complete) {
-        //            return 1;
-        //        } else if (o2.getStatus() == Status.Complete){
-        //            return 1;
-        //        } else {
-        //            return 0;
-        //        }
-        //    }
-        //});
+        ThreadUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 
-//        for (AliyunDownloadMediaInfo downloadMediaInfo : alldownloadMediaInfos) {
-//            String tag = downloadMediaInfo.getStatus() == AliyunDownloadMediaInfo.Status.Complete ? DOWNLOADED_TAG : DOWNLOADING_TAG;
-//            String title = downloadMediaInfo.getStatus() == AliyunDownloadMediaInfo.Status.Complete ? getResources().getString(
-//                    R.string.already_downloaded) : getResources().getString(R.string.download_caching);
-//
-//            AlivcDownloadMediaInfo alivcDownloadMediaInfo = new AlivcDownloadMediaInfo();
-//            alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
-//            alivcDownloadingMediaInfos.add(0, alivcDownloadMediaInfo);
-//            addSection(tag, title, alivcDownloadingMediaInfos);
-//        }
-
-
-        for (AliyunDownloadMediaInfo downloadMediaInfo : alldownloadMediaInfos) {
-            if (alivcDownloadingMediaInfos != null) {
-                for (AlivcDownloadMediaInfo alivcDownloadMediaInfo : alivcDownloadingMediaInfos) {
-                    if (downloadMediaInfo.getNewPlayerId().equals(alivcDownloadMediaInfo.getAliyunDownloadMediaInfo().getNewPlayerId())) {
-                        alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
+                for (AliyunDownloadMediaInfo downloadMediaInfo : alldownloadMediaInfos) {
+                    if (alivcDownloadingMediaInfos != null) {
+                        for (AlivcDownloadMediaInfo alivcDownloadMediaInfo : alivcDownloadingMediaInfos) {
+                            if (downloadMediaInfo.getNewPlayerId().equals(alivcDownloadMediaInfo.getAliyunDownloadMediaInfo().getNewPlayerId())) {
+                                alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
+                            }
+                        }
                     }
                 }
+
+                sectionAdapter.notifyDataSetChanged();
+                showDownloadContentView();
             }
-        }
-
-        sectionAdapter.notifyDataSetChanged();
-
-        showDownloadContentView();
+        },300);
 
     }
 
@@ -352,15 +332,15 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
         alivcDownloadingMediaInfos.clear();
         alivcDownloadingMediaInfos.addAll(list);
 
-        //延迟一会执行
-        new android.os.Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addSection(tag, title, alivcDownloadingMediaInfos);
-                sectionAdapter.notifyDataSetChanged();
-            }
-        },350);
-
+        addSection(tag, title, alivcDownloadingMediaInfos);
+        sectionAdapter.notifyDataSetChanged();
+//        //延迟一会执行
+//        new android.os.Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//
+//            }
+//        },350);
     }
 
     public void cleanCheck() {
