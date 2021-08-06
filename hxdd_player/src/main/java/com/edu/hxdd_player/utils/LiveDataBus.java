@@ -27,7 +27,10 @@ public final class LiveDataBus {
     public static LiveDataBus get() {
         return SingletonHolder.DEFAULT_BUS;
     }
-
+    public void clear() {
+        if (bus != null)
+            bus.clear();
+    }
     public <T> MutableLiveData<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new BusMutableLiveData<>());

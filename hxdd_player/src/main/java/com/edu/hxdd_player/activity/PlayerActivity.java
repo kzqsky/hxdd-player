@@ -274,7 +274,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (timeUtil_record != null) {
             timeUtil_record.stop();
         }
-
+        mCatalog = null;
+        getChapter = null;
+        LiveDataBus.get().clear();
         super.onDestroy();
     }
 
@@ -578,7 +580,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
-                if (data.catalogId.equals(mCatalog.id))
+                if (data != null && mCatalog != null && data.catalogId.equals(mCatalog.id))
                     learnRecordId = data.learnRecordId;
 //                ToastUtils.showLong("弹题记录发送完毕");
             }
