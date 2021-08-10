@@ -583,7 +583,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
-                if (data != null && mCatalog != null && data.catalogId.equals(mCatalog.id))
+                if (data != null && mCatalog != null && mCatalog.id !=
+                        null && data.catalogId.equals(mCatalog.id))
                     learnRecordId = data.learnRecordId;
 //                ToastUtils.showLong("弹题记录发送完毕");
             }
