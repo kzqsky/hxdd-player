@@ -93,6 +93,9 @@ public class Common {
             String[] fileNames = context.getAssets().list(srcPath);
             if (fileNames.length > 0) {
                 File file = new File(Environment.getExternalStorageDirectory(), dstPath);
+                if (file.exists()) {
+                    file.delete();
+                }
                 if (!file.exists()) {
                     file.mkdirs();
                 }
@@ -100,7 +103,7 @@ public class Common {
                     // assets 文件夹下的目录
                     if (!"".equals(srcPath)) {
                         copyAssetsToDst(context, srcPath + File.separator + fileName,
-                            dstPath + File.separator + fileName);
+                                dstPath + File.separator + fileName);
                     } else {
                         // assets 文件夹
                         copyAssetsToDst(context, fileName, dstPath + File.separator + fileName);
@@ -151,6 +154,7 @@ public class Common {
 
         /**
          * copy fail
+         *
          * @param error 错误信息
          */
         void onFailed(String error);

@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -37,7 +36,9 @@ import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -161,42 +162,46 @@ public class DownLoadFragment extends Fragment {
     }
 
     private void initAliDownload() {
-        copyAssets();
         DatabaseManager.getInstance().createDataBase(getContext());
+        copyAssets();
     }
 
     private void copyAssets() {
-        commenUtils = Common.getInstance(getContext()).copyAssetsToSD("encrypt", "aliyun");
-        commenUtils.setFileOperateCallback(
 
-                new Common.FileOperateCallback() {
-                    @Override
-                    public void onSuccess() {
-                        File file = new File(StartPlayerUtils.getVideoPath());
-                        if (!file.exists()) {
-                            file.mkdir();
-                        }
-                        // 获取AliyunDownloadManager对象
-                        downloadManager = AliyunDownloadManager.getInstance(getContext());
-                        downloadManager.setEncryptFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aliyun/encryptedApp.dat");
-                        PrivateService.initService(getContext(), Environment.getExternalStorageDirectory().getAbsolutePath() + "/aliyun/encryptedApp.dat");
-                        downloadManager.setDownloadDir(file.getAbsolutePath());
-                        //设置同时下载个数
-                        downloadManager.setMaxNum(3);
+        File file = new File(StartPlayerUtils.getVideoPath());
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        // 获取AliyunDownloadManager对象
+        downloadManager = AliyunDownloadManager.getInstance(getContext());
+//        downloadManager.setEncryptFilePath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/aliyun/encryptedApp.dat");
+        PrivateService.initService(getContext(), getFromAssets("encryptedApp.dat").getBytes());
+        downloadManager.setDownloadDir(file.getAbsolutePath());
+        //设置同时下载个数
+        downloadManager.setMaxNum(3);
 
-                        downloadDataProvider = DownloadDataProvider.getSingleton(getContext());
-                        // 更新sts回调
+        downloadDataProvider = DownloadDataProvider.getSingleton(getContext());
+        // 更新sts回调
 //                        downloadManager.setRefreshStsCallback(new MyRefreshStsCallback());
 
-                        // 视频下载的回调
-                        downloadManager.setDownloadInfoListener(new MyDownloadInfoListener(DownLoadFragment.this));
-                        downloadViewSetting(downloadView);
-                    }
+        // 视频下载的回调
+        downloadManager.setDownloadInfoListener(new MyDownloadInfoListener(DownLoadFragment.this));
+        downloadViewSetting(downloadView);
+    }
 
-                    @Override
-                    public void onFailed(String error) {
-                    }
-                });
+    public String getFromAssets(String fileName) {
+        try {
+            InputStreamReader inputReader = new InputStreamReader(getResources().getAssets().open(fileName));
+            BufferedReader bufReader = new BufferedReader(inputReader);
+            String line = "";
+            String Result = "";
+            while ((line = bufReader.readLine()) != null)
+                Result += line;
+            return Result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     @Override
