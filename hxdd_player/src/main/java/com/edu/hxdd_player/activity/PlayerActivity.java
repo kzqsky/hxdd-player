@@ -149,16 +149,20 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         tabLayout = findViewById(R.id.hxdd_player_tabs);
         viewPager = findViewById(R.id.hxdd_player_viewpager);
 
-        tabTitles.add(getString(R.string.tab_1));
-        tabTitles.add(getString(R.string.tab_2));
-        if (StartPlayerUtils.getHasDownload())
+        if (StartPlayerUtils.getCacheMode()) {
             tabTitles.add(getString(R.string.tab_3));
-
-        fragments.add(ChapterFragment.newInstance(getChapter));
-        fragments.add(JiangyiFragment.newInstance());
-        if (StartPlayerUtils.getHasDownload())
             fragments.add(DownLoadFragment.newInstance(getChapter));
+        } else {
+            tabTitles.add(getString(R.string.tab_1));
+            tabTitles.add(getString(R.string.tab_2));
+            if (StartPlayerUtils.getHasDownload())
+                tabTitles.add(getString(R.string.tab_3));
 
+            fragments.add(ChapterFragment.newInstance(getChapter));
+            fragments.add(JiangyiFragment.newInstance());
+            if (StartPlayerUtils.getHasDownload())
+                fragments.add(DownLoadFragment.newInstance(getChapter));
+        }
         fragmentAdapter = new BaseFragmentPagerAdapter(getSupportFragmentManager(),
                 tabTitles.toArray(new String[]{}), fragments);
         viewPager.setOffscreenPageLimit(fragments.size());

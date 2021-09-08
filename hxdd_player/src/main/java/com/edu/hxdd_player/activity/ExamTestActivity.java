@@ -80,21 +80,21 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "ced62780f3301766d95d996db6bd6ed";
-            getChapter.timestamp = "1626418806228";
-            getChapter.businessLineCode = "ld_gk";
-            getChapter.coursewareCode = "2216_ept";
-            getChapter.courseCode = "04732";
-            getChapter.catalogId = "314972266083385344";
-            getChapter.clientCode = "123456";
-            getChapter.userId = "123456654";
+            getChapter.publicKey = "0c2c0075fe6ba13561bde3d2c76b139b";
+            getChapter.timestamp = "1631083378422";
+            getChapter.businessLineCode = "Id_zk";
+            getChapter.coursewareCode = "1341_ept";
+            getChapter.courseCode = "00054";
+            getChapter.catalogId = "";
+            getChapter.clientCode = "123321";
+            getChapter.userId = "1355067003798294528";
             getChapter.userName = "李亚飞测试";
             getChapter.validTime = "0";
-            getChapter.lastTime = "10";
+            getChapter.lastTime = "0";
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
-            getChapter.drag = 0;
+            getChapter.drag = 1;
             getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
             getChapter.logoPosition = 1;
             getChapter.logoAlpha = 0.6f;
@@ -104,6 +104,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
+                    .cacheMode(true)
 //                    .callBackTime(10, new TimeCallBack() {
 //                        @Override
 //                        public void onTime() {

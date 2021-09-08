@@ -5,15 +5,16 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 
 import com.aliyun.player.bean.ErrorCode;
 import com.aliyun.player.source.VidAuth;
@@ -107,8 +108,10 @@ public class DownLoadFragment extends Fragment {
 //                    getMedia(chapter, true);
 //                });
         LiveDataBus.get().with("chatper", Object.class).observe(this, list -> {
-            chapterList = (List<ChapterBean>) list;
-            downloadView.initDownloadList(chapterList);
+            if (!StartPlayerUtils.getCacheMode()) {
+                chapterList = (List<ChapterBean>) list;
+                downloadView.initDownloadList(chapterList);
+            }
         });
 
         LiveDataBus.get()
@@ -159,6 +162,7 @@ public class DownLoadFragment extends Fragment {
             }
         }
     }
+
 
     private void initAliDownload() {
         copyAssets();
@@ -277,7 +281,11 @@ public class DownLoadFragment extends Fragment {
             @Override
             public void onLoadSuccess(List<AliyunDownloadMediaInfo> dataList) {
                 if (downloadView != null) {
-                    downloadView.addAllDownloadMediaInfo(dataList);
+                    if (StartPlayerUtils.getCacheMode()) {
+                        downloadView.addAllDownload(dataList);
+                    } else {
+                        downloadView.addAllDownloadMediaInfo(dataList);
+                    }
                 }
             }
         });
