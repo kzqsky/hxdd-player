@@ -79,14 +79,14 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "c3e0d811294d29a0cd36158e10b53d7e";
-            getChapter.timestamp = "1628060611687";
+            getChapter.publicKey = "806f158309f0657cd8708ecbb2c221f6";
+            getChapter.timestamp = "1631152729165";
             getChapter.businessLineCode = "Id_zk";
-            getChapter.coursewareCode = "2523_ept";
-            getChapter.courseCode = "03708";
+            getChapter.coursewareCode = "1341_ept";
+            getChapter.courseCode = "00054";
             getChapter.catalogId = "";
             getChapter.clientCode = "123321";
-            getChapter.userId = "1412688987490881536";
+            getChapter.userId = "1355067003798294528";
             getChapter.userName = "李亚飞测试";
             getChapter.validTime = "0";
             getChapter.lastTime = "0";
@@ -103,6 +103,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
+                    .cacheMode(true)
 //                    .callBackTime(10, new TimeCallBack() {
 //                        @Override
 //                        public void onTime() {

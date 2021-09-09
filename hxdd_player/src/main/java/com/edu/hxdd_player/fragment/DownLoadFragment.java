@@ -108,8 +108,10 @@ public class DownLoadFragment extends Fragment {
 //                    getMedia(chapter, true);
 //                });
         LiveDataBus.get().with("chatper", Object.class).observe(this, list -> {
-            chapterList = (List<ChapterBean>) list;
-            downloadView.initDownloadList(chapterList);
+            if (!StartPlayerUtils.getCacheMode()) {
+                chapterList = (List<ChapterBean>) list;
+                downloadView.initDownloadList(chapterList);
+            }
         });
 
         LiveDataBus.get()
@@ -135,13 +137,17 @@ public class DownLoadFragment extends Fragment {
      * 播放本地
      */
     private void toPlay(AliyunDownloadMediaInfo aliyunDownloadInfo) {
-        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
-            @Override
-            protected void onResult(Catalog data) {
-                data.savePath = aliyunDownloadInfo.getSavePath();
-                LiveDataBus.get().with("Catalog").setValue(data);
-            }
-        });
+        if (StartPlayerUtils.getCacheMode()) {
+            LiveDataBus.get().with("CacheMode").setValue( aliyunDownloadInfo.getSavePath());
+        } else {
+            ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
+                @Override
+                protected void onResult(Catalog data) {
+                    data.savePath = aliyunDownloadInfo.getSavePath();
+                    LiveDataBus.get().with("Catalog").setValue(data);
+                }
+            });
+        }
     }
 
     private void toDownload(Catalog catalog, boolean newAdd) {
@@ -282,7 +288,11 @@ public class DownLoadFragment extends Fragment {
             @Override
             public void onLoadSuccess(List<AliyunDownloadMediaInfo> dataList) {
                 if (downloadView != null) {
-                    downloadView.addAllDownloadMediaInfo(dataList);
+                    if (StartPlayerUtils.getCacheMode()) {
+                        downloadView.addAllDownload(dataList);
+                    } else {
+                        downloadView.addAllDownloadMediaInfo(dataList);
+                    }
                 }
             }
         });

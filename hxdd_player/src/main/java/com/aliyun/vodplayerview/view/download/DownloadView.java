@@ -274,9 +274,40 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
                 sectionAdapter.notifyDataSetChanged();
                 showDownloadContentView();
             }
-        },300);
+        }, 300);
 
     }
+
+    /**
+     * 添加现在已经下载的
+     *
+     * @param alldownloadMediaInfos
+     */
+    public void addAllDownload(List<AliyunDownloadMediaInfo> alldownloadMediaInfos) {
+        String tag = DOWNLOADING_TAG;
+        String title = getResources().getString(R.string.already_downloaded);
+        if (alldownloadMediaInfos == null) {
+            return;
+        }
+
+        ThreadUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                alivcDownloadingMediaInfos = new ArrayList<>();
+                AlivcDownloadMediaInfo alivcDownloadMediaInfo;
+                for (AliyunDownloadMediaInfo downloadMediaInfo : alldownloadMediaInfos) {
+                    alivcDownloadMediaInfo=new AlivcDownloadMediaInfo();
+                    alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
+                    alivcDownloadingMediaInfos.add(alivcDownloadMediaInfo);
+                }
+                addSection(tag, title, alivcDownloadingMediaInfos);
+                sectionAdapter.notifyDataSetChanged();
+                showDownloadContentView();
+            }
+        }, 300);
+
+    }
+
 
     /**
      * 添加一个item

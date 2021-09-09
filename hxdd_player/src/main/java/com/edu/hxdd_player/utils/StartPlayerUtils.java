@@ -33,6 +33,11 @@ public class StartPlayerUtils {
     private static boolean HAS_DOWNLOAD = true;
 
     /**
+     * 是否是缓存模式
+     */
+    private static boolean CACHE_MODE = false;
+
+    /**
      * 回调时间，目前用于隔多少秒进行人脸识别
      */
     private static int CALL_BACK_TIME = 0;
@@ -93,7 +98,16 @@ public class StartPlayerUtils {
         HAS_DOWNLOAD = downLoad;
         return this;
     }
-
+    /**
+     * 是否是缓存模式（默认否）
+     *
+     * @param cacheMode
+     * @return
+     */
+    public StartPlayerUtils cacheMode(boolean cacheMode) {
+        CACHE_MODE = cacheMode;
+        return this;
+    }
     /**
      * 定时回调任务
      *
@@ -134,6 +148,10 @@ public class StartPlayerUtils {
 
     public static boolean getHasDownload() {
         return HAS_DOWNLOAD;
+    }
+
+    public static boolean getCacheMode() {
+        return CACHE_MODE;
     }
 
     public static boolean isShowPoint() {
