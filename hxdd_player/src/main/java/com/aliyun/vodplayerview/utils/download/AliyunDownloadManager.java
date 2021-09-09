@@ -513,7 +513,7 @@ public class AliyunDownloadManager {
     /**
      * 准备下载项目
      */
-    public void prepareDownload(final VidAuth vidSts, String title, String newPlayerId) {
+    public void prepareDownload(final VidAuth vidSts, String title, String newPlayerId,String coursewareCode) {
         if (vidSts == null || TextUtils.isEmpty(vidSts.getVid())) {
             return;
         }
@@ -542,6 +542,7 @@ public class AliyunDownloadManager {
                         downloadMediaInfo.setStatus(AliyunDownloadMediaInfo.Status.Prepare);
                         downloadMediaInfo.setVidSts(vidSts);
                         downloadMediaInfo.setNewPlayerId(newPlayerId);
+                        downloadMediaInfo.setCoursewareCode(coursewareCode);
                         downloadMediaInfos.add(downloadMediaInfo);
 
                         AliMediaDownloader itemJniDownloader = AliDownloaderFactory.create(mContext);

@@ -138,7 +138,7 @@ public class DownLoadFragment extends Fragment {
      */
     private void toPlay(AliyunDownloadMediaInfo aliyunDownloadInfo) {
         if (StartPlayerUtils.getCacheMode()) {
-            LiveDataBus.get().with("CacheMode").setValue( aliyunDownloadInfo.getSavePath());
+            LiveDataBus.get().with("CacheMode").setValue(aliyunDownloadInfo.getSavePath());
         } else {
             ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
                 @Override
@@ -157,7 +157,7 @@ public class DownLoadFragment extends Fragment {
         if (newAdd) {
             if (!mDownloadInPrepare) {
                 mDownloadInPrepare = true;
-                downloadManager.prepareDownload(vidAuth, catalog.title, catalog.id);
+                downloadManager.prepareDownload(vidAuth, catalog.title, catalog.id, catalog.coursewareCode);
             }
         } else {
             if (downloadManager != null) {
@@ -289,7 +289,7 @@ public class DownLoadFragment extends Fragment {
             public void onLoadSuccess(List<AliyunDownloadMediaInfo> dataList) {
                 if (downloadView != null) {
                     if (StartPlayerUtils.getCacheMode()) {
-                        downloadView.addAllDownload(dataList);
+                        downloadView.addAllDownload(dataList,getChapter.coursewareCode);
                     } else {
                         downloadView.addAllDownloadMediaInfo(dataList);
                     }
@@ -317,12 +317,12 @@ public class DownLoadFragment extends Fragment {
 
             @Override
             public void onDeleteDownloadInfo(final ArrayList<AlivcDownloadMediaInfo> alivcDownloadMediaInfos) {
-
                 if (alivcDownloadMediaInfos != null && alivcDownloadMediaInfos.size() > 0) {
-                    downloadView.deleteDownloadInfo();
-//                                    if (dialogDownloadView != null) {
-//                                        dialogDownloadView.deleteDownloadInfo();
-//                                    }
+                    if (StartPlayerUtils.getCacheMode()) {
+                        downloadView.deleteDownloadInfoCache();
+                    }else {
+                        downloadView.deleteDownloadInfo();
+                    }
                     if (downloadManager != null) {
                         for (AlivcDownloadMediaInfo alivcDownloadMediaInfo : alivcDownloadMediaInfos) {
                             downloadManager.deleteFile(alivcDownloadMediaInfo.getAliyunDownloadMediaInfo());

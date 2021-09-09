@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -221,6 +222,26 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
         showDownloadContentView();
     }
 
+    public void deleteDownloadInfoCache() {
+        changeDownloadEditState(false);
+        isEditeState = false;
+
+        for (Iterator<AlivcDownloadMediaInfo> it = alivcDownloadingMediaInfos.iterator(); it.hasNext(); ) {
+            AlivcDownloadMediaInfo val = it.next();
+            if (val.isCheckedState()) {
+                it.remove();
+            }
+        }
+
+        if (alivcDownloadingMediaInfos.size() <= 0) {
+            sectionAdapter.removeSection(DOWNLOADING_TAG);
+        }
+
+
+        sectionAdapter.notifyDataSetChanged();
+        showDownloadContentView();
+    }
+
     /**
      * 删除单个视频
      */
@@ -283,7 +304,7 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
      *
      * @param alldownloadMediaInfos
      */
-    public void addAllDownload(List<AliyunDownloadMediaInfo> alldownloadMediaInfos) {
+    public void addAllDownload(List<AliyunDownloadMediaInfo> alldownloadMediaInfos, String coursewareCode) {
         String tag = DOWNLOADING_TAG;
         String title = getResources().getString(R.string.already_downloaded);
         if (alldownloadMediaInfos == null) {
@@ -296,9 +317,11 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
                 alivcDownloadingMediaInfos = new ArrayList<>();
                 AlivcDownloadMediaInfo alivcDownloadMediaInfo;
                 for (AliyunDownloadMediaInfo downloadMediaInfo : alldownloadMediaInfos) {
-                    alivcDownloadMediaInfo=new AlivcDownloadMediaInfo();
-                    alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
-                    alivcDownloadingMediaInfos.add(alivcDownloadMediaInfo);
+                    if (TextUtils.isEmpty(coursewareCode) || coursewareCode.equals(downloadMediaInfo.getCoursewareCode())) {
+                        alivcDownloadMediaInfo = new AlivcDownloadMediaInfo();
+                        alivcDownloadMediaInfo.setAliyunDownloadMediaInfo(downloadMediaInfo);
+                        alivcDownloadingMediaInfos.add(alivcDownloadMediaInfo);
+                    }
                 }
                 addSection(tag, title, alivcDownloadingMediaInfos);
                 sectionAdapter.notifyDataSetChanged();
@@ -351,6 +374,7 @@ public class DownloadView extends FrameLayout implements OnClickListener, Compou
             alivcDownloadMediaInfo = new AlivcDownloadMediaInfo();
             aliyunDownloadMediaInfo = new AliyunDownloadMediaInfo();
             aliyunDownloadMediaInfo.setNewPlayerId(chapterBean.id);
+            aliyunDownloadMediaInfo.setCoursewareCode(chapterBean.coursewareCode);
             aliyunDownloadMediaInfo.setNewPlayerTitle(chapterBean.title);
             if (chapterBean.isMedia == 0) {
                 aliyunDownloadMediaInfo.setStatus(AliyunDownloadMediaInfo.Status.UnableDownload);

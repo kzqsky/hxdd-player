@@ -16,7 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * 数据库版本
      */
-    private static int DATABASE_VERSION = 1;
+    private static int DATABASE_VERSION = 3;
 
 
     public DatabaseHelper(Context context, String name, int version) {
@@ -24,11 +24,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
-    public static DatabaseHelper getInstance(Context context){
-        if(mInstance == null){
-            synchronized (DatabaseHelper.class){
-                if(mInstance == null){
-                    mInstance = new DatabaseHelper(context, DatabaseManager.DB_NAME,1);
+    public static DatabaseHelper getInstance(Context context) {
+        if (mInstance == null) {
+            synchronized (DatabaseHelper.class) {
+                if (mInstance == null) {
+                    mInstance = new DatabaseHelper(context, DatabaseManager.DB_NAME, DATABASE_VERSION);
                 }
             }
         }
@@ -43,7 +43,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        if (oldVersion == 1 || oldVersion == 2) {
+            db.execSQL(DatabaseManager.UPDATE_TABLE_SQL);
+        }
     }
 
 }
