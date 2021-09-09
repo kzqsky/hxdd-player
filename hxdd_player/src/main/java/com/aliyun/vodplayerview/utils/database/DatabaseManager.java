@@ -53,13 +53,15 @@ public class DatabaseManager {
      */
     public static final String CREATE_TABLE_SQL = "create table if not exists " + DatabaseManager.TABLE_NAME +
             " (" + DatabaseManager.ID + " integer primary key autoincrement," +
-            DatabaseManager.VID + " text,"+ DatabaseManager.NEW_PLAYER_ID + " text,"
-            + DatabaseManager.NEW_PLAYER_TITLE + " text,"+ DatabaseManager.QUALITY + " text," +
+            DatabaseManager.VID + " text," + DatabaseManager.NEW_PLAYER_ID + " text," + DatabaseManager.COURSE_WARE_CODE + " text,"
+            + DatabaseManager.NEW_PLAYER_TITLE + " text," + DatabaseManager.QUALITY + " text," +
             DatabaseManager.TITLE + " text," + DatabaseManager.COVERURL + " text," +
             DatabaseManager.DURATION + " text," + DatabaseManager.SIZE + " text," +
             DatabaseManager.PROGRESS + " integer," + DatabaseManager.STATUS + " integer," +
             DatabaseManager.PATH + " text," + DatabaseManager.TRACKINDEX + " integer," +
             DatabaseManager.FORMAT + " text)";
+
+    public static final String UPDATE_TABLE_SQL = "alter table " + DatabaseManager.TABLE_NAME + " add column "+ DatabaseManager.COURSE_WARE_CODE + " text";
 
     /**
      * 查询所有语句
@@ -84,6 +86,7 @@ public class DatabaseManager {
     private static final String FORMAT = "format";
     private static final String TRACKINDEX = "trackindex";
     private static final String NEW_PLAYER_ID = "new_player_id";
+    private static final String COURSE_WARE_CODE = "coursewareCode";
     private static final String NEW_PLAYER_TITLE = "new_player_title";
 
     private static DatabaseManager mInstance = null;
@@ -132,28 +135,27 @@ public class DatabaseManager {
     }
 
     public long insert(AliyunDownloadMediaInfo mediaInfo) {
-        Log.e("test","插入数据："+mediaInfo.getTitle());
         ContentValues contentValues = new ContentValues();
         contentValues.put(VID, mediaInfo.getVid());
         contentValues.put(NEW_PLAYER_ID, mediaInfo.getNewPlayerId());
-        contentValues.put(NEW_PLAYER_TITLE,mediaInfo.getNewPlayerTitle());
+        contentValues.put(COURSE_WARE_CODE, mediaInfo.getCoursewareCode());
+        contentValues.put(NEW_PLAYER_TITLE, mediaInfo.getNewPlayerTitle());
         contentValues.put(QUALITY, mediaInfo.getQuality());
         contentValues.put(TITLE, mediaInfo.getTitle());
-        contentValues.put(FORMAT,mediaInfo.getFormat());
+        contentValues.put(FORMAT, mediaInfo.getFormat());
         contentValues.put(COVERURL, mediaInfo.getCoverUrl());
         contentValues.put(DURATION, mediaInfo.getDuration());
         contentValues.put(SIZE, mediaInfo.getSize());
         contentValues.put(PROGRESS, mediaInfo.getProgress());
         contentValues.put(STATUS, mediaInfo.getStatus().ordinal());
-        contentValues.put(PATH,mediaInfo.getSavePath());
-        contentValues.put(TRACKINDEX,mediaInfo.getQualityIndex());
-        long ss=mSqliteDatabase.insert(TABLE_NAME, null, contentValues);
-        Log.e("test","插入数据："+ss);
+        contentValues.put(PATH, mediaInfo.getSavePath());
+        contentValues.put(TRACKINDEX, mediaInfo.getQualityIndex());
+        long ss = mSqliteDatabase.insert(TABLE_NAME, null, contentValues);
         return ss;
     }
 
     public int delete(AliyunDownloadMediaInfo mediaInfo) {
-        if(mSqliteDatabase == null || !mSqliteDatabase.isOpen()){
+        if (mSqliteDatabase == null || !mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
         return mSqliteDatabase.delete(TABLE_NAME, "new_player_id=? ",
@@ -161,58 +163,59 @@ public class DatabaseManager {
     }
 
     public int update(AliyunDownloadMediaInfo mediaInfo) {
-        Log.e("test","更新数据："+mediaInfo.getTitle());
+        Log.e("test", "更新数据：" + mediaInfo.getTitle());
         ContentValues contentValues = new ContentValues();
         contentValues.put(PROGRESS, mediaInfo.getProgress());
-        contentValues.put(STATUS,mediaInfo.getStatus().ordinal());
-        contentValues.put(PATH,mediaInfo.getSavePath());
-        contentValues.put(TRACKINDEX,mediaInfo.getQualityIndex());
+        contentValues.put(STATUS, mediaInfo.getStatus().ordinal());
+        contentValues.put(PATH, mediaInfo.getSavePath());
+        contentValues.put(TRACKINDEX, mediaInfo.getQualityIndex());
         contentValues.put(VID, mediaInfo.getVid());
-        int ss=mSqliteDatabase.update(TABLE_NAME, contentValues, " new_player_id=? ",
+        int ss = mSqliteDatabase.update(TABLE_NAME, contentValues, " new_player_id=? ",
                 new String[]{mediaInfo.getNewPlayerId()});
-        Log.e("test","更新数据："+ss);
+        Log.e("test", "更新数据：" + ss);
         return ss;
     }
 
     /**
      * 删除所有数据
      */
-    public void deleteAll(){
-        if(!mSqliteDatabase.isOpen()){
+    public void deleteAll() {
+        if (!mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
-        mSqliteDatabase.delete(TABLE_NAME,"",new String[]{});
+        mSqliteDatabase.delete(TABLE_NAME, "", new String[]{});
     }
 
     /**
      * 删除指定的数据
      */
-    public void deleteItem(AliyunDownloadMediaInfo mediaInfo){
-        if(!mSqliteDatabase.isOpen()){
+    public void deleteItem(AliyunDownloadMediaInfo mediaInfo) {
+        if (!mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
-        mSqliteDatabase.delete(TABLE_NAME,"new_player_id=? ",new String[]{mediaInfo.getNewPlayerId()});
+        mSqliteDatabase.delete(TABLE_NAME, "new_player_id=? ", new String[]{mediaInfo.getNewPlayerId()});
     }
 
     /**
      * 查询所有下载中状态的数据
      */
-    public List<AliyunDownloadMediaInfo> selectDownloadingList(){
-        if(!mSqliteDatabase.isOpen()){
+    public List<AliyunDownloadMediaInfo> selectDownloadingList() {
+        if (!mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
-        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL,new String[]{DOWNLOADING_STATE+""});
+        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL, new String[]{DOWNLOADING_STATE + ""});
         List<AliyunDownloadMediaInfo> queryLists = new ArrayList<>();
-        if(cursor == null || cursor.getCount() <= 0){
-            if(cursor != null){
+        if (cursor == null || cursor.getCount() <= 0) {
+            if (cursor != null) {
                 cursor.close();
             }
             return queryLists;
         }
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             AliyunDownloadMediaInfo mediaInfo = new AliyunDownloadMediaInfo();
             mediaInfo.setVid(cursor.getString(cursor.getColumnIndex(VID)));
             mediaInfo.setNewPlayerId(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_ID)));
+            mediaInfo.setCoursewareCode(cursor.getString(cursor.getColumnIndex(COURSE_WARE_CODE)));
             mediaInfo.setNewPlayerTitle(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_TITLE)));
             mediaInfo.setQuality(cursor.getString(cursor.getColumnIndex(QUALITY)));
             mediaInfo.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
@@ -269,23 +272,24 @@ public class DatabaseManager {
     /**
      * 查询处于等待状态的数据
      */
-    public List<AliyunDownloadMediaInfo> selectStopedList(){
-        if(!mSqliteDatabase.isOpen()){
+    public List<AliyunDownloadMediaInfo> selectStopedList() {
+        if (!mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
-        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL,new String[]{STOP_STATE+""});
+        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL, new String[]{STOP_STATE + ""});
         List<AliyunDownloadMediaInfo> queryLists = new ArrayList<>();
-        if(cursor == null || cursor.getCount() <= 0){
-            if(cursor != null){
+        if (cursor == null || cursor.getCount() <= 0) {
+            if (cursor != null) {
                 cursor.close();
             }
 
             return queryLists;
         }
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             AliyunDownloadMediaInfo mediaInfo = new AliyunDownloadMediaInfo();
             mediaInfo.setVid(cursor.getString(cursor.getColumnIndex(VID)));
             mediaInfo.setNewPlayerId(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_ID)));
+            mediaInfo.setCoursewareCode(cursor.getString(cursor.getColumnIndex(COURSE_WARE_CODE)));
             mediaInfo.setNewPlayerTitle(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_TITLE)));
             mediaInfo.setQuality(cursor.getString(cursor.getColumnIndex(QUALITY)));
             mediaInfo.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
@@ -342,19 +346,20 @@ public class DatabaseManager {
     /**
      * 查询所有完成状态的数据
      */
-    public List<AliyunDownloadMediaInfo> selectCompletedList(){
-        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL,new String[]{COMPLETED_STATE+""});
+    public List<AliyunDownloadMediaInfo> selectCompletedList() {
+        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL, new String[]{COMPLETED_STATE + ""});
         List<AliyunDownloadMediaInfo> queryLists = new ArrayList<>();
-        if(cursor == null || cursor.getCount() <= 0){
-            if(cursor != null){
+        if (cursor == null || cursor.getCount() <= 0) {
+            if (cursor != null) {
                 cursor.close();
             }
             return queryLists;
         }
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             AliyunDownloadMediaInfo mediaInfo = new AliyunDownloadMediaInfo();
             mediaInfo.setVid(cursor.getString(cursor.getColumnIndex(VID)));
             mediaInfo.setNewPlayerId(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_ID)));
+            mediaInfo.setCoursewareCode(cursor.getString(cursor.getColumnIndex(COURSE_WARE_CODE)));
             mediaInfo.setNewPlayerTitle(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_TITLE)));
             mediaInfo.setQuality(cursor.getString(cursor.getColumnIndex(QUALITY)));
             mediaInfo.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
@@ -411,22 +416,23 @@ public class DatabaseManager {
     /**
      * 查询所有准备状态的数据
      */
-    public List<AliyunDownloadMediaInfo> selectPreparedList(){
-        if(!mSqliteDatabase.isOpen()){
+    public List<AliyunDownloadMediaInfo> selectPreparedList() {
+        if (!mSqliteDatabase.isOpen()) {
             mSqliteDatabase = databaseHelper.getWritableDatabase();
         }
-        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL,new String[]{PREPARED_STATE+""});
+        Cursor cursor = mSqliteDatabase.rawQuery(SELECT_WITH_STATUS_SQL, new String[]{PREPARED_STATE + ""});
         List<AliyunDownloadMediaInfo> queryLists = new ArrayList<>();
-        if(cursor == null || cursor.getCount() <= 0){
-            if(cursor != null){
+        if (cursor == null || cursor.getCount() <= 0) {
+            if (cursor != null) {
                 cursor.close();
             }
             return queryLists;
         }
-        while(cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             AliyunDownloadMediaInfo mediaInfo = new AliyunDownloadMediaInfo();
             mediaInfo.setVid(cursor.getString(cursor.getColumnIndex(VID)));
             mediaInfo.setNewPlayerId(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_ID)));
+            mediaInfo.setCoursewareCode(cursor.getString(cursor.getColumnIndex(COURSE_WARE_CODE)));
             mediaInfo.setNewPlayerTitle(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_TITLE)));
             mediaInfo.setQuality(cursor.getString(cursor.getColumnIndex(QUALITY)));
             mediaInfo.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
@@ -486,7 +492,7 @@ public class DatabaseManager {
         Cursor cursor = mSqliteDatabase.rawQuery(SELECT_ALL_SQL, new String[]{});
         List<AliyunDownloadMediaInfo> queryLists = new ArrayList<>();
         if (cursor == null || cursor.getCount() <= 0) {
-            if(cursor != null){
+            if (cursor != null) {
                 cursor.close();
             }
             return queryLists;
@@ -495,6 +501,7 @@ public class DatabaseManager {
             AliyunDownloadMediaInfo mediaInfo = new AliyunDownloadMediaInfo();
             mediaInfo.setVid(cursor.getString(cursor.getColumnIndex(VID)));
             mediaInfo.setNewPlayerId(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_ID)));
+            mediaInfo.setCoursewareCode(cursor.getString(cursor.getColumnIndex(COURSE_WARE_CODE)));
             mediaInfo.setNewPlayerTitle(cursor.getString(cursor.getColumnIndex(NEW_PLAYER_TITLE)));
             mediaInfo.setQuality(cursor.getString(cursor.getColumnIndex(QUALITY)));
             mediaInfo.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));

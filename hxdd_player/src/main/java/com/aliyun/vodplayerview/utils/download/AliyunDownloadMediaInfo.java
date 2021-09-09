@@ -49,6 +49,19 @@ public class AliyunDownloadMediaInfo {
     private String newPlayerId;
 
     private String newPlayerTitle;
+    /**
+     * 课件id，用于筛选
+     */
+    private String coursewareCode;
+
+    public String getCoursewareCode() {
+        return coursewareCode;
+    }
+
+    public void setCoursewareCode(String coursewareCode) {
+        this.coursewareCode = coursewareCode;
+    }
+
 
     public String getNewPlayerTitle() {
         return newPlayerTitle;

@@ -183,6 +183,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     setMedia(catalog);
                     getQuestionMap();
                 });
+        LiveDataBus.get().with("CacheMode", String.class).observe(this, s -> {
+            UrlSource urlSource = new UrlSource();
+            urlSource.setUri(s);
+            urlSource.setTitle("");
+            mAliyunVodPlayerView.setLocalSource(urlSource);
+        });
     }
 
     private void getQuestionMap() {
@@ -497,7 +503,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Log.i("test", "开始播放:");
             timeUtil_record.start();
             timeUtil_question.start();
-            if (mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
+            if (mCatalog != null && mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
                 mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
             }
         });
