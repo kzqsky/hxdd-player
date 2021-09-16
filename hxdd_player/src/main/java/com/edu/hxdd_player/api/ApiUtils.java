@@ -84,7 +84,7 @@ public class ApiUtils {
                         try {
                             baseBean = gson.fromJson(data, BaseBean.class);
                             if (baseBean != null && baseBean.success) {
-                                ToastUtils.showLong("回传成功！！");
+//                                ToastUtils.showLong("回传成功！！");
                             } else {
                                 String message = "返回数据无法处理";
                                 if (baseBean != null)
