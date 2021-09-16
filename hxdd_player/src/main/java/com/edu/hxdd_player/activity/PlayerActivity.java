@@ -597,6 +597,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                         null && data.catalogId.equals(mCatalog.id))
                     learnRecordId = data.learnRecordId;
 //                ToastUtils.showLong("弹题记录发送完毕");
+                if (!TextUtils.isEmpty(data.backUrl)) {
+                    ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, data);
+                }
             }
         });
 

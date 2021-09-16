@@ -40,4 +40,5 @@ public class GetChapter extends BaseParameters {
     public float logoAlpha;
     public int logoWidth;
     public int logoHeight;
+    public String backUrl;
 }

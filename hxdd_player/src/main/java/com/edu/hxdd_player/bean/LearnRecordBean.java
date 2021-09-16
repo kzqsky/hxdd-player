@@ -20,4 +20,5 @@ public class LearnRecordBean {
     public String accumulativeTime;
     public String coursewareCode;
     public Object createdAt;
+    public String backUrl;
 }

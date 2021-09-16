@@ -73,7 +73,7 @@ public class RetrofitFactory {
                 return response;
             }
         };
-        client = RetrofitUrlManager.getInstance().with(new OkHttpClient.Builder())
+        client = RetrofitUrlManager.getInstance().with(OkUtils.getOkhttpBuilder())
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
@@ -87,4 +87,7 @@ public class RetrofitFactory {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
+
+
+
 }

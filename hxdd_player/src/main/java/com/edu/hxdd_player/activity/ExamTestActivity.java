@@ -79,17 +79,17 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "6d9f2b1195a4e210bf2032dd29cead66";
-            getChapter.timestamp = "1631171624128";
-            getChapter.businessLineCode = "Id_zk";
-            getChapter.coursewareCode = "1341_ept";
-            getChapter.courseCode = "00054";
-            getChapter.catalogId = "";
-            getChapter.clientCode = "123321";
-            getChapter.userId = "1355067003798294528";
+            getChapter.publicKey = "be64aff1b058473fd21ea45e902c5c2c";
+            getChapter.timestamp = "1631759428202";
+            getChapter.businessLineCode = "ld_gk";
+            getChapter.coursewareCode = "2216_ept";
+            getChapter.courseCode = "04732";
+            getChapter.catalogId = "314972266083385344";
+            getChapter.clientCode = "123456";
+            getChapter.userId = "123456654";
             getChapter.userName = "李亚飞测试";
             getChapter.validTime = "0";
-            getChapter.lastTime = "0";
+            getChapter.lastTime = "10";
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
@@ -99,11 +99,12 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.logoAlpha = 0.6f;
             getChapter.logoWidth = 240;
             getChapter.logoHeight = 72;
+            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
-                    .cacheMode(true)
+                    .cacheMode(false)
 //                    .callBackTime(10, new TimeCallBack() {
 //                        @Override
 //                        public void onTime() {
