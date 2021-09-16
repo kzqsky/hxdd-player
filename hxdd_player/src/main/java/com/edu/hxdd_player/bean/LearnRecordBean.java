@@ -23,4 +23,8 @@ public class LearnRecordBean {
     public String backUrl;
     public String createdAtMillions;
     public String synchronizedAtMillions;
+    public String publicKey;
+    public String timestamp;
+    public String lastTime;
+    public String listenTimes;
 }
