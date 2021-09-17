@@ -79,11 +79,11 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "6ed9bd92f6070eb9f8f75f2623d0201b";
-            getChapter.timestamp = "1631870832749";
+            getChapter.publicKey = "7540bfdb2af7bca93869e8a63b9151d6";
+            getChapter.timestamp = "1631871265398";
             getChapter.businessLineCode = "";
             getChapter.coursewareCode = "1745_ept";
-            getChapter.courseCode = "00054";
+            getChapter.courseCode = "";
             getChapter.catalogId = "314972010830626818";
             getChapter.clientCode = "123456";
             getChapter.userId = "20200005_202010_testmvc";
@@ -99,7 +99,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.logoAlpha = 0.6f;
             getChapter.logoWidth = 240;
             getChapter.logoHeight = 72;
-            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
+//            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
