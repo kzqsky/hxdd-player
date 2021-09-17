@@ -27,4 +27,8 @@ public class LearnRecordBean {
     public String timestamp;
     public String lastTime;
     public String listenTimes;
+
+    public boolean pass;
+    public String examinePoint;
+    public String questionId;
 }
