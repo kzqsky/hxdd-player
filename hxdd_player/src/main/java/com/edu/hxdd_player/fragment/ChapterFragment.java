@@ -140,8 +140,8 @@ public class ChapterFragment extends Fragment {
             }
 
             @Override
-            public void onApiFailure() {
-                super.onApiFailure();
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
                 if (getActivity() != null)
                     getActivity().finish();
             }

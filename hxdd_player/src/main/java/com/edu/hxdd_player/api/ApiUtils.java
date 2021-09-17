@@ -1,6 +1,7 @@
 package com.edu.hxdd_player.api;
 
 import android.content.Context;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -90,15 +91,38 @@ public class ApiUtils {
                                 if (baseBean != null)
                                     message = baseBean.message;
                                 ToastUtils.showLong("回传出错:" + message);
+                                showDialog("回传出错:" + message);
                             }
                         } catch (Exception e) {
                             ToastUtils.showLong("回传出错:" + e.getMessage());
+                            showDialog("回传出错:" + e.getMessage());
                         }
                     }
                 } else {
                     ToastUtils.showLong("回传出错:" + response.message());
+                    showDialog("回传出错:" + response.message());
                 }
             }
         });
+    }
+
+    private void showDialog(String message) {
+        if (context == null)
+            return;
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(context);
+        normalDialog.setTitle("提示");
+        normalDialog.setMessage(message);
+        normalDialog.setPositiveButton("确定",
+                (dialog, which) -> {
+
+                });
+        normalDialog.setNegativeButton("",
+                (dialog, which) -> {
+                    //...To-do
+
+                });
+        // 显示
+        normalDialog.show();
     }
 }

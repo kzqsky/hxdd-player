@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -602,10 +603,32 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     }
                 }
             }
+
+            @Override
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
+                showDialog(message);
+            }
         });
 
     }
 
+    private void showDialog(String message){
+        final AlertDialog.Builder normalDialog =
+                new AlertDialog.Builder(PlayerActivity.this);
+        normalDialog.setTitle("提示");
+        normalDialog.setMessage(message);
+        normalDialog.setPositiveButton("确定",
+                (dialog, which) -> {
+
+                });
+        normalDialog.setNegativeButton("",
+                (dialog, which) -> {
+
+                });
+        // 显示
+        normalDialog.show();
+    }
     /**
      * 设置屏幕亮度
      */
