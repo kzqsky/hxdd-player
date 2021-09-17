@@ -107,22 +107,26 @@ public class ApiUtils {
     }
 
     private void showDialog(String message) {
-        if (context == null)
-            return;
-        final AlertDialog.Builder normalDialog =
-                new AlertDialog.Builder(context);
-        normalDialog.setTitle("提示");
-        normalDialog.setMessage(message);
-        normalDialog.setPositiveButton("确定",
-                (dialog, which) -> {
+        try {
+            if (context == null)
+                return;
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(context);
+            normalDialog.setTitle("提示");
+            normalDialog.setMessage(message);
+            normalDialog.setPositiveButton("确定",
+                    (dialog, which) -> {
 
-                });
-        normalDialog.setNegativeButton("",
-                (dialog, which) -> {
-                    //...To-do
+                    });
+            normalDialog.setNegativeButton("",
+                    (dialog, which) -> {
+                        //...To-do
 
-                });
-        // 显示
-        normalDialog.show();
+                    });
+            // 显示
+            normalDialog.show();
+        } catch (Exception e) {
+
+        }
     }
 }

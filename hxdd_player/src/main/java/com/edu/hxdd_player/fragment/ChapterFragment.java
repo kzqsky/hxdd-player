@@ -165,19 +165,23 @@ public class ChapterFragment extends Fragment {
     }
 
     private void showDialog(String message) {
-        final AlertDialog.Builder normalDialog =
-                new AlertDialog.Builder(getActivity());
-        normalDialog.setTitle("提示");
-        normalDialog.setMessage(message);
-        normalDialog.setPositiveButton("确定",
-                (dialog, which) -> {
+        try {
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(getActivity());
+            normalDialog.setTitle("提示");
+            normalDialog.setMessage(message);
+            normalDialog.setPositiveButton("确定",
+                    (dialog, which) -> {
 
-                });
-        normalDialog.setNegativeButton("",
-                (dialog, which) -> {
+                    });
+            normalDialog.setNegativeButton("",
+                    (dialog, which) -> {
 
-                });
-        // 显示
-        normalDialog.show();
+                    });
+            // 显示
+            normalDialog.show();
+        } catch (Exception e) {
+
+        }
     }
 }

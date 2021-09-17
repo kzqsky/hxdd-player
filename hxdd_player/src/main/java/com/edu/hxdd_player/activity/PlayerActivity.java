@@ -613,22 +613,27 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     }
 
-    private void showDialog(String message){
-        final AlertDialog.Builder normalDialog =
-                new AlertDialog.Builder(PlayerActivity.this);
-        normalDialog.setTitle("提示");
-        normalDialog.setMessage(message);
-        normalDialog.setPositiveButton("确定",
-                (dialog, which) -> {
+    private void showDialog(String message) {
+        try {
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(PlayerActivity.this);
+            normalDialog.setTitle("提示");
+            normalDialog.setMessage(message);
+            normalDialog.setPositiveButton("确定",
+                    (dialog, which) -> {
 
-                });
-        normalDialog.setNegativeButton("",
-                (dialog, which) -> {
+                    });
+            normalDialog.setNegativeButton("",
+                    (dialog, which) -> {
 
-                });
-        // 显示
-        normalDialog.show();
+                    });
+            // 显示
+            normalDialog.show();
+        } catch (Exception e) {
+
+        }
     }
+
     /**
      * 设置屏幕亮度
      */
