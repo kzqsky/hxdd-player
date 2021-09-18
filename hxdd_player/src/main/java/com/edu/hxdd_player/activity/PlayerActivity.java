@@ -600,7 +600,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 //                ToastUtils.showLong("弹题记录发送完毕");
                 }
                 if (data != null) {
-                    if (!TextUtils.isEmpty(data.backUrl)) {
+                    if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
                         ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, data);
                     }
                 }
