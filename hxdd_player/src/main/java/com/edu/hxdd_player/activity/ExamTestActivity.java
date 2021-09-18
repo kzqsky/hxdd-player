@@ -79,18 +79,18 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "7540bfdb2af7bca93869e8a63b9151d6";
-            getChapter.timestamp = "1631871265398";
+            getChapter.publicKey = "a5a3971d213c1092e9338eadc150c7c3";
+            getChapter.timestamp = "1631938227643";
             getChapter.businessLineCode = "";
-            getChapter.coursewareCode = "1745_ept";
+            getChapter.coursewareCode = "00169_cj";
             getChapter.courseCode = "";
-            getChapter.catalogId = "314972010830626818";
-            getChapter.clientCode = "123456";
-            getChapter.userId = "20200005_202010_testmvc";
-            getChapter.userName = "10536";
-            getChapter.validTime = "47986";
-            getChapter.lastTime = "527";
-            getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
+            getChapter.catalogId = "361714161241030656";
+            getChapter.clientCode = "657657";
+            getChapter.userId = "12345678_202110_hunnugk";
+            getChapter.userName = "hunnugk";
+            getChapter.validTime = "20896";
+            getChapter.lastTime = "660";
+            getChapter.serverUrl = "https://cws.edu-edu.com";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
             getChapter.drag = 1;

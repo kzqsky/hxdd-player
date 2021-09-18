@@ -179,8 +179,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
                 .observe(this, catalog -> {
+                    if (timeUtil_record != null)
+                        timeUtil_record.stop();
                     videoRecord(recordTime);
                     recordTime = 0;
+                    if (timeUtil_record != null)
+                        timeUtil_record.start();
                     learnRecordId = null;
                     mCatalog = catalog;
                     setMedia(catalog);
@@ -590,7 +594,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void uploadRecord(PutLearnRecords putLearnRecords) {
-
+//        if (TextUtils.isEmpty(putLearnRecords.learnRecordId)) {
+//            if (timeUtil_record != null)
+//                timeUtil_record.stop();
+//            putLearnRecords.accumulativeTime = 60;
+//            recordTime = 60;
+//            if (timeUtil_record != null)
+//                timeUtil_record.start();
+//        }
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
