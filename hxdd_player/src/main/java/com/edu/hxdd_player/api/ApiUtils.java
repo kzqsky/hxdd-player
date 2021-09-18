@@ -126,7 +126,7 @@ public class ApiUtils {
             // 显示
             normalDialog.show();
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
     }
 }
