@@ -82,15 +82,15 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.publicKey = "a5a3971d213c1092e9338eadc150c7c3";
             getChapter.timestamp = "1631938227643";
             getChapter.businessLineCode = "";
-            getChapter.coursewareCode = "00169_cj";
-            getChapter.courseCode = "";
+            getChapter.coursewareCode = "jl10045_jj";
+            getChapter.courseCode = "10045";
             getChapter.catalogId = "361714161241030656";
             getChapter.clientCode = "657657";
             getChapter.userId = "12345678_202110_hunnugk";
             getChapter.userName = "hunnugk";
             getChapter.validTime = "20896";
             getChapter.lastTime = "660";
-            getChapter.serverUrl = "https://cws.edu-edu.com";
+            getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
             getChapter.drag = 1;
@@ -99,6 +99,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.logoAlpha = 0.6f;
             getChapter.logoWidth = 240;
             getChapter.logoHeight = 72;
+            getChapter.defaultQuality = "LD";
 //            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)

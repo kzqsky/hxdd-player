@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -21,6 +20,7 @@ import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 
@@ -159,29 +159,9 @@ public class ChapterFragment extends Fragment {
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);
-                showDialog(message);
+                DialogUtils.showDialog(getContext(), message);
             }
         });
     }
 
-    private void showDialog(String message) {
-        try {
-            final AlertDialog.Builder normalDialog =
-                    new AlertDialog.Builder(getActivity());
-            normalDialog.setTitle("提示");
-            normalDialog.setMessage(message);
-            normalDialog.setPositiveButton("确定",
-                    (dialog, which) -> {
-
-                    });
-            normalDialog.setNegativeButton("",
-                    (dialog, which) -> {
-
-                    });
-            // 显示
-            normalDialog.show();
-        } catch (Exception e) {
-
-        }
-    }
 }

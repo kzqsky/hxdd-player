@@ -585,11 +585,14 @@ public class AliyunDownloadManager {
             @Override
             public void onPrepared(MediaInfo mediaInfo) {
                 List<TrackInfo> trackInfos = mediaInfo.getTrackInfos();
-//                for (TrackInfo trackInfo : trackInfos) {
-//                    TrackInfo.Type type = trackInfo.getType();
-//                    if (type == TrackInfo.Type.TYPE_VOD && trackInfo.getVodDefinition().equals(downloadMediaInfo.getQuality())) {
                 TrackInfo trackInfo = trackInfos.get(0);
-//                        //一个JniDownloader 对应多个 AliyunDownloaderMediaInfo(同一Vid,不同清晰度)
+                for (TrackInfo info : trackInfos) {
+                    TrackInfo.Type type = info.getType();
+                    if (type == TrackInfo.Type.TYPE_VOD && info.getVodDefinition().equals(downloadMediaInfo.getQuality())) {
+                         trackInfo = info;
+                    }
+                }
+               //一个JniDownloader 对应多个 AliyunDownloaderMediaInfo(同一Vid,不同清晰度)
                 downloadMediaInfo.setQuality(trackInfo.getVodDefinition());
                 downloadMediaInfo.setTitle(mediaInfo.getTitle());
                 downloadMediaInfo.setCoverUrl(mediaInfo.getCoverUrl());

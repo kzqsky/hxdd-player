@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -154,6 +155,8 @@ public class DownLoadFragment extends Fragment {
         VidAuth vidAuth = new VidAuth();
         vidAuth.setVid(catalog.media.mediaSource);
         vidAuth.setPlayAuth(catalog.media.playAuth);
+        if (!TextUtils.isEmpty(getChapter.defaultQuality))
+            vidAuth.setQuality(getChapter.defaultQuality, false);
         if (newAdd) {
             if (!mDownloadInPrepare) {
                 mDownloadInPrepare = true;
@@ -162,6 +165,8 @@ public class DownLoadFragment extends Fragment {
         } else {
             if (downloadManager != null) {
                 downloadMediaInfo.setVidSts(vidAuth);
+                if (!TextUtils.isEmpty(getChapter.defaultQuality))
+                    downloadMediaInfo.setQuality(getChapter.defaultQuality);
                 downloadManager.prepareDownloadByQuality(downloadMediaInfo, 0);
             }
         }
@@ -289,7 +294,7 @@ public class DownLoadFragment extends Fragment {
             public void onLoadSuccess(List<AliyunDownloadMediaInfo> dataList) {
                 if (downloadView != null) {
                     if (StartPlayerUtils.getCacheMode()) {
-                        downloadView.addAllDownload(dataList,getChapter.coursewareCode);
+                        downloadView.addAllDownload(dataList, getChapter.coursewareCode);
                     } else {
                         downloadView.addAllDownloadMediaInfo(dataList);
                     }
@@ -320,7 +325,7 @@ public class DownLoadFragment extends Fragment {
                 if (alivcDownloadMediaInfos != null && alivcDownloadMediaInfos.size() > 0) {
                     if (StartPlayerUtils.getCacheMode()) {
                         downloadView.deleteDownloadInfoCache();
-                    }else {
+                    } else {
                         downloadView.deleteDownloadInfo();
                     }
                     if (downloadManager != null) {

@@ -28,7 +28,7 @@ public class GetChapter extends BaseParameters {
      */
     public int drag;
     /**
-     *提示点 (默认为 1 显示提示点, 0 则隐藏)
+     * 提示点 (默认为 1 显示提示点, 0 则隐藏)
      */
     public int hintPoint;
     /**
@@ -40,5 +40,7 @@ public class GetChapter extends BaseParameters {
     public float logoAlpha;
     public int logoWidth;
     public int logoHeight;
-    public String backUrl;
+
+    public String backUrl; //回调业务系统
+    public String defaultQuality = "LD";  //指定播放的清晰度  LD标清   FD流畅
 }
