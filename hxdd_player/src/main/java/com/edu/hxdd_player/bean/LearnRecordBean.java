@@ -11,7 +11,7 @@ public class LearnRecordBean {
     public String catalogId;
     public long offset;
     public String courseCode;
-    public Object synchronizedAt;
+    public String synchronizedAt;
     public long pageCount;
     public String videoTime;
     public long pageSize;
@@ -19,5 +19,16 @@ public class LearnRecordBean {
     public String currentlyTime;
     public String accumulativeTime;
     public String coursewareCode;
-    public Object createdAt;
+    public String createdAt;
+    public String backUrl;
+    public String createdAtMillions;
+    public String synchronizedAtMillions;
+    public String publicKey;
+    public String timestamp;
+    public String lastTime;
+    public String listenTimes;
+
+    public boolean pass;
+    public String examinePoint;
+    public String questionId;
 }

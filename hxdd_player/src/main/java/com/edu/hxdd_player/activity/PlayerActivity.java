@@ -45,6 +45,7 @@ import com.edu.hxdd_player.fragment.DownLoadFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
 import com.edu.hxdd_player.utils.DensityUtils;
+import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
@@ -100,6 +101,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             image_logo.setVisibility(View.VISIBLE);
 
             Glide.with(PlayerActivity.this).load(getChapter.logoUrl).into(image_logo);
+            image_logo.setAlpha(0.5f);
+
             image_logo.setAlpha(getChapter.logoAlpha);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
             layoutParams.width = DensityUtils.dp2px(this, getChapter.logoWidth);
@@ -176,8 +179,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
                 .observe(this, catalog -> {
+                    if (timeUtil_record != null)
+                        timeUtil_record.stop();
                     videoRecord(recordTime);
                     recordTime = 0;
+                    if (timeUtil_record != null)
+                        timeUtil_record.start();
                     learnRecordId = null;
                     mCatalog = catalog;
                     setMedia(catalog);
@@ -188,6 +195,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             urlSource.setUri(s);
             urlSource.setTitle("");
             mAliyunVodPlayerView.setLocalSource(urlSource);
+        });
+        LiveDataBus.get().with("stop", String.class).observe(this, s -> {
+            videoPause();
         });
     }
 
@@ -209,11 +219,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 VidAuth vidAuth = new VidAuth();
                 vidAuth.setVid(media.mediaSource);
                 vidAuth.setPlayAuth(media.playAuth);
-//                if (isfirst) {
-//                    vidAuth.setPlayAuth("eyJTZWN1cml0eVRva2VuIjoiQ0FJUzN3SjFxNkZ0NUIyeWZTaklyNVdER3ZLR2d1ZGpnb1M0VGxQZmpYSVphOFJEMXBMQ29UejJJSHBOZTNocUIrMGZzUGt3bEdsVTZmZ2Nsck1xRjg4YkhCV1lONVFwdHMwUHIxNzlKcExGc3QySjZyOEpqc1Z3NTl3bXBWaXBzdlhKYXNEVkVma3VFNVhFTWlJNS8wMGU2TC8rY2lyWVhEN0JHSmFWaUpsaFE4MEtWdzJqRjFSdkQ4dFhJUTBRazYxOUszemRaOW1nTGlidWkzdnhDa1J2MkhCaWptOHR4cW1qL015UTV4MzFpMXYweStCM3dZSHRPY3FjYThCOU1ZMVdUc3Uxdm9oemFyR1Q2Q3BaK2psTStxQVU2cWxZNG1YcnM5cUhFa0ZOd0JpWFNaMjJsT2RpTndoa2ZLTTNOcmRacGZ6bjc1MUN0L2ZVaXA3OHhtUW1YNGdYY1Z5R0ZkMzhtcE9aUXJ6eGFvWmdLZStxQVJtWGpJRFRiS3VTbWhnL2ZIY1dPRGxOZjljY01YSnFBWFF1TUdxQWMvRDJvZzZYTzFuK0ZQamNqUDVvajRBSjVsSHA3TWVNR1YrRGVMeVF5aDBFSWFVN2EwNDQxTUtpUXVranBzUWFnQUdXajBrcVQxaDh0YXBLVDZWeXdEcTc2b0RXMzhNQld5NXIza1RNelk5ZXZKMFRlVi9McXlPSEtDOTFUTzNBVm1KVytyblA4aXJab0ZLNytBV0dtejliKzBMck1TZXEyeEtLTlZ3Q2lmb0RTZU51S0hQN1Fud0thbFlsQjJyK011emVycHdNTHY3UFkzcjNLaG5qYUtzcCtNYUV0WGZxREZDblBYUnhqeVlnUlE9PSIsIkF1dGhJbmZvIjoie1wiQ0lcIjpcIkJ6YU0vR3lEUVNQYXNwV0FxWmNWZml3NGxGbW5DUXpnSmQwTzhrdzQzTFBZdW5ZMklUcnBERVhFaFB6a2Vub0dYQnBmRVhjQzl0ejkwRmVjNTIwQm1DWU1Eckx3bVhMWUx0ajhzMVAwaE80PVwiLFwiQ2FsbGVyXCI6XCJxeVJxd0N4eG93WU55SWlTRVkyNitNMG9ITXlqOEViSjhCN3NOaGFLSkIwPVwiLFwiRXhwaXJlVGltZVwiOlwiMjAyMC0wOS0wOFQwMjoyMzoxOVpcIixcIk1lZGlhSWRcIjpcIjE2ZmZmMWQ3MWVhZjQxYTE4MDk2MWRiZTIzY2Q2NzI4XCIsXCJQbGF5RG9tYWluXCI6XCJna3N0cmVhbS5lZHUtZWR1LmNvbS5jblwiLFwiU2lnbmF0dXJlXCI6XCJhOE1UZHd0QVdHWEI0VHFIcU5UMDNGOW5leFU9XCJ9IiwiVmlkZW9NZXRhIjp7IlN0YXR1cyI6Ik5vcm1hbCIsIlZpZGVvSWQiOiIxNmZmZjFkNzFlYWY0MWExODA5NjFkYmUyM2NkNjcyOCIsIlRpdGxlIjoiMTYxMF8wNzk0OF9jaDAxLm1wNCIsIkNvdmVyVVJMIjoiaHR0cHM6Ly9na3N0cmVhbS5lZHUtZWR1LmNvbS5jbi8xNmZmZjFkNzFlYWY0MWExODA5NjFkYmUyM2NkNjcyOC9jb3ZlcnMvNmQ0ZjFjZWE3ZWNlNGZkNThjODJhOWVhYWVlZmFmNTUtMDAwMDUuanBnIiwiRHVyYXRpb24iOjYxOS4wODJ9LCJBY2Nlc3NLZXlJZCI6IlNUUy5OVjZRSDJvOEI1RlNMdW5pckxnS285V2lDIiwiUGxheURvbWFpbiI6Imdrc3RyZWFtLmVkdS1lZHUuY29tLmNuIiwiQWNjZXNzS2V5U2VjcmV0IjoiRFRmRzJLQm9tZjZHempnMjhNUVhtQnQ4b0NrN3F3QnVjcDdyVjZZYVBUZmIiLCJSZWdpb24iOiJjbi1zaGFuZ2hhaSIsIkN1c3RvbWVySWQiOjE0ODYxMTQyNzEwMTA2NTR9");
-//                    vidAuth.setVid("16fff1d71eaf41a180961dbe23cd6728");
-//                    isfirst = false;
-//                }
+                if (!TextUtils.isEmpty(getChapter.defaultQuality))
+                    vidAuth.setQuality(getChapter.defaultQuality, false);
                 mAliyunVodPlayerView.setAuthInfo(vidAuth);
                 LiveDataBus.get().with("urlVideo").setValue(null);
             } else {
@@ -576,8 +583,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void videoRecord(long accumulativeTime) {
-        if (mCatalog == null)
+        if (mCatalog == null) {
             return;
+        }
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         PutLearnRecords putLearnRecords =
@@ -586,17 +594,38 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private void uploadRecord(PutLearnRecords putLearnRecords) {
-
+//        if (TextUtils.isEmpty(putLearnRecords.learnRecordId)) {
+//            if (timeUtil_record != null)
+//                timeUtil_record.stop();
+//            putLearnRecords.accumulativeTime = 60;
+//            recordTime = 60;
+//            if (timeUtil_record != null)
+//                timeUtil_record.start();
+//        }
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
             @Override
             protected void onResult(LearnRecordBean data) {
-                if (data != null && mCatalog != null && data.catalogId.equals(mCatalog.id))
+                if (data != null && mCatalog != null && mCatalog.id !=
+                        null && data.catalogId.equals(mCatalog.id)) {
                     learnRecordId = data.learnRecordId;
 //                ToastUtils.showLong("弹题记录发送完毕");
+                }
+                if (data != null) {
+                    if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
+                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, data);
+                    }
+                }
+            }
+
+            @Override
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
+                DialogUtils.showDialog(PlayerActivity.this, message);
             }
         });
 
     }
+
 
     /**
      * 设置屏幕亮度

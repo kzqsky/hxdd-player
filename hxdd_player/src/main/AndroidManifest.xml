@@ -25,6 +25,7 @@
             android:name="com.edu.hxdd_player.activity.PlayerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
+            android:networkSecurityConfig="@xml/network_security_config"
             android:theme="@style/NoActionTheme">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->

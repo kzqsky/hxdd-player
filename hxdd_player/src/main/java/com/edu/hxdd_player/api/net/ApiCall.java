@@ -36,11 +36,11 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
                 onResult((T) baseBean.data);
             } else {
                 ToastUtils.showLong(baseBean.message);
-                onApiFailure();
+                onApiFailure(baseBean.message);
             }
         } else {
             ToastUtils.showLong("服务器错误");
-            onApiFailure();
+            onApiFailure("服务器错误");
         }
     }
 
@@ -59,6 +59,6 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
     /**
      * 调用接口成功，但接口返回错误
      */
-    public void onApiFailure() {
+    public void onApiFailure(String message) {
     }
 }

@@ -21,6 +21,7 @@ import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 
@@ -141,8 +142,8 @@ public class ChapterFragment extends Fragment {
             }
 
             @Override
-            public void onApiFailure() {
-                super.onApiFailure();
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
                 if (getActivity() != null)
                     getActivity().finish();
             }
@@ -153,8 +154,13 @@ public class ChapterFragment extends Fragment {
         ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
-
                 LiveDataBus.get().with("Catalog").setValue(data);
+            }
+
+            @Override
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
+                DialogUtils.showDialog(getContext(), message);
             }
         });
     }
