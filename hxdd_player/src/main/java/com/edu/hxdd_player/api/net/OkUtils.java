@@ -1,24 +1,32 @@
 package com.edu.hxdd_player.api.net;
 
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
+import java.net.Socket;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.X509ExtendedTrustManager;
 
 import okhttp3.OkHttpClient;
 
 public class OkUtils {
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public static OkHttpClient.Builder getOkhttpBuilder() {
         return new OkHttpClient.Builder().sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
                 .hostnameVerifier(new TrustAllHostnameVerifier());
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     private static SSLSocketFactory createSSLSocketFactory() {
         SSLSocketFactory ssfFactory = null;
         try {
@@ -32,12 +40,38 @@ public class OkUtils {
         return ssfFactory;
     }
 
-    static class TrustAllCerts implements X509TrustManager {
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    static class TrustAllCerts extends X509ExtendedTrustManager {
+
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType, Socket socket) throws CertificateException {
+
+        }
+
+
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType, SSLEngine engine) throws CertificateException {
+
+        }
+
 
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 
         }
+
 
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
