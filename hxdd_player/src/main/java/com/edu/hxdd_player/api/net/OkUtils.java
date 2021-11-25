@@ -1,5 +1,7 @@
 package com.edu.hxdd_player.api.net;
 
+import android.os.Build;
+
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -15,8 +17,12 @@ import okhttp3.OkHttpClient;
 
 public class OkUtils {
     public static OkHttpClient.Builder getOkhttpBuilder() {
-        return new OkHttpClient.Builder().sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
-                .hostnameVerifier(new TrustAllHostnameVerifier());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return new OkHttpClient.Builder().sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
+                    .hostnameVerifier(new TrustAllHostnameVerifier());
+        } else {
+            return new OkHttpClient.Builder().hostnameVerifier(new TrustAllHostnameVerifier());
+        }
     }
 
     private static SSLSocketFactory createSSLSocketFactory() {
