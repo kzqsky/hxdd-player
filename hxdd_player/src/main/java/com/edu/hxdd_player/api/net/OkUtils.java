@@ -20,11 +20,16 @@ import javax.net.ssl.X509ExtendedTrustManager;
 import okhttp3.OkHttpClient;
 
 public class OkUtils {
-    @RequiresApi(api = Build.VERSION_CODES.N)
+
     public static OkHttpClient.Builder getOkhttpBuilder() {
-        return new OkHttpClient.Builder().sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
-                .hostnameVerifier(new TrustAllHostnameVerifier());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return new OkHttpClient.Builder().sslSocketFactory(createSSLSocketFactory(), new TrustAllCerts())
+                    .hostnameVerifier(new TrustAllHostnameVerifier());
+        } else {
+            return new OkHttpClient.Builder().hostnameVerifier(new TrustAllHostnameVerifier());
+        }
     }
+
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     private static SSLSocketFactory createSSLSocketFactory() {
@@ -39,6 +44,7 @@ public class OkUtils {
         }
         return ssfFactory;
     }
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
