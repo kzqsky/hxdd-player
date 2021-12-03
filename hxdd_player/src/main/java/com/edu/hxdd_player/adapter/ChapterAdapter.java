@@ -58,14 +58,21 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
                     helper.setVisible(R.id.hxdd_player_imageView, true);
                     ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
+
                     if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
                         helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
                         helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
                         imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                     } else {
-                        helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                        helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
-                        imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                        if (baseItem.accumulativeTimeLast >= baseItem.mediaDuration - 20) {
+                            helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorLearned());
+                            helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorLearned());
+                            imageView.setColorFilter(StartPlayerUtils.getColorLearned());
+                        } else {
+                            helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                            helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
+                            imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
+                        }
                     }
 
                     if (downloadMode) {

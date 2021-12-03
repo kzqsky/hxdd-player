@@ -17,6 +17,10 @@ public class StartPlayerUtils {
      */
     private static int COLOR_PRIMARY = Color.parseColor("#B7B7B7");
     /**
+     * 已学习的颜色
+     */
+    private static int COLOR_LEARNED = Color.parseColor("#6DCA68");
+    /**
      * 预留色
      */
     private static int COLOR_PRIMARY_DARK = Color.parseColor("#B5B5B5");
@@ -59,6 +63,16 @@ public class StartPlayerUtils {
      */
     public StartPlayerUtils colorPrimary(@ColorInt int colorPrimary) {
         COLOR_PRIMARY = colorPrimary;
+        return this;
+    }
+    /**
+     * 已学习的颜色
+     *
+     * @param colorPrimary
+     * @return
+     */
+    public StartPlayerUtils colorLearned(@ColorInt int colorPrimary) {
+        COLOR_LEARNED = colorPrimary;
         return this;
     }
 
@@ -134,7 +148,9 @@ public class StartPlayerUtils {
     public static int getColorPrimary() {
         return COLOR_PRIMARY;
     }
-
+    public static int getColorLearned(){
+        return COLOR_LEARNED;
+    }
     public static int getColorPrimaryDark() {
         return COLOR_PRIMARY_DARK;
     }
