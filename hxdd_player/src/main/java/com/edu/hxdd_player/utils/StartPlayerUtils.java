@@ -64,6 +64,16 @@ public class StartPlayerUtils {
         COLOR_PRIMARY = colorPrimary;
         return this;
     }
+    /**
+     * 已学习的颜色
+     *
+     * @param colorPrimary
+     * @return
+     */
+    public StartPlayerUtils colorLearned(@ColorInt int colorPrimary) {
+        COLOR_LEARNED = colorPrimary;
+        return this;
+    }
 
     /**
      * 预留色
