@@ -62,9 +62,15 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                         helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
                         imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                     } else {
-                        helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
-                        helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
-                        imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
+                        if (baseItem.accumulativeTimeLast >= baseItem.mediaDuration - 20) {
+                            helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorLearned());
+                            helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorLearned());
+                            imageView.setColorFilter(StartPlayerUtils.getColorLearned());
+                        } else {
+                            helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
+                            helper.setTextColor(R.id.hxdd_player_txt_time, mContext.getResources().getColor(R.color.black));
+                            imageView.setColorFilter(ContextCompat.getColor(mContext, R.color.black));
+                        }
                     }
 
                     if (downloadMode) {

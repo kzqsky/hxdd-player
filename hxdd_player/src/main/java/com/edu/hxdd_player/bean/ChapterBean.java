@@ -27,6 +27,7 @@ public class ChapterBean  implements com.chad.library.adapter.base.entity.MultiI
     public long isMedia;
     public long mediaId;
     public long mediaDuration;
+    public long accumulativeTimeLast;
     public String coursewareCode;
     public long isEnabled;
 

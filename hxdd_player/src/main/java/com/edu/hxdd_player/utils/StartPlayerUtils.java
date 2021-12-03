@@ -16,6 +16,10 @@ public class StartPlayerUtils {
      */
     private static int COLOR_PRIMARY = Color.parseColor("#B7B7B7");
     /**
+     * 已学习的颜色
+     */
+    private static int COLOR_LEARNED = Color.parseColor("#6DCA68");
+    /**
      * 预留色
      */
     private static int COLOR_PRIMARY_DARK = Color.parseColor("#B5B5B5");
@@ -98,6 +102,7 @@ public class StartPlayerUtils {
         HAS_DOWNLOAD = downLoad;
         return this;
     }
+
     /**
      * 是否是缓存模式（默认否）
      *
@@ -108,6 +113,7 @@ public class StartPlayerUtils {
         CACHE_MODE = cacheMode;
         return this;
     }
+
     /**
      * 定时回调任务
      *
@@ -132,6 +138,10 @@ public class StartPlayerUtils {
 
     public static int getColorPrimary() {
         return COLOR_PRIMARY;
+    }
+
+    public static int getColorLearned() {
+        return COLOR_LEARNED;
     }
 
     public static int getColorPrimaryDark() {
