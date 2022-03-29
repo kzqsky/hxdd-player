@@ -31,4 +31,6 @@ public class LearnRecordBean {
     public boolean pass;
     public String examinePoint;
     public String questionId;
+    public String total;
+    public String finishwatching;
 }
