@@ -612,7 +612,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 }
                 if (data != null) {
                     if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
-                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, data);
+                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(getChapter.backUrl, data);
                     }
                 }
             }
