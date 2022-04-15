@@ -57,8 +57,8 @@ public class ApiUtils {
         api.catalogInfo(getRequestBody(parameters), catalogId).enqueue(apiCall);
     }
 
-    public void callBackUrl(String url, String data) {
-        if (data == null || TextUtils.isEmpty(url))
+    public void callBackUrl(String url, String json) {
+        if (json == null || TextUtils.isEmpty(url))
             return;
         OkHttpClient okHttpClient = OkUtils.getOkhttpBuilder().build();
         MediaType mediaType = MediaType.parse("text/x-markdown; charset=utf-8");
@@ -66,7 +66,7 @@ public class ApiUtils {
 //        String requestBody = gson.toJson(data);
         final Request request = new Request.Builder()
                 .url(url)
-                .post(RequestBody.create(mediaType, data))
+                .post(RequestBody.create(mediaType, json))
                 .build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(new Callback() {
