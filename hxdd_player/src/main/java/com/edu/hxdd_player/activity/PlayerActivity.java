@@ -603,12 +603,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 //            if (timeUtil_record != null)
 //                timeUtil_record.start();
 //        }
-        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<String>() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<Object>() {
             @Override
-            protected void onResult(String json) {
+            protected void onResult(Object object) {
                 LearnRecordBean data;
+                String jsonString = "";
                 try {
-                    data = new Gson().fromJson(json, LearnRecordBean.class);
+                    jsonString = new Gson().toJson(object);
+                    data = new Gson().fromJson(jsonString, LearnRecordBean.class);
                 } catch (Exception e) {
                     return;
                 }
@@ -619,7 +621,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 }
                 if (data != null) {
                     if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
-                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, json);
+                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, jsonString);
                     }
                 }
             }
