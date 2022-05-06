@@ -79,17 +79,17 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "a5a3971d213c1092e9338eadc150c7c3";
-            getChapter.timestamp = "1631938227643";
-            getChapter.businessLineCode = "";
-            getChapter.coursewareCode = "jl10045_jj";
-            getChapter.courseCode = "10045";
-            getChapter.catalogId = "361714161241030656";
-            getChapter.clientCode = "657657";
-            getChapter.userId = "12345678_202110_hunnugk";
-            getChapter.userName = "hunnugk";
-            getChapter.validTime = "20896";
-            getChapter.lastTime = "660";
+            getChapter.publicKey = "561be809537bf0d704fe40eae9aaaa2a";
+            getChapter.timestamp = "1651800563669";
+            getChapter.businessLineCode = "ld_gk";
+            getChapter.coursewareCode = "2216_ept";
+            getChapter.courseCode = "04732";
+            getChapter.catalogId = "314972266083385344";
+            getChapter.clientCode = "123456";
+            getChapter.userId = "123456654";
+            getChapter.userName = "李亚飞测试";
+            getChapter.validTime = "0";
+            getChapter.lastTime = "10";
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
@@ -100,7 +100,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.logoWidth = 240;
             getChapter.logoHeight = 72;
             getChapter.defaultQuality = "LD";
-//            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
+            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")

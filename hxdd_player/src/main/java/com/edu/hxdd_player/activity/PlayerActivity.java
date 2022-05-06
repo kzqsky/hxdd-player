@@ -51,6 +51,7 @@ import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
+import com.google.gson.Gson;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -602,9 +603,17 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 //            if (timeUtil_record != null)
 //                timeUtil_record.start();
 //        }
-        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<LearnRecordBean>() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<Object>() {
             @Override
-            protected void onResult(LearnRecordBean data) {
+            protected void onResult(Object object) {
+                LearnRecordBean data;
+                String jsonString = "";
+                try {
+                    jsonString = new Gson().toJson(object);
+                    data = new Gson().fromJson(jsonString, LearnRecordBean.class);
+                } catch (Exception e) {
+                    return;
+                }
                 if (data != null && mCatalog != null && mCatalog.id !=
                         null && data.catalogId.equals(mCatalog.id)) {
                     learnRecordId = data.learnRecordId;
@@ -612,11 +621,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 }
                 if (data != null) {
                     if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
-                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, data);
+                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, jsonString);
                     }
                 }
             }
-
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);

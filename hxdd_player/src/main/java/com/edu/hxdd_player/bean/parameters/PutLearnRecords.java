@@ -18,6 +18,8 @@ public class PutLearnRecords extends BaseParameters {
     public long questionId;
     public String examinePoint;
 
+    public String backUrl; //回调业务系统
+
     public static PutLearnRecords getRecord(String learnRecordId, GetChapter getChapter, String catalogId, long videoTime, long lastTime, long accumulativeTime) {
         PutLearnRecords records = getPublic(learnRecordId, getChapter, catalogId);
         records.videoTime = videoTime;
@@ -56,6 +58,7 @@ public class PutLearnRecords extends BaseParameters {
         records.catalogId = catalogId;
         records.userId = getChapter.userId;
         records.userName = getChapter.userName;
+        records.backUrl = getChapter.backUrl;
         return records;
     }
 }
