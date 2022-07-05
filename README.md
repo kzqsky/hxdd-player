@@ -1,2 +1,2 @@
 # hxdd-player
-build ulr：https://jitpack.io/#kzqsky/hxdd-player
+build ulr：https://jitpack.io/private#kzqsky/hxdd-player
