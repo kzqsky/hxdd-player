@@ -45,6 +45,7 @@ import com.edu.hxdd_player.fragment.ChapterFragment;
 import com.edu.hxdd_player.fragment.DownLoadFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.utils.ComputeUtils;
 import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
@@ -255,6 +256,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (tabLayout != null) {
             //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
             tabLayout.post(() -> TablayoutUtil.setIndicator(tabLayout, (int) getResources().getDimension(R.dimen.tablayout_textsize) * 4));
+        }
+
+        if (mAliyunVodPlayerView != null) {
+            mAliyunVodPlayerView.setScreenBrightness(BrightnessDialog.getActivityBrightness(this));
         }
     }
 
@@ -641,7 +646,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void setWindowBrightness(int brightness) {
         Window window = getWindow();
         WindowManager.LayoutParams lp = window.getAttributes();
-        lp.screenBrightness = brightness / 255.0f;
+        lp.screenBrightness = ComputeUtils.div(brightness, 100, 2);
         window.setAttributes(lp);
     }
 

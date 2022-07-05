@@ -1,11 +1,10 @@
 package com.aliyun.vodplayerview.view.gesturedialog;
 
 import android.app.Activity;
-import android.view.Window;
-import android.view.WindowManager;
-
+import android.provider.Settings;
 
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.ComputeUtils;
 
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -48,18 +47,13 @@ public class BrightnessDialog extends BaseGestureDialog {
      */
     public static int getActivityBrightness(Activity activity) {
         if (activity != null) {
-            Window window = activity.getWindow();
-            WindowManager.LayoutParams layoutParams = window.getAttributes();
-
-            float screenBrightness = layoutParams.screenBrightness;
-            if (screenBrightness > 1) {
-                screenBrightness = 1;
-            } else if (screenBrightness < 0.1f) {
-                //解决三星某些手机亮度值等于0自动锁屏的bug
-                screenBrightness = 0.1f;
+            int systemBrightness = 0;
+            try {
+                systemBrightness = Settings.System.getInt(activity.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
             }
-
-            return (int) (screenBrightness * 100);
+            return (int) (ComputeUtils.div(systemBrightness, 255, 2) * 100);
         }
         return 0;
     }
