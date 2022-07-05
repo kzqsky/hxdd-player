@@ -1,11 +1,10 @@
 package com.aliyun.vodplayerview.view.gesturedialog;
 
 import android.app.Activity;
-import android.view.Window;
-import android.view.WindowManager;
-
+import android.provider.Settings;
 
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.ComputeUtils;
 
 /*
  * Copyright (C) 2010-2018 Alibaba Group Holding Limited.
@@ -34,7 +33,8 @@ public class BrightnessDialog extends BaseGestureDialog {
 
     /**
      * 更新对话框上的亮度百分比
-     * @param percent  亮度百分比
+     *
+     * @param percent 亮度百分比
      */
     public void updateBrightness(int percent) {
         mTextView.setText(percent + "%");
@@ -43,35 +43,32 @@ public class BrightnessDialog extends BaseGestureDialog {
 
     /**
      * 获取当前亮度百分比
+     *
      * @param activity 活动
      * @return 当前亮度百分比
      */
     public static int getActivityBrightness(Activity activity) {
         if (activity != null) {
-            Window window = activity.getWindow();
-            WindowManager.LayoutParams layoutParams = window.getAttributes();
-
-            float screenBrightness = layoutParams.screenBrightness;
-            if (screenBrightness > 1) {
-                screenBrightness = 1;
-            } else if (screenBrightness < 0.1f) {
-                //解决三星某些手机亮度值等于0自动锁屏的bug
-                screenBrightness = 0.1f;
+            int systemBrightness = 0;
+            try {
+                systemBrightness = Settings.System.getInt(activity.getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
             }
-
-            return (int) (screenBrightness * 100);
+            return (int) (ComputeUtils.div(systemBrightness, 255, 2) * 100);
         }
         return 0;
     }
 
     /**
      * 计算最终的亮度百分比
+     *
      * @param changePercent 变化的百分比
      * @return 最终的亮度百分比
      */
     public int getTargetBrightnessPercent(int changePercent) {
 
-            int newBrightness = mCurrentBrightness - changePercent;
+        int newBrightness = mCurrentBrightness - changePercent;
         if (newBrightness > 100) {
             newBrightness = 100;
         } else if (newBrightness < 0) {
