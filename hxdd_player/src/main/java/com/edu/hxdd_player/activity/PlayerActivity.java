@@ -216,7 +216,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     //    boolean isfirst = true;
     private void setMedia(Catalog catalog) {
         Media media = catalog.media;
-        if ("aliyunCode".equals(media.serverType)) {
+        if (media.serverType != null && media.serverType.toLowerCase().contains("aliyuncode")) {
             if (TextUtils.isEmpty(catalog.savePath)) { //是否本地缓存
                 VidAuth vidAuth = new VidAuth();
                 vidAuth.setVid(media.mediaSource);
@@ -234,7 +234,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 LiveDataBus.get().with("localVideo").setValue(null);
             }
         } else {
-            String url = media.serverCluster + "/" + media.mediaSource + "_sd.mp4";
+            String url = media.mediaSource;
             UrlSource urlSource = new UrlSource();
             urlSource.setUri(url);
             mAliyunVodPlayerView.setLocalSource(urlSource);
