@@ -1,6 +1,8 @@
 package com.edu.hxdd_player.activity;
 
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -147,6 +149,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         mAliyunVodPlayerView.setOnScreenBrightness(new MyOnScreenBrightnessListener(this));
         PlayerConfig playerConfig = mAliyunVodPlayerView.getPlayerConfig();
         playerConfig.mNetworkRetryCount = 5;
+        PackageManager manager = this.getPackageManager();
+        try {
+            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            if (info != null)//设置Referrer
+                playerConfig.mReferrer = "https://" + info.packageName + ".android";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         mAliyunVodPlayerView.setPlayerConfig(playerConfig);
     }
 
