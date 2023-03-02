@@ -8,7 +8,6 @@ import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.api.net.OkUtils;
 import com.edu.hxdd_player.api.net.RetrofitFactory;
 import com.edu.hxdd_player.bean.BaseBean;
-import com.edu.hxdd_player.bean.LearnRecordBean;
 import com.edu.hxdd_player.bean.parameters.BaseParameters;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
@@ -72,7 +71,7 @@ public class ApiUtils {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ToastUtils.showLong("回传出错:" + e.getMessage());
+                ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
             }
 
             @Override
@@ -90,20 +89,29 @@ public class ApiUtils {
                                 String message = "返回数据无法处理";
                                 if (baseBean != null)
                                     message = baseBean.message;
-                                ToastUtils.showLong("回传出错:" + message);
-                                DialogUtils.showDialog(context,"回传出错:" + message);
+                                ToastUtils.showLong("回传学习记录失败:" + message);
+                                DialogUtils.showDialog(context,"回传学习记录失败:" + message);
                             }
                         } catch (Exception e) {
-                            ToastUtils.showLong("回传出错:" + e.getMessage());
-                            DialogUtils.showDialog(context,"回传出错:" + e.getMessage());
+                            ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
+                            DialogUtils.showDialog(context,"回传学习记录失败:" + showErrorMessage(e.getMessage()));
                         }
                     }
                 } else {
-                    ToastUtils.showLong("回传出错:" + response.message());
-                    DialogUtils.showDialog(context,"回传出错:" + response.message());
+                    ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(response.message()));
+                    DialogUtils.showDialog(context,"回传学习记录失败:" + showErrorMessage(response.message()));
                 }
             }
         });
     }
-
+    private String showErrorMessage(String error) {
+        String s = "未知错误";
+        if (error != null) {
+            s = error;
+            if (error.toLowerCase().equals("timeout")) {
+                s = "网络异常，请检查网络";
+            }
+        }
+        return s;
+    }
 }
