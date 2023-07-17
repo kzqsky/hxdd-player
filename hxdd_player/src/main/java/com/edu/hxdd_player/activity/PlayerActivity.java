@@ -81,6 +81,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     long questionTime;
     ImageView image_logo;
+    private String showErrorMessage = "";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -644,7 +645,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);
-                DialogUtils.showDialog(PlayerActivity.this, message);
+                if (!message.equals(showErrorMessage)) {
+                    showErrorMessage = message;
+                    DialogUtils.showDialog(PlayerActivity.this, message);
+                }
             }
         });
 

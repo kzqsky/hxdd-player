@@ -79,28 +79,28 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
             GetChapter getChapter = new GetChapter();
             //应为传递过来的数据bean
-            getChapter.publicKey = "c44dfd95c252473c95dc8a517ea8e4b7";
-            getChapter.timestamp = "1657163609570";
-            getChapter.businessLineCode = "ld_gk";
-            getChapter.coursewareCode = "2216_ept";
-            getChapter.courseCode = "04732";
-            getChapter.catalogId = "314972266083385344";
-            getChapter.clientCode = "123456";
-            getChapter.userId = "123456654";
-            getChapter.userName = "李亚飞测试";
-            getChapter.validTime = "0";
-            getChapter.lastTime = "10";
+            getChapter.publicKey = "aaa124defe0e571892196cde4da5dfcc";
+            getChapter.timestamp = "1665470377122";
+            getChapter.businessLineCode = "";
+            getChapter.coursewareCode = "bnu_00714";
+            getChapter.courseCode = null;
+            getChapter.catalogId = "680587579770286081";
+            getChapter.clientCode = "657657";
+            getChapter.userId = "522228199206151624_202210_gzmu";
+            getChapter.userName = "gzmu";
+            getChapter.validTime = null;
+            getChapter.lastTime = "536";
             getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
             getChapter.isQuestion = true;
             getChapter.hintPoint = 1;
-            getChapter.drag = 1;
+            getChapter.drag = 0;
             getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
             getChapter.logoPosition = 1;
             getChapter.logoAlpha = 0.6f;
             getChapter.logoWidth = 240;
             getChapter.logoHeight = 72;
             getChapter.defaultQuality = "LD";
-            getChapter.backUrl="https://restest.edu-cj.com/LearnReturnUrl/LearnReturnUrlIndex";
+            getChapter.backUrl=null;
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
