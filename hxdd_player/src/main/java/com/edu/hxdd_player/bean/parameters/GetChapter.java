@@ -43,4 +43,8 @@ public class GetChapter extends BaseParameters {
 
     public String backUrl; //回调业务系统
     public String defaultQuality = "LD";  //指定播放的清晰度  LD标清   FD流畅
+
+
+    public int maxTimePerDay = 0; //按照每天来限制学时时长，单位是秒
+    public int maxTimePerTime = 0; //按照单次打开窗口限制学时时长，单位是秒
 }
