@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.ChapterAdapter;
@@ -144,6 +145,7 @@ public class ChapterFragment extends Fragment {
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);
+                ToastUtils.showLong(message);
                 if (getActivity() != null)
                     getActivity().finish();
             }

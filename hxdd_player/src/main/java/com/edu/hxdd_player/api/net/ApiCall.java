@@ -35,7 +35,6 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
             if (baseBean.success == true) {
                 onResult((T) baseBean.data);
             } else {
-                ToastUtils.showLong(baseBean.message);
                 onApiFailure(baseBean.message);
             }
         } else {
