@@ -2,6 +2,7 @@ package com.edu.hxdd_player.utils;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.RestrictTo;
+
 import android.util.Log;
 
 import com.edu.hxdd_player.BuildConfig;
@@ -31,6 +32,7 @@ public class TimeUtil {
 
     private int[] timeIntervalArray = {1000, 750, 600, 500};//1000为默认1秒，800为1.5倍速，600为1.75倍速，500为2倍速
     private int timeInterval;
+
     public interface TimeUtilCallback {
         void time(long time);//单位秒
     }
@@ -51,6 +53,10 @@ public class TimeUtil {
         return accumulativeTime;
     }
 
+    public boolean isStart() {
+        return start;
+    }
+
     public void start() {
         try {
             stop();
@@ -62,12 +68,12 @@ public class TimeUtil {
                     while (start || thread.interrupted()) {
                         Thread.sleep(timeInterval);
                         if (!isPause) {
-                            accumulativeTime ++;
+                            accumulativeTime++;
                             if (mCallback != null) {
                                 mCallback.time(accumulativeTime);
                             }
                             if (BuildConfig.DEBUG) {
-                                Log.i(tag, Thread.currentThread().getName() + "----" + accumulativeTime +"---当前时间间隔" + timeInterval);
+                                Log.i(tag, Thread.currentThread().getName() + "----" + accumulativeTime + "---当前时间间隔" + timeInterval);
                             }
                         }
                     }
@@ -123,6 +129,7 @@ public class TimeUtil {
      * public static final int ONE_SEVEN_FIVE = 2;
      * public static final int TWO = 3;
      * 只能传这4个值
+     *
      * @param type
      */
     public void setTimeInterval(@TimeType int type) {
@@ -133,6 +140,7 @@ public class TimeUtil {
     @RestrictTo(LIBRARY)
     @Target(ElementType.PARAMETER)
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef(value = {DEFAULT, ONE_HALF, ONE_SEVEN_FIVE,TWO})
-    public @interface TimeType {}
+    @IntDef(value = {DEFAULT, ONE_HALF, ONE_SEVEN_FIVE, TWO})
+    public @interface TimeType {
+    }
 }

@@ -536,7 +536,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Log.i("test", "开始播放:");
             timeUtil_record.start();
             timeUtil_question.start();
-            if (timeUtil_face != null)
+            if (timeUtil_face != null && !timeUtil_face.isStart())
                 timeUtil_face.start();
             if (mCatalog != null && mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
                 mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
