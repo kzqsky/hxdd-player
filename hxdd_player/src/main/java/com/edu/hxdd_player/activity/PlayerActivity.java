@@ -71,7 +71,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private List<Fragment> fragments = new ArrayList<>();
     BaseFragmentPagerAdapter fragmentAdapter;
 
-    TimeUtil timeUtil_record, timeUtil_question;
+    TimeUtil timeUtil_record, timeUtil_question, timeUtil_face;
     Catalog mCatalog;
     Map<Long, Question> questionMap;
     String learnRecordId = null;
@@ -264,6 +264,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             timeUtil_question.resume();
             timeUtil_record.resume();
+            if (timeUtil_face != null)
+                timeUtil_face.resume();
         }
         if (tabLayout != null) {
             //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
@@ -305,9 +307,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (timeUtil_question != null) {
             timeUtil_question.stop();
         }
-
         if (timeUtil_record != null) {
             timeUtil_record.stop();
+        }
+        if (timeUtil_face != null) {
+            timeUtil_face.stop();
         }
         mCatalog = null;
         getChapter = null;
@@ -492,16 +496,20 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         timeUtil_record.setCallback(time -> {
             recordTime = time;
 //            Log.e("test", "timeUtil_record: " + time);
-            if (StartPlayerUtils.getCallBackTime() != 0 && time % StartPlayerUtils.getCallBackTime() == 0) {
-//                Log.e("test", "StartPlayerUtils.getCallBackTime() == 0");
-                if (StartPlayerUtils.timeCallBack != null)
-                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
-            }
-
             if (time % 60 == 0) {
                 videoRecord(time);
             }
         });
+
+        if (StartPlayerUtils.getCallBackTime() > 0) {
+            timeUtil_face = new TimeUtil();
+            timeUtil_face.setCallback(time -> {
+                if (time % StartPlayerUtils.getCallBackTime() == 0) {
+                    if (StartPlayerUtils.timeCallBack != null)
+                        runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
+                }
+            });
+        }
 
     }
 
@@ -528,6 +536,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             Log.i("test", "开始播放:");
             timeUtil_record.start();
             timeUtil_question.start();
+            if (timeUtil_face != null)
+                timeUtil_face.start();
             if (mCatalog != null && mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
                 mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
             }
@@ -535,6 +545,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         mAliyunVodPlayerView.setOnSeekCompleteListener(() -> {
             timeUtil_record.resume();
             timeUtil_question.resume();
+            if (timeUtil_face != null)
+                timeUtil_face.resume();
         });
         //播放状态
         mAliyunVodPlayerView.setOnPlayStateBtnClickListener(playerState -> {
@@ -542,10 +554,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 Log.i("test", "暂停:");
                 timeUtil_record.pause();
                 timeUtil_question.pause();
+                if (timeUtil_face != null)
+                    timeUtil_face.pause();
             } else if (playerState == IPlayer.paused) {
                 Log.i("test", "播放:");
                 timeUtil_record.resume();
                 timeUtil_question.resume();
+                if (timeUtil_face != null)
+                    timeUtil_face.resume();
             }
         });
     }
@@ -553,12 +569,16 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void videoPause() {
         timeUtil_question.pause();
         timeUtil_record.pause();
+        if (timeUtil_face != null)
+            timeUtil_face.pause();
         runOnUiThread(() -> mAliyunVodPlayerView.pause());
     }
 
     private void videoStart() {
         timeUtil_question.resume();
         timeUtil_record.resume();
+        if (timeUtil_face != null)
+            timeUtil_face.resume();
         mAliyunVodPlayerView.start();
     }
 
