@@ -171,12 +171,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             fragments.add(DownLoadFragment.newInstance(getChapter));
         } else {
             tabTitles.add(getString(R.string.tab_1));
-            tabTitles.add(getString(R.string.tab_2));
+            if (StartPlayerUtils.getHandOut())
+                tabTitles.add(getString(R.string.tab_2));
             if (StartPlayerUtils.getHasDownload())
                 tabTitles.add(getString(R.string.tab_3));
 
             fragments.add(ChapterFragment.newInstance(getChapter));
-            fragments.add(JiangyiFragment.newInstance());
+            if (StartPlayerUtils.getHandOut())
+                fragments.add(JiangyiFragment.newInstance());
             if (StartPlayerUtils.getHasDownload())
                 fragments.add(DownLoadFragment.newInstance(getChapter));
         }

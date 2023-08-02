@@ -46,6 +46,12 @@ public class StartPlayerUtils {
      * 回调时间，目前用于隔多少秒进行人脸识别
      */
     private static int CALL_BACK_TIME = 0;
+
+    /**
+     * 是否有讲义页面
+     */
+    private static boolean HAS_HANDOUT = true;
+
     public static TimeCallBack timeCallBack;
     Context context;
     static GetChapter getChapter;
@@ -65,6 +71,7 @@ public class StartPlayerUtils {
         COLOR_PRIMARY = colorPrimary;
         return this;
     }
+
     /**
      * 已学习的颜色
      *
@@ -113,6 +120,7 @@ public class StartPlayerUtils {
         HAS_DOWNLOAD = downLoad;
         return this;
     }
+
     /**
      * 是否是缓存模式（默认否）
      *
@@ -123,6 +131,7 @@ public class StartPlayerUtils {
         CACHE_MODE = cacheMode;
         return this;
     }
+
     /**
      * 定时回调任务
      *
@@ -134,6 +143,18 @@ public class StartPlayerUtils {
         timeCallBack = callBack;
         return this;
     }
+
+    /**
+     * 是否显示讲义页面（默认是）
+     *
+     * @param handout
+     * @return
+     */
+    public StartPlayerUtils handout(boolean handout) {
+        HAS_HANDOUT = handout;
+        return this;
+    }
+
 
     /**
      * 播放
@@ -148,9 +169,11 @@ public class StartPlayerUtils {
     public static int getColorPrimary() {
         return COLOR_PRIMARY;
     }
-    public static int getColorLearned(){
+
+    public static int getColorLearned() {
         return COLOR_LEARNED;
     }
+
     public static int getColorPrimaryDark() {
         return COLOR_PRIMARY_DARK;
     }
@@ -181,5 +204,9 @@ public class StartPlayerUtils {
 
     public static int getCallBackTime() {
         return CALL_BACK_TIME;
+    }
+
+    public static boolean getHandOut() {
+        return HAS_HANDOUT;
     }
 }
