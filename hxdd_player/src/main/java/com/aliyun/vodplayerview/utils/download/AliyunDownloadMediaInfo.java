@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.aliyun.player.bean.ErrorCode;
 import com.aliyun.player.nativeclass.TrackInfo;
 import com.aliyun.player.source.VidAuth;
-import com.aliyun.utils.JsonUtil;
+
 
 
 import org.json.JSONArray;
@@ -303,20 +303,20 @@ public class AliyunDownloadMediaInfo {
         }
     }
 
-    private static AliyunDownloadMediaInfo getInfoFromJson(JSONObject jsonObject) {
+    private static AliyunDownloadMediaInfo getInfoFromJson(JSONObject jsonObject) throws JSONException {
         AliyunDownloadMediaInfo info = new AliyunDownloadMediaInfo();
-        info.setVid(JsonUtil.getString(jsonObject, new String[]{"vid"}));
-        info.setTitle(JsonUtil.getString(jsonObject, new String[]{"title"}));
-        info.setQuality(JsonUtil.getString(jsonObject, new String[]{"quality"}));
-        info.setFormat(JsonUtil.getString(jsonObject, new String[]{"format"}));
-        info.setCoverUrl(JsonUtil.getString(jsonObject, new String[]{"coverUrl"}));
-        info.setDuration((long) JsonUtil.getInt(jsonObject, new String[]{"duration"}));
-        info.setSavePath(JsonUtil.getString(jsonObject, new String[]{"savePath"}));
-        info.setStatus(AliyunDownloadMediaInfo.Status.valueOf(JsonUtil.getString(jsonObject, new String[]{"status"})));
-        info.setSize((long) JsonUtil.getInt(jsonObject, new String[]{"size"}));
-        info.setProgress(JsonUtil.getInt(jsonObject, new String[]{"progress"}));
-        info.setDownloadIndex(JsonUtil.getInt(jsonObject, new String[]{"dIndex"}));
-        info.setEncripted(JsonUtil.getInt(jsonObject, new String[]{"encript"}));
+        info.setVid(jsonObject.getString("vid"));
+        info.setTitle(jsonObject.getString("title"));
+        info.setQuality(jsonObject.getString("quality"));
+        info.setFormat(jsonObject.getString("format"));
+        info.setCoverUrl(jsonObject.getString("coverUrl"));
+        info.setDuration(jsonObject.getInt("duration"));
+        info.setSavePath(jsonObject.getString("savePath"));
+        info.setStatus(AliyunDownloadMediaInfo.Status.valueOf(jsonObject.getString("status")));
+        info.setSize(jsonObject.getInt("size"));
+        info.setProgress(jsonObject.getInt("progress"));
+        info.setDownloadIndex(jsonObject.getInt("dIndex"));
+        info.setEncripted(jsonObject.getInt("encript"));
         return info;
     }
 

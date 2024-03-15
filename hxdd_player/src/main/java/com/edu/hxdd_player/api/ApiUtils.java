@@ -56,6 +56,16 @@ public class ApiUtils {
         api.catalogInfo(getRequestBody(parameters), catalogId).enqueue(apiCall);
     }
 
+    /**
+     * 获取评课纠错配置
+     *
+     * @param clientCode
+     * @param apiCall
+     */
+    public void getClientConfig(String clientCode, ApiCall apiCall) {
+        api.getClientConfig(clientCode).enqueue(apiCall);
+    }
+
     public void callBackUrl(String url, String json) {
         if (json == null || TextUtils.isEmpty(url))
             return;
@@ -90,20 +100,21 @@ public class ApiUtils {
                                 if (baseBean != null)
                                     message = baseBean.message;
                                 ToastUtils.showLong("回传学习记录失败:" + message);
-                                DialogUtils.showDialog(context,"回传学习记录失败:" + message);
+                                DialogUtils.showDialog(context, "回传学习记录失败:" + message);
                             }
                         } catch (Exception e) {
                             ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
-                            DialogUtils.showDialog(context,"回传学习记录失败:" + showErrorMessage(e.getMessage()));
+                            DialogUtils.showDialog(context, "回传学习记录失败:" + showErrorMessage(e.getMessage()));
                         }
                     }
                 } else {
                     ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(response.message()));
-                    DialogUtils.showDialog(context,"回传学习记录失败:" + showErrorMessage(response.message()));
+                    DialogUtils.showDialog(context, "回传学习记录失败:" + showErrorMessage(response.message()));
                 }
             }
         });
     }
+
     private String showErrorMessage(String error) {
         String s = "未知错误";
         if (error != null) {
@@ -113,5 +124,10 @@ public class ApiUtils {
             }
         }
         return s;
+    }
+
+    public void clear() {
+        RetrofitFactory.clear();
+        instance = null;
     }
 }

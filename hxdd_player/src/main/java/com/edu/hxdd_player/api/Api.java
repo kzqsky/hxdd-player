@@ -2,6 +2,7 @@ package com.edu.hxdd_player.api;
 
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ChapterBean;
+import com.edu.hxdd_player.bean.ClientConfigBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 
 import java.util.List;
@@ -9,9 +10,11 @@ import java.util.List;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface Api {
     @POST("/appApi/catalogs")
@@ -21,5 +24,8 @@ public interface Api {
     Call<BaseBean<Object>> learnRecords(@Body RequestBody body);
 
     @POST("/appApi/catalogInfo/{catalogId}")
-    Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body,  @Path("catalogId") String catalogId );
+    Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body, @Path("catalogId") String catalogId);
+
+    @GET("/appApi/client")
+    Call<BaseBean<ClientConfigBean>> getClientConfig(@Query("clientCode") String clientCode);
 }

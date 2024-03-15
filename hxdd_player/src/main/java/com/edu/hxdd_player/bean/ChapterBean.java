@@ -1,14 +1,17 @@
 package com.edu.hxdd_player.bean;
 
+import android.util.Log;
+
 import com.edu.hxdd_player.adapter.ChapterAdapter;
 import com.edu.hxdd_player.utils.TimeFormatUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
  * http://yapi.edu-edu.com/project/23/interface/api/676
  */
-public class ChapterBean  implements com.chad.library.adapter.base.entity.MultiItemEntity {
+public class ChapterBean implements com.chad.library.adapter.base.entity.MultiItemEntity {
     public String updatedBy;
     public long pId;
     public Object media;
@@ -28,9 +31,11 @@ public class ChapterBean  implements com.chad.library.adapter.base.entity.MultiI
     public long mediaId;
     public long mediaDuration;
     public long accumulativeTimeLast;
+    public long accumulativeTime;
     public String coursewareCode;
     public long isEnabled;
-
+    // 是否为上次最后播放章节：0（非），1（是）
+    public int isLastPlay;
 
     @Override
     public int getItemType() {
@@ -39,6 +44,28 @@ public class ChapterBean  implements com.chad.library.adapter.base.entity.MultiI
     }
 
     public String getMediaDuration() {
-       return TimeFormatUtils.format(mediaDuration);
+        return TimeFormatUtils.format(mediaDuration);
     }
+
+    public Integer getRatio() {
+        int ratio = 0;
+        if (mediaDuration > 0) {
+            if (accumulativeTime >= mediaDuration) {
+                return 100;
+            }
+            BigDecimal at = new BigDecimal(accumulativeTime);
+            BigDecimal md = new BigDecimal(mediaDuration);
+            double ra = at.divide(md, 3, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
+            Log.e("test", "ra:" + ra);
+            // 使用Math.round进行四舍五入
+            ratio = (int) Math.round(ra);
+        }
+
+        return ratio;
+    }
+
+    public String getRatioString() {
+        return "已学" + getRatio() + "%";
+    }
+
 }

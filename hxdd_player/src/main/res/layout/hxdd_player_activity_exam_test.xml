@@ -67,6 +67,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="停止" />
+
+    <Button
+        android:id="@+id/hxdd_player_button12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="获取播放参数" />
     <Button
         android:id="@+id/hxdd_player_button11"
         android:layout_width="match_parent"

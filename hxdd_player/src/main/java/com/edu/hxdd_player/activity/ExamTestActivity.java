@@ -3,6 +3,7 @@ package com.edu.hxdd_player.activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -11,7 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
+import com.blankj.utilcode.util.ToastUtils;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.api.net.OkUtils;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
@@ -19,8 +22,19 @@ import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TimeUtil;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ExamTestActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     private static String[] PERMISSIONS_STORAGE = {
@@ -29,6 +43,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
     };
     TextView textView;
     TimeUtil timeUtil;
+    GetChapter getChapter = new GetChapter();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,36 +92,17 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button10).setOnClickListener(v -> {
             timeUtil.setTimeInterval(TimeUtil.DEFAULT);
         });
+        //获取播放参数
+        findViewById(R.id.hxdd_player_button12).setOnClickListener(v -> {
+            getParameters();
+        });
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
-            GetChapter getChapter = new GetChapter();
-            //应为传递过来的数据bean
-            getChapter.publicKey = "98c3a5073c4f42a6ba1e8b0f66f50d38";
-            getChapter.timestamp = "1690962954791";
-            getChapter.businessLineCode = "ld_gk";
-            getChapter.coursewareCode = "2216_ept";
-            getChapter.courseCode = "04732";
-            getChapter.catalogId = "314972266083385344";
-            getChapter.clientCode = "123456";
-            getChapter.userId = "123456654";
-            getChapter.userName = "李亚飞测试";
-            getChapter.validTime = "0";
-            getChapter.lastTime = "10";
-            getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
-            getChapter.isQuestion = true;
-            getChapter.hintPoint = 1;
-            getChapter.drag = 1;
-            getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
-            getChapter.logoPosition = 1;
-            getChapter.logoAlpha = 0.6f;
-            getChapter.logoWidth = 240;
-            getChapter.logoHeight = 72;
-            getChapter.defaultQuality = "LD";
-            getChapter.backUrl="https://tra.hlw-study.com/ApiMinedu/LearnReturnUrl/LearnReturnUrlIndex";
+
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(Color.BLUE)
                     .colorLearned(Color.RED)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
-                    .downLoad(false)
+                    .downLoad(true)
                     .handout(false)
                     .cacheMode(false)
 //                    .callBackTime(10, new TimeCallBack() {
@@ -123,6 +119,92 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
         ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE,
                 1);
+    }
+
+    private void getParameters() {
+        getChapter = new GetChapter();
+        //应为传递过来的数据bean
+        getChapter.publicKey = "bea4fdfc732adbea8bbae096bbe3f492";
+        getChapter.timestamp = "1700012389974";
+        getChapter.businessLineCode = "ld_gk";
+        getChapter.coursewareCode = "2216_ept";
+        getChapter.courseCode = "04732";
+        getChapter.catalogId = "314972266083385344";
+        getChapter.clientCode = "123456";
+        getChapter.userId = "123456654";
+        getChapter.userName = "李亚飞测试";
+        getChapter.validTime = "0";
+        getChapter.lastTime = "10";
+        getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
+        getChapter.isQuestion = true;
+        getChapter.hintPoint = 1;
+        getChapter.drag = 1;
+        getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
+        getChapter.logoPosition = 1;
+        getChapter.logoAlpha = 0.6f;
+        getChapter.logoWidth = 240;
+        getChapter.logoHeight = 72;
+        getChapter.defaultQuality = "LD";
+        getChapter.backUrl = "https://tra.hlw-study.com/ApiMinedu/LearnReturnUrl/LearnReturnUrlIndex";
+
+        OkHttpClient okHttpClient = OkUtils.getOkhttpBuilder().build();
+        MediaType mediaType = MediaType.parse("application/json");
+//        Gson gson = new Gson();
+//        String requestBody = gson.toJson(data);
+        final Request request = new Request.Builder()
+                .url("https://cwstest.edu-edu.com:7443/client/clientKey")
+                .get()
+                .post(RequestBody.create(mediaType, "{\"businessLineCode\":\"ld_gk\",\n" +
+                        "\"coursewareCode\":\"2216_ept\",\n" +
+                        "\"courseCode\":\"04732\",\n" +
+                        "\"catalogId\":\"314972266083385344\",\n" +
+                        "\"clientCode\":\"123456\",\n" +
+                        "\"userId\":\"123456654\",\n" +
+                        "\"userName\":\"李亚飞测试\",\n" +
+                        "\"lastTime\":10,\n" +
+                        "\"validTime\":0}"))
+                .build();
+        Call call = okHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                ToastUtils.showLong("获取播放参数失败:" + showErrorMessage(e.getMessage()));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 200) {
+
+                    String data = response.body().string();
+                    if (!TextUtils.isEmpty(data)) {
+                        try {
+                            JsonObject jsonObject = new JsonParser().parse(data).getAsJsonObject();
+                            String j = jsonObject.getAsJsonPrimitive("data").getAsString();
+                            JsonObject json = new JsonParser().parse(j).getAsJsonObject();
+
+                            getChapter.publicKey = json.get("public").getAsString();
+                            getChapter.timestamp = json.get("timestamp").getAsString();
+                            ToastUtils.showLong("获取播放参数成功！");
+                        } catch (Exception e) {
+                            ToastUtils.showLong("获取播放参数失败！" + e.getMessage());
+                        }
+                    }
+                } else {
+                    ToastUtils.showLong("获取播放参数失败！返回空");
+                }
+            }
+        });
+    }
+
+    private String showErrorMessage(String error) {
+        String s = "未知错误";
+        if (error != null) {
+            s = error;
+            if (error.toLowerCase().equals("timeout")) {
+                s = "网络异常，请检查网络";
+            }
+        }
+        return s;
     }
 
 
@@ -192,4 +274,6 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
+
+
 }

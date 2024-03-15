@@ -3,54 +3,69 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_bg"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="50dp">
+    android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/hxdd_player_imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="15dp"
+        android:layout_width="15dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"
         android:src="@drawable/ic_play_n"
-        app:layout_constraintBottom_toTopOf="@+id/view_line"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/hxdd_player_txt_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:text="12312312"
+        android:textColor="@color/text"
+        android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/hxdd_player_imageView"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/hxdd_player_txt_time"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="25dp"
         android:gravity="center_vertical|right"
+        android:visibility="gone"
         android:text="333"
-        android:textColor="@color/black"
-        android:textSize="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/hxdd_player_imageView"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="@color/text_gary"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="@+id/hxdd_player_txt_title"
+        app:layout_constraintTop_toBottomOf="@+id/hxdd_player_txt_title" />
 
     <TextView
-        android:id="@+id/hxdd_player_txt_title"
-        android:layout_width="0dp"
+        android:id="@+id/hxdd_player_txt_ratio"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginStart="15dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:text="12312312"
-        android:textColor="@color/text"
-        android:textSize="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/hxdd_player_txt_time"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:gravity="center_vertical|right"
+        android:text="333"
+        android:visibility="gone"
+        android:textColor="@color/text_gary"
+        android:textSize="14dp"
+        app:layout_constraintEnd_toEndOf="@+id/hxdd_player_txt_title"
+        app:layout_constraintTop_toTopOf="@+id/hxdd_player_txt_time" />
 
     <View
         android:id="@+id/view_line"
         style="@style/line_horizontal"
         android:layout_width="0dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="10dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="@+id/hxdd_player_txt_title"
+        app:layout_constraintStart_toStartOf="@+id/hxdd_player_imageView"
+        app:layout_constraintTop_toBottomOf="@+id/hxdd_player_txt_time" />
 </androidx.constraintlayout.widget.ConstraintLayout>

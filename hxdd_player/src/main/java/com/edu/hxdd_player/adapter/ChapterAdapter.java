@@ -1,14 +1,14 @@
 package com.edu.hxdd_player.adapter;
 
 import android.widget.ImageView;
-
-import androidx.core.content.ContextCompat;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
+import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
-import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
+import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.util.List;
@@ -46,40 +46,48 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case TYPE_LEVEL_4:
             case 5:
             case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-                helper.setText(R.id.hxdd_player_txt_title, baseItem.title).setText(R.id.hxdd_player_txt_time, baseItem.getMediaDuration());
+
+                helper.setText(R.id.hxdd_player_txt_title, "  " + baseItem.title)
+                        .setText(R.id.hxdd_player_txt_time, "  " + baseItem.getMediaDuration())
+                        .setText(R.id.hxdd_player_txt_ratio, baseItem.getRatioString());
+
+                TextView textView = helper.getView(R.id.hxdd_player_txt_title);
                 if (baseItem.isMedia == 0) { //代表沒有媒体
-                    helper.setGone(R.id.hxdd_player_txt_time, true);
-                    helper.setGone(R.id.hxdd_player_imageView, true);
+                    helper.setGone(R.id.hxdd_player_txt_time, false);
+                    helper.setGone(R.id.hxdd_player_imageView, false);
+                    helper.setGone(R.id.hxdd_player_txt_ratio, false);
+                    helper.setGone(R.id.view_line, false);
+                    textView.setPadding(0, DensityUtils.dp2px(mContext, 5), 0, DensityUtils.dp2px(mContext, 5));
+                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.F4F6FA));
+
                 } else {
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
                     helper.setVisible(R.id.hxdd_player_imageView, true);
+                    helper.setVisible(R.id.hxdd_player_txt_ratio, true);
+                    helper.setVisible(R.id.view_line, true);
+                    textView.setPadding(0, 0, 0, 0);
+                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.white));
+
                     ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
-
-                    if (helper.getAdapterPosition() == selectIndex && !downloadMode) {
-                        helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
-                        helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorPrimary());
-                        imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
-                    } else {
-                        if (baseItem.accumulativeTimeLast >= baseItem.mediaDuration - 20) {
-                            helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorLearned());
-                            helper.setTextColor(R.id.hxdd_player_txt_time, StartPlayerUtils.getColorLearned());
-                            imageView.setColorFilter(StartPlayerUtils.getColorLearned());
-                        } else {
-                            helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                            helper.setTextColor(R.id.hxdd_player_txt_time, getContext().getResources().getColor(R.color.black));
-                            imageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.black));
-                        }
-                    }
-
                     if (downloadMode) {
                         imageView.setImageResource(R.drawable.icon_donwload);
                     } else {
-                        imageView.setImageResource(R.drawable.ic_play_n);
+                        if (helper.getAdapterPosition() == selectIndex) { //选中
+                            helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
+                            imageView.setImageResource(R.drawable.ic_play_p);
+                            imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
+                        } else { //没选中
+                            helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
+                            imageView.setImageResource(R.drawable.ic_play_n);
+                            imageView.setColorFilter(null);
+                        }
+                        if (baseItem.getRatio() >= 100) {
+                            helper.setTextColor(R.id.hxdd_player_txt_ratio, StartPlayerUtils.getColorLearned());
+                        } else {
+                            helper.setTextColor(R.id.hxdd_player_txt_ratio, mContext.getResources().getColor(R.color.text_gary));
+                        }
                     }
+
                 }
 
                 break;
@@ -92,11 +100,11 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         notifyDataSetChanged();
     }
 
-    public int getCheckedIndex(String id) {
+    public int getCheckedIndex() {
         int index = 0;
         for (MultiItemEntity itemEntity : getData()) {
             ChapterBean chapterBean = (ChapterBean) itemEntity;
-            if (chapterBean.id.equals(id)) {
+            if (chapterBean.isLastPlay == 1) {
                 return index;
             }
             index++;

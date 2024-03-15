@@ -16,9 +16,12 @@
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application tools:node="merge">
         <activity
@@ -33,21 +36,37 @@
             <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
+
         <activity
-            android:name=".activity.ExamTestActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:name="com.edu.hxdd_player.activity.WebViewActivity"
+            android:screenOrientation="portrait"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:networkSecurityConfig="@xml/network_security_config"
             android:theme="@style/NoActionTheme">
+        </activity>
+<!--        <activity-->
+<!--            android:name=".activity.ExamTestActivity"-->
+<!--            android:configChanges="orientation|keyboardHidden|screenSize"-->
+<!--            android:theme="@style/NoActionTheme">-->
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->
 <!--            </intent-filter>-->
-        </activity>
+<!--        </activity>-->
 
         <service
             android:name=".service.DownLoadService"
             android:enabled="true"
             android:exported="true" />
+
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensekey"
+            android:value="QoSwY4jodgVcRZHkSadbf47be1a18436ca6d7d59f0be2c6d2" />
+        <meta-data
+            android:name="com.aliyun.alivc_license.licensefile"
+            android:value="assets/license.crt" />
     </application>
 
 </manifest>

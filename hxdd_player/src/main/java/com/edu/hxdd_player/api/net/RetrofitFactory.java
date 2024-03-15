@@ -88,6 +88,9 @@ public class RetrofitFactory {
                 .build();
     }
 
-
+    public static void clear() {
+        client = null;
+        retrofit = null;
+    }
 
 }

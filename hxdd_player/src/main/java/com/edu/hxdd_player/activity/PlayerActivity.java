@@ -1,8 +1,10 @@
 package com.edu.hxdd_player.activity;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -36,6 +38,8 @@ import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
+import com.edu.hxdd_player.bean.BaseBean;
+import com.edu.hxdd_player.bean.ClientConfigBean;
 import com.edu.hxdd_player.bean.LearnRecordBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.media.Media;
@@ -50,6 +54,7 @@ import com.edu.hxdd_player.utils.ComputeUtils;
 import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
+import com.edu.hxdd_player.utils.PhoneInfo;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
@@ -61,6 +66,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import retrofit2.Call;
 
 public class PlayerActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     AliyunVodPlayerView mAliyunVodPlayerView;
@@ -84,6 +91,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     private String showErrorMessage = "";
 
+    ClientConfigBean clientConfigBean;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,8 +105,81 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         initLiveData();
         initVideoBack();
         initTimer();
+        getClientConfig();
     }
 
+
+    private void getClientConfig() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
+            @Override
+            protected void onResult(ClientConfigBean data) {
+                clientConfigBean = data;
+                initFloatingActionButton(data);
+            }
+
+            @Override
+            public void onFailure(Call<BaseBean<ClientConfigBean>> call, Throwable t) {
+                super.onFailure(call, t);
+            }
+        });
+    }
+
+    private void initFloatingActionButton(ClientConfigBean data) {
+        if (data == null)
+            return;
+        if (data.assessment == 1 || data.correction == 1) {
+            findViewById(R.id.multiple_actions).setVisibility(View.VISIBLE);
+            if (data.assessment == 1) {//评课
+                findViewById(R.id.action_pk).setVisibility(View.VISIBLE);
+                findViewById(R.id.action_pk).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(PlayerActivity.this, WebViewActivity.class);
+                        intent.putExtra("url", getChapter.serverUrl + "/page/client#/evaluate" + getUrlParamers());
+                        intent.putExtra("title", "评课");
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                findViewById(R.id.action_pk).setVisibility(View.GONE);
+            }
+            if (data.correction == 1) {//纠错
+                findViewById(R.id.action_jc).setVisibility(View.VISIBLE);
+                findViewById(R.id.action_jc).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(PlayerActivity.this, WebViewActivity.class);
+                        intent.putExtra("url", getChapter.serverUrl + "/page/client#/errorCorrection" + getUrlParamers());
+                        intent.putExtra("title", "纠错");
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                findViewById(R.id.action_jc).setVisibility(View.GONE);
+            }
+        } else {
+            findViewById(R.id.multiple_actions).setVisibility(View.GONE);
+        }
+    }
+
+    private String getUrlParamers() {
+        String appName = PhoneInfo.getAppName(this);
+        String appVersion = PhoneInfo.getVerCode(this);
+        String phoneModel = PhoneInfo.getDeviceInfo(this);
+        String paramers = "?uid=" + getChapter.businessLineCode
+                + "&userId=" + getChapter.userId + "&userName=" + getChapter.userName
+                + "&clientCode=" + getChapter.clientCode + "&coursewareCode=" + getChapter.coursewareCode
+                + "&catalogId=" + getChapter.catalogId +
+                "&appName=" + appName + "&appVersion=" + appVersion
+                + "&phoneModel=" + phoneModel;
+        try {
+            paramers = Uri.encode(paramers, "-![.:/,%?&=]");
+        } catch (Exception e) {
+
+        }
+        return paramers;
+//        return "";
+    }
 
     private void getIntentData() {
         getChapter = (GetChapter) getIntent().getSerializableExtra("data");
@@ -233,6 +315,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (media.serverType != null && media.serverType.toLowerCase().contains("aliyuncode")) {
             if (TextUtils.isEmpty(catalog.savePath)) { //是否本地缓存
                 VidAuth vidAuth = new VidAuth();
+//                vidAuth.setAuthTimeout(600);超时时间
                 vidAuth.setVid(media.mediaSource);
                 vidAuth.setPlayAuth(media.playAuth);
                 if (!TextUtils.isEmpty(getChapter.defaultQuality))
@@ -318,6 +401,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         mCatalog = null;
         getChapter = null;
         LiveDataBus.get().clear();
+        ApiUtils.getInstance(this, "").clear();
         super.onDestroy();
     }
 
@@ -342,7 +426,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 //                if (!isStrangePhone()) {
                 //                    aliVcVideoViewLayoutParams.topMargin = getSupportActionBar().getHeight();
                 //                }
-
+                initFloatingActionButton(clientConfigBean);
             } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 //转到横屏了。
                 //隐藏状态栏
@@ -365,6 +449,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 //                if (!isStrangePhone()) {
                 //                    aliVcVideoViewLayoutParams.topMargin = 0;
                 //                }
+                findViewById(R.id.multiple_actions).setVisibility(View.GONE);
+                findViewById(R.id.action_pk).setVisibility(View.GONE);
+                findViewById(R.id.action_jc).setVisibility(View.GONE);
             }
         }
     }

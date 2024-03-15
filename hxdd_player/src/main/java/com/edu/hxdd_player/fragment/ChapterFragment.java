@@ -1,7 +1,6 @@
 package com.edu.hxdd_player.fragment;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,11 +133,8 @@ public class ChapterFragment extends Fragment {
                 ArrayList<MultiItemEntity> res = new ArrayList<>();
                 res.addAll(data);
                 chapterAdapter.setNewData(res);
-                if (TextUtils.isEmpty(getChapter.catalogId))
-                    setLast(0);
-                else {
-                    setLast(chapterAdapter.getCheckedIndex(getChapter.catalogId));
-                }
+                //由从考试系统返回改为从课件系统返回
+                setLast(chapterAdapter.getCheckedIndex());
                 LiveDataBus.get().with("chatper").setValue(data);
             }
 

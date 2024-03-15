@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fab="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,8 +21,11 @@
             android:id="@+id/image_logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:layout_margin="10dp" />
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:scaleType="fitXY" />
     </RelativeLayout>
 
     <com.google.android.material.tabs.TabLayout
@@ -29,7 +33,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/layout_video"
-        android:background="@color/white"
         app:tabIndicatorHeight="3dp"
         app:tabTextAppearance="@style/TabLayoutTextStyle"
         app:tabTextColor="@color/text" />
@@ -39,7 +42,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/hxdd_player_tabs"
-        android:layout_alignParentBottom="true" />
+        android:layout_alignParentBottom="true"
+        android:background="@color/white" />
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/multiple_actions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="20dp"
+        android:visibility="gone"
+        android:layout_marginBottom="30dp"
+        app:menu_fab_size="mini">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/action_pk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_pk"
+            app:fab_colorNormal="@color/alivc_green"
+            app:fab_label="评课"
+            app:fab_size="mini" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/action_jc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_jc"
+            app:fab_colorNormal="@color/alivc_orange"
+            app:fab_label="纠错"
+            app:fab_size="mini" />
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 
 </RelativeLayout>
