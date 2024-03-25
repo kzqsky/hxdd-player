@@ -1,7 +1,5 @@
 package com.edu.hxdd_player.bean;
 
-import android.util.Log;
-
 import com.edu.hxdd_player.adapter.ChapterAdapter;
 import com.edu.hxdd_player.utils.TimeFormatUtils;
 
@@ -56,7 +54,6 @@ public class ChapterBean implements com.chad.library.adapter.base.entity.MultiIt
             BigDecimal at = new BigDecimal(accumulativeTime);
             BigDecimal md = new BigDecimal(mediaDuration);
             double ra = at.divide(md, 3, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
-            Log.e("test", "ra:" + ra);
             // 使用Math.round进行四舍五入
             ratio = (int) Math.round(ra);
         }

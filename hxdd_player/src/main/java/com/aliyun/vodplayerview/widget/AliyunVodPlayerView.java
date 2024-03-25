@@ -190,6 +190,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     private int currentScreenBrigtness;
 
     private AudioManager mAudioManager;
+    /**
+     * 播放状态回调
+     */
+    OnStateChangedListener onStateChangedListener;
 
     public AliyunVodPlayerView(Context context) {
         super(context);
@@ -244,7 +248,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         //初始化手势对话框控制
         initGestureDialogManager();
         //默认为蓝色主题
-        setTheme(Theme.Blue);
+        setTheme(Theme.Green);
         //先隐藏手势和控制栏，防止在没有prepare的时候做操作。
         hideGestureAndControlViews();
     }
@@ -2683,10 +2687,20 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
             AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
             if (aliyunVodPlayerView != null) {
                 aliyunVodPlayerView.sourceVideoPlayerStateChanged(newState);
+                if (aliyunVodPlayerView.onStateChangedListener != null)
+                    aliyunVodPlayerView.onStateChangedListener.onStateChanged(newState);
             }
         }
     }
 
+    public void setOnStateChangedListener(
+            OnStateChangedListener onStateChangedListener) {
+        this.onStateChangedListener = onStateChangedListener;
+    }
+
+    public interface OnStateChangedListener {
+        void onStateChanged(int newState);
+    }
 
     /**
      * 原视频状态改变监听

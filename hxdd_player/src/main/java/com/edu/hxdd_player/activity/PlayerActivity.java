@@ -40,6 +40,7 @@ import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ClientConfigBean;
+import com.edu.hxdd_player.bean.CourseInfoBean;
 import com.edu.hxdd_player.bean.LearnRecordBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.media.Media;
@@ -47,9 +48,10 @@ import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
 import com.edu.hxdd_player.fragment.ChapterFragment;
+import com.edu.hxdd_player.fragment.CourseInfoFragment;
 import com.edu.hxdd_player.fragment.DownLoadFragment;
 import com.edu.hxdd_player.fragment.ExamFragment;
-import com.edu.hxdd_player.fragment.JiangyiFragment;
+import com.edu.hxdd_player.fragment.FileListFragment;
 import com.edu.hxdd_player.utils.ComputeUtils;
 import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.DialogUtils;
@@ -60,8 +62,14 @@ import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,8 +98,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     ImageView image_logo;
 
     private String showErrorMessage = "";
-
+    /**
+     * 课件配置
+     */
     ClientConfigBean clientConfigBean;
+    /**
+     * 课件信息
+     */
+    CourseInfoBean courseInfoBean;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,20 +115,37 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         image_logo = findViewById(R.id.image_logo);
         initPlayer();
         getIntentData();
-        initTab();
         initLiveData();
         initVideoBack();
         initTimer();
-        getClientConfig();
+        getCourseInfo();
+
     }
 
+    /**
+     * 获取课件信息
+     */
+    private void getCourseInfo() {
+        ApiUtils.getInstance(this, getChapter.serverUrl).getCourseInfo(getChapter.coursewareCode, new ApiCall<CourseInfoBean>() {
+            @Override
+            protected void onResult(CourseInfoBean data) {
+                courseInfoBean = data;
+                getClientConfig();
+            }
 
+        });
+    }
+
+    /**
+     * 获取课件配置
+     */
     private void getClientConfig() {
         ApiUtils.getInstance(this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
             @Override
             protected void onResult(ClientConfigBean data) {
                 clientConfigBean = data;
                 initFloatingActionButton(data);
+                initTab();
             }
 
             @Override
@@ -253,14 +284,28 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             fragments.add(DownLoadFragment.newInstance(getChapter));
         } else {
             tabTitles.add(getString(R.string.tab_1));
-            if (StartPlayerUtils.getHandOut())
+
+            if (courseInfoBean != null && (courseInfoBean.teacherList != null && courseInfoBean.teacherList.size() > 0 ||
+                    courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) //有教师或者教程 就显示介绍
+                tabTitles.add(getString(R.string.tab_4));
+
+            if (courseInfoBean != null && courseInfoBean.uploadedFiles != null && courseInfoBean.uploadedFiles.size() > 0) //有文件就显示讲义
                 tabTitles.add(getString(R.string.tab_2));
+
+
             if (StartPlayerUtils.getHasDownload())
                 tabTitles.add(getString(R.string.tab_3));
 
-            fragments.add(ChapterFragment.newInstance(getChapter));
-            if (StartPlayerUtils.getHandOut())
-                fragments.add(JiangyiFragment.newInstance());
+
+            fragments.add(ChapterFragment.newInstance(getChapter, clientConfigBean));
+
+            if (courseInfoBean != null && (courseInfoBean.teacherList != null && courseInfoBean.teacherList.size() > 0 ||
+                    courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) //有教师或者教程 就显示介绍
+                fragments.add(CourseInfoFragment.newInstance(courseInfoBean.teacherList, courseInfoBean.textbookList));
+
+            if (courseInfoBean != null && courseInfoBean.uploadedFiles != null && courseInfoBean.uploadedFiles.size() > 0)//有文件就显示讲义
+                fragments.add(FileListFragment.newInstance(courseInfoBean.uploadedFiles, clientConfigBean));
+
             if (StartPlayerUtils.getHasDownload())
                 fragments.add(DownLoadFragment.newInstance(getChapter));
         }
@@ -279,7 +324,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 .observe(this, catalog -> {
                     if (timeUtil_record != null)
                         timeUtil_record.stop();
-                    videoRecord(recordTime);
+                    Log.e("test", "LiveDataBus ");
+                    videoRecord(recordTime, "end");
                     recordTime = 0;
                     if (timeUtil_record != null)
                         timeUtil_record.start();
@@ -384,7 +430,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     @Override
     protected void onDestroy() {
-        videoRecord(recordTime);
+        Log.e("test", "onDestroy");
+        videoRecord(recordTime, "end");
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onDestroy();
             mAliyunVodPlayerView = null;
@@ -583,10 +630,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         timeUtil_record = new TimeUtil();
         timeUtil_record.setCallback(time -> {
-            recordTime = time;
-//            Log.e("test", "timeUtil_record: " + time);
+            recordTime = time % 60;
             if (time % 60 == 0) {
-                videoRecord(time);
+                videoRecord(60, "timing");
             }
         });
 
@@ -610,6 +656,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
             timeUtil_record.stop();
+//            Log.e("test","setOnCompletionListener");
+//            videoRecord(recordTime, "end");
             LiveDataBus.get().with("playNext").setValue(null);
         });
         //播放错误
@@ -618,15 +666,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         });
         //播放停止
         mAliyunVodPlayerView.setOnStoppedListener(() -> {
-            Log.i("test", "播放停止:");
         });
         //开始播放
         mAliyunVodPlayerView.setOnFirstFrameStartListener(() -> {
-            Log.i("test", "开始播放:");
-            timeUtil_record.start();
-            timeUtil_question.start();
-            if (timeUtil_face != null && !timeUtil_face.isStart())
-                timeUtil_face.start();
+//            timeUtil_record.start();
+//            videoRecord(0, "start");
+//            timeUtil_question.start();
+//            if (timeUtil_face != null && !timeUtil_face.isStart())
+//                timeUtil_face.start();
             if (mCatalog != null && mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
                 mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
             }
@@ -637,37 +684,54 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             if (timeUtil_face != null)
                 timeUtil_face.resume();
         });
-        //播放状态
-        mAliyunVodPlayerView.setOnPlayStateBtnClickListener(playerState -> {
-            if (playerState == IPlayer.started) {
-                Log.i("test", "暂停:");
-                timeUtil_record.pause();
+        //播放按钮事件
+//        mAliyunVodPlayerView.setOnPlayStateBtnClickListener(playerState -> {
+//            if (playerState == IPlayer.started) {
+//                Log.i("test", "暂停:");
+//                timeUtil_record.stop();
+//                timeUtil_question.pause();
+//                if (timeUtil_face != null)
+//                    timeUtil_face.pause();
+//            } else if (playerState == IPlayer.paused) {
+//                Log.i("test", "播放:");
+//                timeUtil_record.start();
+//                timeUtil_question.resume();
+//                if (timeUtil_face != null)
+//                    timeUtil_face.resume();
+//            }
+//        });
+        //播放状态回调
+        mAliyunVodPlayerView.setOnStateChangedListener(newState -> {
+            if (newState == IPlayer.paused) { //暂停
+                timeUtil_record.stop();
                 timeUtil_question.pause();
                 if (timeUtil_face != null)
                     timeUtil_face.pause();
-            } else if (playerState == IPlayer.paused) {
-                Log.i("test", "播放:");
-                timeUtil_record.resume();
+                Log.e("test", "setOnStateChangedListener  IPlayer.paused");
+                videoRecord(recordTime, "end");
+            } else if (newState == IPlayer.started) {//开始
+                timeUtil_record.start();
                 timeUtil_question.resume();
                 if (timeUtil_face != null)
                     timeUtil_face.resume();
+                videoRecord(0, "start");
             }
         });
     }
 
     private void videoPause() {
-        timeUtil_question.pause();
-        timeUtil_record.pause();
-        if (timeUtil_face != null)
-            timeUtil_face.pause();
+//        timeUtil_question.pause();
+//        timeUtil_record.stop();
+//        if (timeUtil_face != null)
+//            timeUtil_face.pause();
         runOnUiThread(() -> mAliyunVodPlayerView.pause());
     }
 
     private void videoStart() {
-        timeUtil_question.resume();
-        timeUtil_record.resume();
-        if (timeUtil_face != null)
-            timeUtil_face.resume();
+//        timeUtil_question.resume();
+//        timeUtil_record.start();
+//        if (timeUtil_face != null)
+//            timeUtil_face.resume();
         mAliyunVodPlayerView.start();
     }
 
@@ -701,34 +765,85 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
         PutLearnRecords putLearnRecords =
                 PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint, videoTime, lastTime, recordTime);
-        uploadRecord(putLearnRecords);
-//        PutLearnRecords putLearnRecords =
-//                PutLearnRecords.getQuestionRecord(learnRecordId, getChapter, mCatalog.id, question.isPass, question.questionId, question.examinePoint);
-//        uploadRecord(putLearnRecords);
-
-//        ToastUtils.showLong("开始发送弹题记录:"+putLearnRecords.toString());
+        uploadRecordQuestion(putLearnRecords);
     }
 
-    private void videoRecord(long accumulativeTime) {
+    private void videoRecord(long accumulativeTime, String action) {
         if (mCatalog == null) {
             return;
         }
+
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         PutLearnRecords putLearnRecords =
                 PutLearnRecords.getRecord(learnRecordId, getChapter, mCatalog.id, videoTime, lastTime, accumulativeTime);
-        uploadRecord(putLearnRecords);
+        uploadRecord(putLearnRecords, action);
+
+        if ("end".equals(action)) {
+            recordTime = 0;
+        }
     }
 
-    private void uploadRecord(PutLearnRecords putLearnRecords) {
-//        if (TextUtils.isEmpty(putLearnRecords.learnRecordId)) {
-//            if (timeUtil_record != null)
-//                timeUtil_record.stop();
-//            putLearnRecords.accumulativeTime = 60;
-//            recordTime = 60;
-//            if (timeUtil_record != null)
-//                timeUtil_record.start();
-//        }
+    /**
+     * 新上传学习记录
+     *
+     * @param putLearnRecords
+     * @param action          start（timing、end)
+     */
+    private void uploadRecord(PutLearnRecords putLearnRecords, String action) {
+        putLearnRecords.Md5();
+        ApiUtils.getInstance(this, getChapter.serverUrl).newLearnRecord(putLearnRecords, action, new ApiCall<Object>() {
+            @Override
+            protected void onResult(Object object) {
+                LearnRecordBean data;
+                String jsonString = "";
+                try {
+                    //防止int被转成double
+                    Gson gson = new GsonBuilder().registerTypeAdapter(Double.class, new JsonSerializer<Double>() {
+                        @Override
+                        public JsonElement serialize(Double src, Type typeOfSrc, JsonSerializationContext context) {
+                            if (src == src.longValue()) {
+                                return new JsonPrimitive(src.longValue());
+                            } else {
+                                return new JsonPrimitive(src);
+                            }
+                        }
+                    }).create();
+                    jsonString = gson.toJson(object);
+                    data = new Gson().fromJson(jsonString, LearnRecordBean.class);
+                } catch (Exception e) {
+                    return;
+                }
+                if (data != null && mCatalog != null && mCatalog.id !=
+                        null && data.catalogId.equals(mCatalog.id)) {
+                    learnRecordId = data.learnRecordId;
+                }
+                if (data != null) {
+                    if (!TextUtils.isEmpty(data.backUrl) && getChapter != null) {
+                        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).callBackUrl(data.backUrl, jsonString);
+                    }
+                }
+            }
+
+            @Override
+            public void onApiFailure(String message) {
+                super.onApiFailure(message);
+                if (!message.equals(showErrorMessage)) {//相同的错误信息只提示一次。
+                    showErrorMessage = message;
+                    DialogUtils.showDialog(PlayerActivity.this, message);
+                }
+            }
+        });
+
+    }
+
+    /**
+     * 上传答题记录
+     *
+     * @param putLearnRecords
+     */
+    private void uploadRecordQuestion(PutLearnRecords putLearnRecords) {
+
         ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<Object>() {
             @Override
             protected void onResult(Object object) {

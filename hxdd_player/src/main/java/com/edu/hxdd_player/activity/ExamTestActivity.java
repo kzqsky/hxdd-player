@@ -99,7 +99,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
 
             new StartPlayerUtils(this, getChapter)
-                    .colorPrimary(Color.BLUE)
+                    .colorPrimary(getResources().getColor(R.color.alivc_green))
                     .colorLearned(Color.RED)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
@@ -127,18 +127,18 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         getChapter.publicKey = "bea4fdfc732adbea8bbae096bbe3f492";
         getChapter.timestamp = "1700012389974";
         getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "2216_ept";
-        getChapter.courseCode = "04732";
-        getChapter.catalogId = "314972266083385344";
+        getChapter.coursewareCode = "sd00403_cj";
+        getChapter.courseCode = "sd00403";
+        getChapter.catalogId = "371929866104209408";
         getChapter.clientCode = "123456";
-        getChapter.userId = "123456654";
-        getChapter.userName = "李亚飞测试";
+        getChapter.userId = "123456654321";
+        getChapter.userName = "李亚飞测试2";
         getChapter.validTime = "0";
         getChapter.lastTime = "10";
         getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
         getChapter.isQuestion = true;
         getChapter.hintPoint = 1;
-        getChapter.drag = 1;
+        getChapter.drag = 0;
         getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
         getChapter.logoPosition = 1;
         getChapter.logoAlpha = 0.6f;
@@ -155,12 +155,12 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                 .url("https://cwstest.edu-edu.com:7443/client/clientKey")
                 .get()
                 .post(RequestBody.create(mediaType, "{\"businessLineCode\":\"ld_gk\",\n" +
-                        "\"coursewareCode\":\"2216_ept\",\n" +
-                        "\"courseCode\":\"04732\",\n" +
-                        "\"catalogId\":\"314972266083385344\",\n" +
+                        "\"coursewareCode\":\"sd00403_cj\",\n" +
+                        "\"courseCode\":\"sd00403\",\n" +
+                        "\"catalogId\":\"371929866104209408\",\n" +
                         "\"clientCode\":\"123456\",\n" +
-                        "\"userId\":\"123456654\",\n" +
-                        "\"userName\":\"李亚飞测试\",\n" +
+                        "\"userId\":\"123456654321\",\n" +
+                        "\"userName\":\"李亚飞测试2\",\n" +
                         "\"lastTime\":10,\n" +
                         "\"validTime\":0}"))
                 .build();

@@ -107,7 +107,7 @@
 
                 <com.aliyun.vodplayerview.view.TimePointSeekBar
                     android:id="@+id/alivc_info_large_seekbar"
-                    style="@style/alivc_info_seekbar"
+                    style="@style/alivc_info_seekbar_green"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1" />
@@ -144,7 +144,7 @@
 
                 <com.aliyun.vodplayerview.view.TimePointSeekBar
                     android:id="@+id/alivc_info_small_seekbar"
-                    style="@style/alivc_info_seekbar"
+                    style="@style/alivc_info_seekbar_green"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content" />

@@ -1,6 +1,8 @@
 package com.edu.hxdd_player.api;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.blankj.utilcode.util.ToastUtils;
@@ -28,10 +30,18 @@ public class ApiUtils {
     private static ApiUtils instance;
     private Api api;
     private static Context context;
+    public String serverUrl;
 
     private ApiUtils(Context context, String serverUrl) {
         api = RetrofitFactory.getInstance(context, serverUrl).create(Api.class);
         this.context = context;
+        this.serverUrl = serverUrl;
+    }
+
+    public static ApiUtils getInstance() {
+        if (instance == null)
+            return null;
+        return instance;
     }
 
     public static ApiUtils getInstance(Context context, String serverUrl) {
@@ -52,12 +62,17 @@ public class ApiUtils {
         api.learnRecords(getRequestBody(parameters)).enqueue(apiCall);
     }
 
+    public void newLearnRecord(PutLearnRecords parameters, String action, ApiCall apiCall) {
+        api.newLearnRecords(getRequestBody(parameters), action).enqueue(apiCall);
+    }
+
+
     public void getChapterDetail(GetChapter parameters, String catalogId, ApiCall apiCall) {
         api.catalogInfo(getRequestBody(parameters), catalogId).enqueue(apiCall);
     }
 
     /**
-     * 获取评课纠错配置
+     * 获取评课纠错等配置
      *
      * @param clientCode
      * @param apiCall
@@ -65,6 +80,17 @@ public class ApiUtils {
     public void getClientConfig(String clientCode, ApiCall apiCall) {
         api.getClientConfig(clientCode).enqueue(apiCall);
     }
+
+    /**
+     * 获取课件相关信息-如老师 教材 讲义等
+     *
+     * @param coursewarecode
+     * @param apiCall
+     */
+    public void getCourseInfo(String coursewarecode, ApiCall apiCall) {
+        api.getCourseInfo(coursewarecode).enqueue(apiCall);
+    }
+
 
     public void callBackUrl(String url, String json) {
         if (json == null || TextUtils.isEmpty(url))
@@ -100,17 +126,26 @@ public class ApiUtils {
                                 if (baseBean != null)
                                     message = baseBean.message;
                                 ToastUtils.showLong("回传学习记录失败:" + message);
-                                DialogUtils.showDialog(context, "回传学习记录失败:" + message);
+                                showErrorDialog("回传学习记录失败:" + message);
                             }
                         } catch (Exception e) {
                             ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
-                            DialogUtils.showDialog(context, "回传学习记录失败:" + showErrorMessage(e.getMessage()));
+                            showErrorDialog("回传学习记录失败:" + showErrorMessage(e.getMessage()));
                         }
                     }
                 } else {
                     ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(response.message()));
-                    DialogUtils.showDialog(context, "回传学习记录失败:" + showErrorMessage(response.message()));
+                    showErrorDialog("回传学习记录失败:" + showErrorMessage(response.message()));
                 }
+            }
+        });
+    }
+
+    private void showErrorDialog(String message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                DialogUtils.showDialog(context, message);
             }
         });
     }

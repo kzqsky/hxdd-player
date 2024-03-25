@@ -1,5 +1,7 @@
 package com.edu.hxdd_player.bean.parameters;
 
+import com.edu.hxdd_player.utils.MD5Utils;
+
 public class PutLearnRecords extends BaseParameters {
 
     public long videoTime;
@@ -19,6 +21,16 @@ public class PutLearnRecords extends BaseParameters {
     public String examinePoint;
 
     public String backUrl; //回调业务系统
+
+    public String deviceType = "TYPE_ANDROID";
+
+    public long md5Timestamp;
+    public String md5;
+
+    public void Md5() {
+        md5Timestamp = System.currentTimeMillis();
+        md5 = MD5Utils.encodeMD5String(clientCode + userId + coursewareCode + catalogId + accumulativeTime + "14daab0a-4aff-4f6e-b303-c85f09c39f42" + md5Timestamp);
+    }
 
     public static PutLearnRecords getRecord(String learnRecordId, GetChapter getChapter, String catalogId, long videoTime, long lastTime, long accumulativeTime) {
         PutLearnRecords records = getPublic(learnRecordId, getChapter, catalogId);

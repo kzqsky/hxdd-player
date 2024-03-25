@@ -19,6 +19,7 @@ import com.edu.hxdd_player.adapter.ChapterAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.bean.ChapterBean;
+import com.edu.hxdd_player.bean.ClientConfigBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.utils.DialogUtils;
@@ -34,11 +35,12 @@ public class ChapterFragment extends Fragment {
     private View viewLine;
     ChapterAdapter chapterAdapter;
     GetChapter getChapter;
-
-    public static ChapterFragment newInstance(GetChapter getChapter) {
+    ClientConfigBean clientConfigBean;
+    public static ChapterFragment newInstance(GetChapter getChapter, ClientConfigBean clientConfigBean) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle args = new Bundle();
         args.putSerializable("getChapter", getChapter);
+        args.putSerializable("clientConfigBean", clientConfigBean);
         fragment.setArguments(args);
         return fragment;
     }
@@ -49,6 +51,7 @@ public class ChapterFragment extends Fragment {
         Bundle args = getArguments();
         if (args != null) {
             getChapter = (GetChapter) args.getSerializable("getChapter");
+            clientConfigBean = (ClientConfigBean) args.getSerializable("clientConfigBean");
         }
     }
 
@@ -71,7 +74,7 @@ public class ChapterFragment extends Fragment {
         recyclerView = view.findViewById(R.id.hxdd_player_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        chapterAdapter = new ChapterAdapter(null);
+        chapterAdapter = new ChapterAdapter(null,clientConfigBean);
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(chapterAdapter);
         chapterAdapter.setOnItemClickListener((adapter, view1, position) -> {

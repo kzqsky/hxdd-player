@@ -1,9 +1,11 @@
 package com.edu.hxdd_player.utils;
 
-import androidx.annotation.IntDef;
-import androidx.annotation.RestrictTo;
+import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 import android.util.Log;
+
+import androidx.annotation.IntDef;
+import androidx.annotation.RestrictTo;
 
 import com.edu.hxdd_player.BuildConfig;
 
@@ -11,8 +13,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static androidx.annotation.RestrictTo.Scope.LIBRARY;
 
 /**
  * 计时工具类，时间单位为秒
@@ -111,6 +111,8 @@ public class TimeUtil {
                 Log.i(tag, e.getMessage());
                 stop();
             }
+        } else {
+            start();
         }
     }
 

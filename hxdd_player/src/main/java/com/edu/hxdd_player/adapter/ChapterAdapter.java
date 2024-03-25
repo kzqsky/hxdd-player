@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
+import com.edu.hxdd_player.bean.ClientConfigBean;
 import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 
@@ -22,6 +23,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     public int selectIndex = -1;
     //    public int lastSelect = 0;
     public boolean downloadMode = false;
+    ClientConfigBean clientConfigBean;
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
@@ -29,10 +31,11 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
      *
      * @param data A new list is created out of this one to avoid mutable list
      */
-    public ChapterAdapter(List<MultiItemEntity> data) {
+    public ChapterAdapter(List<MultiItemEntity> data, ClientConfigBean clientConfigBean) {
         super(data);
         addItemType(TYPE_LEVEL_1, R.layout.hxdd_player_item_expandable_lv1);
         addItemType(TYPE_LEVEL_2, R.layout.hxdd_player_item_expandable_lv2);
+        this.clientConfigBean = clientConfigBean;
     }
 
 
@@ -63,7 +66,11 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                 } else {
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
                     helper.setVisible(R.id.hxdd_player_imageView, true);
-                    helper.setVisible(R.id.hxdd_player_txt_ratio, true);
+                    if (clientConfigBean != null && clientConfigBean.learningProgress) {
+                        helper.setVisible(R.id.hxdd_player_txt_ratio, true);
+                    } else {
+                        helper.setGone(R.id.hxdd_player_txt_ratio, false);
+                    }
                     helper.setVisible(R.id.view_line, true);
                     textView.setPadding(0, 0, 0, 0);
                     helper.setBackgroundColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.white));

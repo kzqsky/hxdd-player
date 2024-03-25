@@ -1,7 +1,9 @@
 package com.edu.hxdd_player.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -39,7 +41,7 @@ public class WebViewActivity extends AppCompatActivity {
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
                 .createAgentWeb()
                 .ready().go( getIntent().getStringExtra("url"));
-
+        mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new  AndroidInterface(mAgentWeb, this));
     }
 
 
@@ -52,5 +54,14 @@ public class WebViewActivity extends AppCompatActivity {
         }
     }
 
+   public class AndroidInterface {
+       public AndroidInterface (AgentWeb agentWeb,  Context context){
 
+       }
+        @JavascriptInterface
+        public void closeWindow() {
+            setResult(RESULT_OK);
+            finish();
+        }
+    }
 }

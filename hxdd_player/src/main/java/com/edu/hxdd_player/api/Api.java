@@ -3,6 +3,7 @@ package com.edu.hxdd_player.api;
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.ClientConfigBean;
+import com.edu.hxdd_player.bean.CourseInfoBean;
 import com.edu.hxdd_player.bean.media.Catalog;
 
 import java.util.List;
@@ -28,4 +29,10 @@ public interface Api {
 
     @GET("/appApi/client")
     Call<BaseBean<ClientConfigBean>> getClientConfig(@Query("clientCode") String clientCode);
+
+    @PUT("/client/learnRecords/{action}")
+    Call<BaseBean<Object>> newLearnRecords(@Body RequestBody body, @Path("action") String action);
+
+    @GET("/client/coursewares/{coursewarecode}/findCwByCode")
+    Call<BaseBean<CourseInfoBean>> getCourseInfo(@Path("coursewarecode") String coursewarecode);
 }
