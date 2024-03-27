@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.bean.CourseInfoBean;
@@ -64,9 +64,9 @@ public class FileListAdapter extends BaseQuickAdapter<CourseInfoBean.UploadedFil
 
             button.setOnClickListener(v -> {
                 if (uploadedFile.progress <= 0) { //开启下载
-                    download(baseViewHolder.getAdapterPosition(), uploadedFile);
+                    download(getItemPosition(uploadedFile), uploadedFile);
                 } else if (uploadedFile.progress >= 100 || uploadedFile.progress == -1) { //下载完成 调用打开
-                    OpenFileUtils.openFile(mContext, new File(FileUtils.urlToFilePath(uploadedFile.url)));
+                    OpenFileUtils.openFile(getContext(), new File(FileUtils.urlToFilePath(uploadedFile.url)));
                 }
             });
         } else {
@@ -78,8 +78,8 @@ public class FileListAdapter extends BaseQuickAdapter<CourseInfoBean.UploadedFil
     private void setColor() {
         if (drawable == null) {
             drawable = new GradientDrawable();
-            drawable.setCornerRadius(DensityUtils.dp2px(mContext, 25));
-            drawable.setStroke(DensityUtils.dp2px(mContext, 1), StartPlayerUtils.getColorPrimary());
+            drawable.setCornerRadius(DensityUtils.dp2px(getContext(), 25));
+            drawable.setStroke(DensityUtils.dp2px(getContext(), 1), StartPlayerUtils.getColorPrimary());
             drawable.setColor(Color.parseColor("#ffffff"));
         }
     }

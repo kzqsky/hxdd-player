@@ -19,7 +19,7 @@ public class StartPlayerUtils {
     /**
      * 已学习的颜色
      */
-    private static int COLOR_LEARNED = Color.parseColor("#6DCA68");
+    private static int COLOR_LEARNED = Color.parseColor("#06c26c");
     /**
      * 预留色
      */

@@ -1,6 +1,5 @@
 package com.edu.hxdd_player.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -100,7 +99,6 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(getResources().getColor(R.color.alivc_green))
-                    .colorLearned(Color.RED)
                     .videoPath(Environment.getExternalStorageDirectory().getAbsolutePath() + "/edu_video2/")
                     .downLoad(true)
                     .handout(false)

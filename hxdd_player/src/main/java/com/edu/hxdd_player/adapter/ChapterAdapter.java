@@ -4,8 +4,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseMultiItemQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
+import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.ClientConfigBean;
@@ -42,7 +42,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     @Override
     protected void convert(BaseViewHolder helper, MultiItemEntity item) {
         final ChapterBean baseItem = (ChapterBean) item;
-        switch (helper.getItemViewType()) {
+        switch (item.getItemType()) {
             case TYPE_LEVEL_1:
             case TYPE_LEVEL_2:
             case TYPE_LEVEL_3:
@@ -60,8 +60,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setGone(R.id.hxdd_player_imageView, false);
                     helper.setGone(R.id.hxdd_player_txt_ratio, false);
                     helper.setGone(R.id.view_line, false);
-                    textView.setPadding(0, DensityUtils.dp2px(mContext, 5), 0, DensityUtils.dp2px(mContext, 5));
-                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.F4F6FA));
+                    textView.setPadding(0, DensityUtils.dp2px(getContext(), 5), 0, DensityUtils.dp2px(getContext(), 5));
+                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.F4F6FA));
 
                 } else {
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
@@ -73,25 +73,25 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     }
                     helper.setVisible(R.id.view_line, true);
                     textView.setPadding(0, 0, 0, 0);
-                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.white));
+                    helper.setBackgroundColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.white));
 
                     ImageView imageView = helper.getView(R.id.hxdd_player_imageView);
                     if (downloadMode) {
                         imageView.setImageResource(R.drawable.icon_donwload);
                     } else {
-                        if (helper.getAdapterPosition() == selectIndex) { //选中
+                        if (getItemPosition(item) == selectIndex) { //选中
                             helper.setTextColor(R.id.hxdd_player_txt_title, StartPlayerUtils.getColorPrimary());
                             imageView.setImageResource(R.drawable.ic_play_p);
                             imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                         } else { //没选中
-                            helper.setTextColor(R.id.hxdd_player_txt_title, mContext.getResources().getColor(R.color.black));
+                            helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
                             imageView.setImageResource(R.drawable.ic_play_n);
                             imageView.setColorFilter(null);
                         }
                         if (baseItem.getRatio() >= 100) {
                             helper.setTextColor(R.id.hxdd_player_txt_ratio, StartPlayerUtils.getColorLearned());
                         } else {
-                            helper.setTextColor(R.id.hxdd_player_txt_ratio, mContext.getResources().getColor(R.color.text_gary));
+                            helper.setTextColor(R.id.hxdd_player_txt_ratio, getContext().getResources().getColor(R.color.text_gary));
                         }
                     }
 
