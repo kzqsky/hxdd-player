@@ -301,7 +301,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             if (courseInfoBean != null && (courseInfoBean.teacherList != null && courseInfoBean.teacherList.size() > 0 ||
                     courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) //有教师或者教程 就显示介绍
-                fragments.add(CourseInfoFragment.newInstance(courseInfoBean.teacherList, courseInfoBean.textbookList));
+                fragments.add(CourseInfoFragment.newInstance(getChapter));
 
             if (courseInfoBean != null && courseInfoBean.uploadedFiles != null && courseInfoBean.uploadedFiles.size() > 0)//有文件就显示讲义
                 fragments.add(FileListFragment.newInstance(courseInfoBean.uploadedFiles, clientConfigBean));
