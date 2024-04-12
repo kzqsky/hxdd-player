@@ -29,7 +29,7 @@ import okhttp3.Response;
 public class ApiUtils {
     private static ApiUtils instance;
     private Api api;
-    private static Context context;
+    private Context context;
     public String serverUrl;
 
     private ApiUtils(Context context, String serverUrl) {
@@ -163,6 +163,7 @@ public class ApiUtils {
 
     public void clear() {
         RetrofitFactory.clear();
+        context = null;
         instance = null;
     }
 }
