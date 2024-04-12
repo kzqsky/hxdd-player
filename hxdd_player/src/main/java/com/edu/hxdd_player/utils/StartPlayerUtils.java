@@ -57,7 +57,7 @@ public class StartPlayerUtils {
     static GetChapter getChapter;
 
     public StartPlayerUtils(Context context, GetChapter getChapter) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.getChapter = getChapter;
     }
 
@@ -208,5 +208,9 @@ public class StartPlayerUtils {
 
     public static boolean getHandOut() {
         return HAS_HANDOUT;
+    }
+
+    public static void clear() {
+        timeCallBack = null;
     }
 }

@@ -449,6 +449,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         getChapter = null;
         LiveDataBus.get().clear();
         ApiUtils.getInstance(this, "").clear();
+        StartPlayerUtils.clear();
         super.onDestroy();
     }
 

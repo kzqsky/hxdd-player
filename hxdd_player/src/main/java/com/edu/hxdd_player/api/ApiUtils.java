@@ -33,8 +33,8 @@ public class ApiUtils {
     public String serverUrl;
 
     private ApiUtils(Context context, String serverUrl) {
-        api = RetrofitFactory.getInstance(context, serverUrl).create(Api.class);
-        this.context = context;
+        api = RetrofitFactory.getInstance(context.getApplicationContext(), serverUrl).create(Api.class);
+        this.context = context.getApplicationContext();
         this.serverUrl = serverUrl;
     }
 
