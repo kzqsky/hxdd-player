@@ -130,7 +130,7 @@ public class ChapterFragment extends Fragment {
     }
 
     private void getData() {
-        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapter(getChapter, new ApiCall<List<ChapterBean>>() {
+        ApiUtils.getInstance(getActivity(), getChapter.serverUrl).getChapter(getChapter, new ApiCall<List<ChapterBean>>() {
             @Override
             protected void onResult(List<ChapterBean> data) {
                 ArrayList<MultiItemEntity> res = new ArrayList<>();
@@ -152,7 +152,7 @@ public class ChapterFragment extends Fragment {
     }
 
     private void getMedia(String catalogId) {
-        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
+        ApiUtils.getInstance(getActivity(), getChapter.serverUrl).getChapterDetail(getChapter, catalogId, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
                 LiveDataBus.get().with("Catalog").setValue(data);

@@ -127,7 +127,7 @@ public class DownLoadFragment extends Fragment {
 
     private void getMedia(String vid, boolean newAdd) {
 //        getChapter.catalogId = vid;
-        ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, vid, new ApiCall<Catalog>() {
+        ApiUtils.getInstance(getActivity(), getChapter.serverUrl).getChapterDetail(getChapter, vid, new ApiCall<Catalog>() {
             @Override
             protected void onResult(Catalog data) {
                 toDownload(data, newAdd);
@@ -142,7 +142,7 @@ public class DownLoadFragment extends Fragment {
         if (StartPlayerUtils.getCacheMode()) {
             LiveDataBus.get().with("CacheMode").setValue(aliyunDownloadInfo.getSavePath());
         } else {
-            ApiUtils.getInstance(getContext(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
+            ApiUtils.getInstance(getActivity(), getChapter.serverUrl).getChapterDetail(getChapter, aliyunDownloadInfo.getNewPlayerId(), new ApiCall<Catalog>() {
                 @Override
                 protected void onResult(Catalog data) {
                     data.savePath = aliyunDownloadInfo.getSavePath();

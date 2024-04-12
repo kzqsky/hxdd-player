@@ -57,7 +57,7 @@ public class StartPlayerUtils {
     static GetChapter getChapter;
 
     public StartPlayerUtils(Context context, GetChapter getChapter) {
-        this.context = context.getApplicationContext();
+        this.context = context;
         this.getChapter = getChapter;
     }
 

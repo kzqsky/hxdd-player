@@ -330,7 +330,7 @@ public class AliyunDownloadManager {
     };
 
     private AliyunDownloadManager(Context context) {
-        this.mContext = context;
+        this.mContext = context.getApplicationContext();
         mDatabaseManager = DatabaseManager.getInstance();
         if (!TextUtils.isEmpty(downloadDir)) {
             File file = new File(downloadDir);

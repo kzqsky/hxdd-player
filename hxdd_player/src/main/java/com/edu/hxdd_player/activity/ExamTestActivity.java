@@ -143,7 +143,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         getChapter.logoWidth = 240;
         getChapter.logoHeight = 72;
         getChapter.defaultQuality = "LD";
-        getChapter.backUrl = "https://testmvc.edu-cj.com/CourseList/LearnReturnUrl/LearnReturnUrlIndex?ename=testmvc";
+        getChapter.backUrl = "";
 
         OkHttpClient okHttpClient = OkUtils.getOkhttpBuilder().build();
         MediaType mediaType = MediaType.parse("application/json");
