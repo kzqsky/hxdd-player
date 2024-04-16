@@ -126,7 +126,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 获取课件信息
      */
     private void getCourseInfo() {
-        ApiUtils.getInstance(this, getChapter.serverUrl).getCourseInfo(getChapter.coursewareCode, new ApiCall<CourseInfoBean>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getCourseInfo(getChapter.coursewareCode, new ApiCall<CourseInfoBean>() {
             @Override
             protected void onResult(CourseInfoBean data) {
                 courseInfoBean = data;
@@ -140,7 +140,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 获取课件配置
      */
     private void getClientConfig() {
-        ApiUtils.getInstance(this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
             @Override
             protected void onResult(ClientConfigBean data) {
                 clientConfigBean = data;
@@ -194,9 +194,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     private String getUrlParamers() {
-        String appName = PhoneInfo.getAppName(this);
-        String appVersion = PhoneInfo.getVerCode(this);
-        String phoneModel = PhoneInfo.getDeviceInfo(this);
+        String appName = PhoneInfo.getAppName(PlayerActivity.this);
+        String appVersion = PhoneInfo.getVerCode(PlayerActivity.this);
+        String phoneModel = PhoneInfo.getDeviceInfo(PlayerActivity.this);
         String paramers = "?uid=" + getChapter.businessLineCode
                 + "&userId=" + getChapter.userId + "&userName=" + getChapter.userName
                 + "&clientCode=" + getChapter.clientCode + "&coursewareCode=" + getChapter.coursewareCode
@@ -224,8 +224,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             image_logo.setAlpha(getChapter.logoAlpha);
             RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) image_logo.getLayoutParams();
-            layoutParams.width = DensityUtils.dp2px(this, getChapter.logoWidth);
-            layoutParams.height = DensityUtils.dp2px(this, getChapter.logoHeight);
+            layoutParams.width = DensityUtils.dp2px(PlayerActivity.this, getChapter.logoWidth);
+            layoutParams.height = DensityUtils.dp2px(PlayerActivity.this, getChapter.logoHeight);
 
             if (getChapter.logoPosition == 1) {
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -261,12 +261,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
     private void initPlayer() {
         mAliyunVodPlayerView.setAutoPlay(true);
-        mAliyunVodPlayerView.setOnScreenBrightness(new MyOnScreenBrightnessListener(this));
+        mAliyunVodPlayerView.setOnScreenBrightness(new MyOnScreenBrightnessListener(PlayerActivity.this));
         PlayerConfig playerConfig = mAliyunVodPlayerView.getPlayerConfig();
         playerConfig.mNetworkRetryCount = 5;
-        PackageManager manager = this.getPackageManager();
+        PackageManager manager = PlayerActivity.this.getPackageManager();
         try {
-            PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+            PackageInfo info = manager.getPackageInfo(PlayerActivity.this.getPackageName(), 0);
             if (info != null)//设置Referrer
                 playerConfig.mReferrer = "https://" + info.packageName + ".android";
         } catch (Exception e) {
@@ -321,7 +321,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void initLiveData() {
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
-                .observe(this, catalog -> {
+                .observe(PlayerActivity.this, catalog -> {
                     if (timeUtil_record != null)
                         timeUtil_record.stop();
                     Log.e("test", "LiveDataBus ");
@@ -334,13 +334,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     setMedia(catalog);
                     getQuestionMap();
                 });
-        LiveDataBus.get().with("CacheMode", String.class).observe(this, s -> {
+        LiveDataBus.get().with("CacheMode", String.class).observe(PlayerActivity.this, s -> {
             UrlSource urlSource = new UrlSource();
             urlSource.setUri(s);
             urlSource.setTitle("");
             mAliyunVodPlayerView.setLocalSource(urlSource);
         });
-        LiveDataBus.get().with("stop", String.class).observe(this, s -> {
+        LiveDataBus.get().with("stop", String.class).observe(PlayerActivity.this, s -> {
             videoPause();
         });
     }
@@ -404,7 +404,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
 
         if (mAliyunVodPlayerView != null) {
-            mAliyunVodPlayerView.setScreenBrightness(BrightnessDialog.getActivityBrightness(this));
+            mAliyunVodPlayerView.setScreenBrightness(BrightnessDialog.getActivityBrightness(PlayerActivity.this));
         }
     }
 
@@ -447,8 +447,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
         mCatalog = null;
         getChapter = null;
+        fragmentAdapter = null;
         LiveDataBus.get().clear();
-        ApiUtils.getInstance(this, "").clear();
+        ApiUtils.getInstance(PlayerActivity.this, "").clear();
         StartPlayerUtils.clear();
         super.onDestroy();
     }
@@ -463,13 +464,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 //                    getSupportActionBar().show();
                 //                }
 
-                this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 mAliyunVodPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 
                 //设置view的布局，宽高之类
                 RelativeLayout.LayoutParams aliVcVideoViewLayoutParams = (RelativeLayout.LayoutParams) mAliyunVodPlayerView
                         .getLayoutParams();
-                aliVcVideoViewLayoutParams.height = (int) (ScreenUtils.getWidth(this) * 9.0f / 16);
+                aliVcVideoViewLayoutParams.height = (int) (ScreenUtils.getWidth(PlayerActivity.this) * 9.0f / 16);
                 aliVcVideoViewLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 //                if (!isStrangePhone()) {
                 //                    aliVcVideoViewLayoutParams.topMargin = getSupportActionBar().getHeight();
@@ -479,7 +480,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 //转到横屏了。
                 //隐藏状态栏
                 if (!isStrangePhone()) {
-                    this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     mAliyunVodPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                             | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -526,7 +527,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         AliyunShowMoreValue moreValue = new AliyunShowMoreValue();
         moreValue.setSpeed(mAliyunVodPlayerView.getCurrentSpeed());
         moreValue.setVolume((int) mAliyunVodPlayerView.getCurrentVolume());
-        moreValue.setScreenBrightness(BrightnessDialog.getActivityBrightness(this));
+        moreValue.setScreenBrightness(BrightnessDialog.getActivityBrightness(PlayerActivity.this));
 
         ShowMoreView showMoreView = new ShowMoreView(activity, moreValue);
         showMoreDialog.setContentView(showMoreView);
@@ -793,7 +794,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     private void uploadRecord(PutLearnRecords putLearnRecords, String action) {
         putLearnRecords.Md5();
-        ApiUtils.getInstance(this, getChapter.serverUrl).newLearnRecord(putLearnRecords, action, new ApiCall<Object>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).newLearnRecord(putLearnRecords, action, new ApiCall<Object>() {
             @Override
             protected void onResult(Object object) {
                 LearnRecordBean data;
@@ -845,7 +846,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     private void uploadRecordQuestion(PutLearnRecords putLearnRecords) {
 
-        ApiUtils.getInstance(this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<Object>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).learnRecord(putLearnRecords, new ApiCall<Object>() {
             @Override
             protected void onResult(Object object) {
                 LearnRecordBean data;
@@ -891,7 +892,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         window.setAttributes(lp);
     }
 
-    private static class MyOnScreenBrightnessListener implements AliyunVodPlayerView.OnScreenBrightnessListener {
+    private class MyOnScreenBrightnessListener implements AliyunVodPlayerView.OnScreenBrightnessListener {
         private WeakReference<PlayerActivity> weakReference;
 
         public MyOnScreenBrightnessListener(PlayerActivity activity) {

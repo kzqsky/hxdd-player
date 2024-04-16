@@ -315,7 +315,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     /**
      * UI播放器支持的主题
      */
-    public static enum Theme {
+    public  enum Theme {
         /**
          * 蓝色主题
          */

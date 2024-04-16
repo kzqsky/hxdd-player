@@ -51,10 +51,9 @@ public class CourseInfoFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         String url = "https://www.edu-edu.com/b2c-static/APP/courseware/courseInfo.html?coursewareCode=" + getChapter.coursewareCode
-                +"&userId="+getChapter.userId
-                +"&clientCode="+getChapter.clientCode
-                +"&requestUrl="+getChapter.serverUrl
-                ;
+                + "&userId=" + getChapter.userId
+                + "&clientCode=" + getChapter.clientCode
+                + "&requestUrl=" + getChapter.serverUrl;
         //加载网页
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(layout, new LinearLayout.LayoutParams(-1, -1))
@@ -62,5 +61,26 @@ public class CourseInfoFragment extends Fragment {
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
                 .createAgentWeb()
                 .ready().go(url);
+    }
+
+    @Override
+    public void onPause() {
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onPause();
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onResume();
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onDestroy();
+        super.onDestroy();
     }
 }
