@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.api.net.OkUtils;
 import com.edu.hxdd_player.bean.media.Question;
@@ -20,6 +19,7 @@ import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TimeUtil;
+import com.edu.hxdd_player.utils.ToastUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -166,7 +166,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ToastUtils.showLong("获取播放参数失败:" + showErrorMessage(e.getMessage()));
+                ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败:" + showErrorMessage(e.getMessage()));
             }
 
             @Override
@@ -182,13 +182,13 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
                             getChapter.publicKey = json.get("public").getAsString();
                             getChapter.timestamp = json.get("timestamp").getAsString();
-                            ToastUtils.showLong("获取播放参数成功！");
+                            ToastUtils.showLong(ExamTestActivity.this,"获取播放参数成功！");
                         } catch (Exception e) {
-                            ToastUtils.showLong("获取播放参数失败！" + e.getMessage());
+                            ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败！" + e.getMessage());
                         }
                     }
                 } else {
-                    ToastUtils.showLong("获取播放参数失败！返回空");
+                    ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败！返回空");
                 }
             }
         });
@@ -273,5 +273,9 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-
+    @Override
+    protected void onDestroy() {
+        ToastUtils.clean();
+        super.onDestroy();
+    }
 }

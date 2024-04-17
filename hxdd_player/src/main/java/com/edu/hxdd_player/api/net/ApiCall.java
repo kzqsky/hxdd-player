@@ -1,6 +1,6 @@
 package com.edu.hxdd_player.api.net;
 
-import com.blankj.utilcode.util.ToastUtils;
+
 import com.edu.hxdd_player.bean.BaseBean;
 
 import retrofit2.Call;
@@ -28,7 +28,7 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
         try {
             baseBean = (BaseBean) response.body();
         } catch (Exception e) {
-            ToastUtils.showLong("数据解析失败");
+            onApiFailure("数据解析失败");
             return;
         }
         if (baseBean != null) {
@@ -38,7 +38,6 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
                 onApiFailure(baseBean.message);
             }
         } else {
-            ToastUtils.showLong("服务器错误");
             onApiFailure("服务器错误");
         }
     }
@@ -46,11 +45,11 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
     //    java.net.ConnectException: Failed to connect to /192.168.10.118:8888
     @Override
     public void onFailure(Call<BaseBean<T>> call, Throwable t) {
-        if (t instanceof java.net.ConnectException) {
-            ToastUtils.showLong("无法连接服务器");
-        } else {
-            ToastUtils.showLong("获取失败,请重试");
-        }
+//        if (t instanceof java.net.ConnectException) {
+//
+//        } else {
+//
+//        }
     }
 
     protected abstract void onResult(T data);

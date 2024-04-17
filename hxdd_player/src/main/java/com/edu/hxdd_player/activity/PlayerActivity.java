@@ -60,6 +60,7 @@ import com.edu.hxdd_player.utils.PhoneInfo;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TablayoutUtil;
 import com.edu.hxdd_player.utils.TimeUtil;
+import com.edu.hxdd_player.utils.ToastUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -126,6 +127,16 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 获取课件信息
      */
     private void getCourseInfo() {
+        if (TextUtils.isEmpty(getChapter.coursewareCode)) {
+            ToastUtils.showLong(this, "课件编码为空！！");
+            finish();
+            return;
+        }
+        if (TextUtils.isEmpty( getChapter.serverUrl)) {
+            ToastUtils.showLong(this, "服务器地址为空！！");
+            finish();
+            return;
+        }
         ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getCourseInfo(getChapter.coursewareCode, new ApiCall<CourseInfoBean>() {
             @Override
             protected void onResult(CourseInfoBean data) {
@@ -451,6 +462,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get().clear();
         ApiUtils.getInstance(PlayerActivity.this, "").clear();
         StartPlayerUtils.clear();
+        ToastUtils.clean();
         super.onDestroy();
     }
 

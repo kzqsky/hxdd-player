@@ -12,7 +12,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.entity.MultiItemEntity;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.ChapterAdapter;
@@ -25,6 +24,7 @@ import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.utils.DialogUtils;
 import com.edu.hxdd_player.utils.LiveDataBus;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
+import com.edu.hxdd_player.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -144,7 +144,7 @@ public class ChapterFragment extends Fragment {
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);
-                ToastUtils.showLong(message);
+                ToastUtils.showLong(getContext(),message);
                 if (getActivity() != null)
                     getActivity().finish();
             }

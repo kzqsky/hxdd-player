@@ -7,10 +7,8 @@ import android.os.Build;
 
 import androidx.core.content.FileProvider;
 
-import com.blankj.utilcode.util.ToastUtils;
 
 import java.io.File;
-
 
 
 public class OpenFileUtils {
@@ -32,7 +30,7 @@ public class OpenFileUtils {
             intent.setDataAndType(getUri(context, intent, file), type);
             context.startActivity(intent);
         } catch (Exception e) {
-            ToastUtils.showLong( "无法打开该格式文件!");
+            ToastUtils.showLong(context, "无法打开该格式文件!");
         }
 
     }

@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
 import com.edu.hxdd_player.api.net.OkUtils;
 import com.edu.hxdd_player.api.net.RetrofitFactory;
@@ -14,6 +13,7 @@ import com.edu.hxdd_player.bean.parameters.BaseParameters;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
 import com.edu.hxdd_player.utils.DialogUtils;
+import com.edu.hxdd_player.utils.ToastUtils;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -107,7 +107,7 @@ public class ApiUtils {
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
+                ToastUtils.showLong(context,"回传学习记录失败:" + showErrorMessage(e.getMessage()));
             }
 
             @Override
@@ -125,16 +125,16 @@ public class ApiUtils {
                                 String message = "返回数据无法处理";
                                 if (baseBean != null)
                                     message = baseBean.message;
-                                ToastUtils.showLong("回传学习记录失败:" + message);
+                                ToastUtils.showLong(context,"回传学习记录失败:" + message);
                                 showErrorDialog("回传学习记录失败:" + message);
                             }
                         } catch (Exception e) {
-                            ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(e.getMessage()));
+                            ToastUtils.showLong(context,"回传学习记录失败:" + showErrorMessage(e.getMessage()));
                             showErrorDialog("回传学习记录失败:" + showErrorMessage(e.getMessage()));
                         }
                     }
                 } else {
-                    ToastUtils.showLong("回传学习记录失败:" + showErrorMessage(response.message()));
+                    ToastUtils.showLong(context,"回传学习记录失败:" + showErrorMessage(response.message()));
                     showErrorDialog("回传学习记录失败:" + showErrorMessage(response.message()));
                 }
             }

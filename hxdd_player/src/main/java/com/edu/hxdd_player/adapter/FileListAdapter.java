@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.blankj.utilcode.util.ToastUtils;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.viewholder.BaseViewHolder;
 import com.edu.hxdd_player.R;
@@ -17,6 +16,7 @@ import com.edu.hxdd_player.utils.DensityUtils;
 import com.edu.hxdd_player.utils.FileUtils;
 import com.edu.hxdd_player.utils.OpenFileUtils;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
+import com.edu.hxdd_player.utils.ToastUtils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.FileCallback;
 
@@ -104,7 +104,7 @@ public class FileListAdapter extends BaseQuickAdapter<CourseInfoBean.UploadedFil
         if (ApiUtils.getInstance() == null)
             return;
         if (checkDowning() >= 5) {
-            ToastUtils.showLong("下载任务不能过多，请稍后再试");
+            ToastUtils.showLong(getContext(),"下载任务不能过多，请稍后再试");
             return;
         }
 
@@ -126,7 +126,7 @@ public class FileListAdapter extends BaseQuickAdapter<CourseInfoBean.UploadedFil
             @Override
             public void onError(Call call, Response response, Exception e) {
                 super.onError(call, response, e);
-                ToastUtils.showLong("下载失败：" + e.getMessage());
+                ToastUtils.showLong(getContext(),"下载失败：" + e.getMessage());
             }
         });
     }
