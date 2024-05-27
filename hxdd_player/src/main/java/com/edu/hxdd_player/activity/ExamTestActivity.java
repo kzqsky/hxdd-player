@@ -3,6 +3,7 @@ package com.edu.hxdd_player.activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ import com.edu.hxdd_player.api.net.OkUtils;
 import com.edu.hxdd_player.bean.media.Question;
 import com.edu.hxdd_player.bean.media.QuestionOption;
 import com.edu.hxdd_player.bean.parameters.GetChapter;
+import com.edu.hxdd_player.callback.TimeCallBack;
 import com.edu.hxdd_player.fragment.ExamFragment;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
 import com.edu.hxdd_player.utils.TimeUtil;
@@ -103,14 +105,12 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .downLoad(true)
                     .handout(false)
                     .cacheMode(false)
-//                    .callBackTime(10, new TimeCallBack() {
-//                        @Override
-//                        public void onTime() {
-//                            Intent intent=new Intent(ExamTestActivity.this,ExamTestActivity.class);
-//                            startActivity(intent);
-////                            Toast.makeText(ExamTestActivity.this,"时间回调",Toast.LENGTH_LONG).show();
-//                        }
-//                    })
+                    .callBackTime(1, new TimeCallBack() {
+                        @Override
+                        public void oneSecondCallback(long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
+                            Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
+                        }
+                    })
                     .play();
 
         });
@@ -166,7 +166,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败:" + showErrorMessage(e.getMessage()));
+                ToastUtils.showLong(ExamTestActivity.this, "获取播放参数失败:" + showErrorMessage(e.getMessage()));
             }
 
             @Override
@@ -182,13 +182,13 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 
                             getChapter.publicKey = json.get("public").getAsString();
                             getChapter.timestamp = json.get("timestamp").getAsString();
-                            ToastUtils.showLong(ExamTestActivity.this,"获取播放参数成功！");
+                            ToastUtils.showLong(ExamTestActivity.this, "获取播放参数成功！");
                         } catch (Exception e) {
-                            ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败！" + e.getMessage());
+                            ToastUtils.showLong(ExamTestActivity.this, "获取播放参数失败！" + e.getMessage());
                         }
                     }
                 } else {
-                    ToastUtils.showLong(ExamTestActivity.this,"获取播放参数失败！返回空");
+                    ToastUtils.showLong(ExamTestActivity.this, "获取播放参数失败！返回空");
                 }
             }
         });

@@ -107,6 +107,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 课件信息
      */
     CourseInfoBean courseInfoBean;
+    /**
+     * 上次回调时间
+     */
+    long lastCallBackTime = -11l;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,7 +136,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             finish();
             return;
         }
-        if (TextUtils.isEmpty( getChapter.serverUrl)) {
+        if (TextUtils.isEmpty(getChapter.serverUrl)) {
             ToastUtils.showLong(this, "服务器地址为空！！");
             finish();
             return;
@@ -406,8 +410,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             timeUtil_question.resume();
             timeUtil_record.resume();
-            if (timeUtil_face != null)
-                timeUtil_face.resume();
+//            if (timeUtil_face != null)
+//                timeUtil_face.resume();
         }
         if (tabLayout != null) {
             //我们在这里对TabLayout的宽度进行修改。。数值越大表示宽度越小。
@@ -650,12 +654,30 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             }
         });
 
+        //定时任务回调
         if (StartPlayerUtils.getCallBackTime() > 0) {
             timeUtil_face = new TimeUtil();
             timeUtil_face.setCallback(time -> {
-                if (time % StartPlayerUtils.getCallBackTime() == 0) {
-                    if (StartPlayerUtils.timeCallBack != null)
-                        runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
+                if (StartPlayerUtils.timeCallBack != null) {
+                    synchronized (this) {
+                        if (StartPlayerUtils.getCallBackTime() == 1) { //一秒一回调的 特殊处理
+                            if (mCatalog != null) {
+                                long currentTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
+                                if (currentTime != lastCallBackTime) { //过滤重复回调
+                                    lastCallBackTime = currentTime;
+                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.oneSecondCallback(time, currentTime,
+                                            mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
+                                }
+                            }
+                        } else {
+                            if (time != lastCallBackTime) {//过滤重复回调
+                                if (time % StartPlayerUtils.getCallBackTime() == 0) {
+                                    lastCallBackTime = time;
+                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
+                                }
+                            }
+                        }
+                    }
                 }
             });
         }
