@@ -665,7 +665,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                                 long currentTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
                                 if (currentTime != lastCallBackTime) { //过滤重复回调
                                     lastCallBackTime = currentTime;
-                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.oneSecondCallback(time, currentTime,
+                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.oneSecondCallback(PlayerActivity.this,time, currentTime,
                                             mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
                                 }
                             }

@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -107,7 +108,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .cacheMode(false)
                     .callBackTime(1, new TimeCallBack() {
                         @Override
-                        public void oneSecondCallback(long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
+                        public void oneSecondCallback(Activity activity,long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
                             Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
                         }
                     })
@@ -122,18 +123,18 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
     private void getParameters() {
         getChapter = new GetChapter();
         //应为传递过来的数据bean
-        getChapter.publicKey = "bea4fdfc732adbea8bbae096bbe3f492";
-        getChapter.timestamp = "1700012389974";
-        getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "sd00403_cj";
-        getChapter.courseCode = "sd00403";
-        getChapter.catalogId = "371929866104209408";
-        getChapter.clientCode = "123456";
-        getChapter.userId = "123456654321";
-        getChapter.userName = "李亚飞测试2";
+        getChapter.publicKey = "c831c4a1cc164a9184a187b39cb7d24b";
+        getChapter.timestamp = "1716794822070";
+        getChapter.businessLineCode = "Id_zk";
+        getChapter.coursewareCode = "00012_jj";
+        getChapter.courseCode = "00012";
+        getChapter.catalogId = "387068958685003776";
+        getChapter.clientCode = "202404";
+        getChapter.userId = "1794983280240525313";
+        getChapter.userName = "kangzq";
         getChapter.validTime = "0";
         getChapter.lastTime = "10";
-        getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
+        getChapter.serverUrl = "https://cws.edu-edu.com/";
         getChapter.isQuestion = true;
         getChapter.hintPoint = 1;
         getChapter.drag = 0;
@@ -150,15 +151,15 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
 //        Gson gson = new Gson();
 //        String requestBody = gson.toJson(data);
         final Request request = new Request.Builder()
-                .url("https://cwstest.edu-edu.com:7443/client/clientKey")
+                .url("https://cws.edu-edu.com/client/clientKey")
                 .get()
-                .post(RequestBody.create(mediaType, "{\"businessLineCode\":\"ld_gk\",\n" +
-                        "\"coursewareCode\":\"sd00403_cj\",\n" +
-                        "\"courseCode\":\"sd00403\",\n" +
-                        "\"catalogId\":\"371929866104209408\",\n" +
-                        "\"clientCode\":\"123456\",\n" +
-                        "\"userId\":\"123456654321\",\n" +
-                        "\"userName\":\"李亚飞测试2\",\n" +
+                .post(RequestBody.create(mediaType, "{\"businessLineCode\":\"Id_zk\",\n" +
+                        "\"coursewareCode\":\"00012_jj\",\n" +
+                        "\"courseCode\":\"00012\",\n" +
+                        "\"catalogId\":\"387068958685003776\",\n" +
+                        "\"clientCode\":\"202404\",\n" +
+                        "\"userId\":\"1794983280240525313\",\n" +
+                        "\"userName\":\"kangzq\",\n" +
                         "\"lastTime\":10,\n" +
                         "\"validTime\":0}"))
                 .build();

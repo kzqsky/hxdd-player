@@ -56,9 +56,9 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
 
                 TextView textView = helper.getView(R.id.hxdd_player_txt_title);
                 if (baseItem.isMedia == 0) { //代表沒有媒体
-                    helper.setGone(R.id.hxdd_player_txt_time, false);
-                    helper.setGone(R.id.hxdd_player_imageView, false);
-                    helper.setGone(R.id.hxdd_player_txt_ratio, false);
+                    helper.setGone(R.id.hxdd_player_txt_time, true);
+                    helper.setGone(R.id.hxdd_player_imageView, true);
+                    helper.setGone(R.id.hxdd_player_txt_ratio, true);
                     helper.setGone(R.id.view_line, false);
                     textView.setPadding(0, DensityUtils.dp2px(getContext(), 5), 0, DensityUtils.dp2px(getContext(), 5));
                     helper.setBackgroundColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.F4F6FA));
