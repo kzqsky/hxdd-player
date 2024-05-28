@@ -404,6 +404,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     @Override
     protected void onResume() {
         super.onResume();
+        videoResume();
+    }
+    public void videoResume(){
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onResume();
@@ -755,7 +758,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         });
     }
 
-    private void videoPause() {
+    public void videoPause() {
 //        timeUtil_question.pause();
 //        timeUtil_record.stop();
 //        if (timeUtil_face != null)
@@ -763,7 +766,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         runOnUiThread(() -> mAliyunVodPlayerView.pause());
     }
 
-    private void videoStart() {
+    public void videoStart() {
 //        timeUtil_question.resume();
 //        timeUtil_record.start();
 //        if (timeUtil_face != null)

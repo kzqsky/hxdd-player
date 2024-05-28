@@ -1,6 +1,6 @@
 package com.edu.hxdd_player.callback;
 
-import android.app.Activity;
+import com.edu.hxdd_player.activity.PlayerActivity;
 
 public interface TimeCallBack {
     /**
@@ -17,7 +17,7 @@ public interface TimeCallBack {
      * @param currentCatalogID 章节id
      * @param coursewareCode 课件code
      */
-    default void oneSecondCallback(Activity activity, long studyTime, long currentTime, long duration, String currentCatalogID, String coursewareCode){}
+    default void oneSecondCallback(PlayerActivity activity, long studyTime, long currentTime, long duration, String currentCatalogID, String coursewareCode){}
 //
 //    /**
 //     * 识别结束的回调

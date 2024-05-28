@@ -1,6 +1,5 @@
 package com.edu.hxdd_player.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -108,7 +107,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .cacheMode(false)
                     .callBackTime(1, new TimeCallBack() {
                         @Override
-                        public void oneSecondCallback(Activity activity,long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
+                        public void oneSecondCallback(PlayerActivity activity,long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
                             Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
                         }
                     })
