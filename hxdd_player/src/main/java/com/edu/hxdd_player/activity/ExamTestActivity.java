@@ -107,8 +107,17 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .cacheMode(false)
                     .callBackTime(1, new TimeCallBack() {
                         @Override
-                        public void oneSecondCallback(PlayerActivity activity,long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
+                        public void oneSecondCallback(PlayerActivity activity, long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
                             Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
+                            if (time == 10) {
+                                activity.setVideoRecord(true);
+                            }
+                            if (time == 20) {
+
+                            }
+                            if (time == 30) {
+                                activity.setVideoRecord(false);
+                            }
                         }
                     })
                     .play();

@@ -111,6 +111,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 上次回调时间
      */
     long lastCallBackTime = -11l;
+    /**
+     * 是否正在录制视频
+     */
+    private boolean videoRecord = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -406,7 +410,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         super.onResume();
         videoResume();
     }
-    public void videoResume(){
+
+    public void videoResume() {
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
             mAliyunVodPlayerView.onResume();
@@ -473,7 +478,41 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         super.onDestroy();
     }
 
+    /**
+     * 强制变为竖屏
+     */
+    public void toPortrait() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mAliyunVodPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+
+        //设置view的布局，宽高之类
+        RelativeLayout.LayoutParams aliVcVideoViewLayoutParams = (RelativeLayout.LayoutParams) mAliyunVodPlayerView
+                .getLayoutParams();
+        aliVcVideoViewLayoutParams.height = (int) (ScreenUtils.getWidth(PlayerActivity.this) * 9.0f / 16);
+        aliVcVideoViewLayoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        //                if (!isStrangePhone()) {
+        //                    aliVcVideoViewLayoutParams.topMargin = getSupportActionBar().getHeight();
+        //                }
+        initFloatingActionButton(clientConfigBean);
+    }
+
+    /**
+     * 设置视频录制状态
+     *
+     * @param videoRecord
+     */
+    public void setVideoRecord(boolean videoRecord) {
+        if (videoRecord) {
+            mAliyunVodPlayerView.changedToPortrait(true);
+            toPortrait();
+        }
+        this.videoRecord = videoRecord;
+        mAliyunVodPlayerView.videoRecord = videoRecord;
+    }
+
     private void updatePlayerViewMode() {
+        if (videoRecord)
+            return;
         if (mAliyunVodPlayerView != null) {
             int orientation = getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -668,7 +707,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                                 long currentTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
                                 if (currentTime != lastCallBackTime) { //过滤重复回调
                                     lastCallBackTime = currentTime;
-                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.oneSecondCallback(PlayerActivity.this,time, currentTime,
+                                    runOnUiThread(() -> StartPlayerUtils.timeCallBack.oneSecondCallback(PlayerActivity.this, time, currentTime,
                                             mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
                                 }
                             }

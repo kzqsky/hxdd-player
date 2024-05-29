@@ -195,6 +195,11 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     OnStateChangedListener onStateChangedListener;
 
+    /**
+     * 是否正在录制视频
+     */
+    public boolean videoRecord = false;
+
     public AliyunVodPlayerView(Context context) {
         super(context);
         initAudio(context);
@@ -315,7 +320,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
     /**
      * UI播放器支持的主题
      */
-    public  enum Theme {
+    public enum Theme {
         /**
          * 蓝色主题
          */
@@ -460,6 +465,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
 
         @Override
         public void changedToLandForwardScape(boolean fromPort) {
+
             AliyunVodPlayerView playerView = playerViewWeakReference.get();
             if (playerView != null) {
                 playerView.changedToLandForwardScape(fromPort);
@@ -489,6 +495,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @param fromPort 是否从竖屏变过来
      */
     private void changedToLandForwardScape(boolean fromPort) {
+        if (videoRecord) //录制视频不允许横竖屏切换
+            return;
         //如果不是从竖屏变过来，也就是一直是横屏的时候，就不用操作了
         if (!fromPort) {
             return;
@@ -504,7 +512,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param fromPort 是否从竖屏变过来
      */
-    private void changedToLandReverseScape(boolean fromPort) {
+    public void changedToLandReverseScape(boolean fromPort) {
+        if (videoRecord) //录制视频不允许横竖屏切换
+            return;
         //如果不是从竖屏变过来，也就是一直是横屏的时候，就不用操作了
         if (!fromPort) {
             return;
@@ -520,7 +530,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      *
      * @param fromLand 是否从横屏转过来
      */
-    private void changedToPortrait(boolean fromLand) {
+    public void changedToPortrait(boolean fromLand) {
+        if (videoRecord) //录制视频不允许横竖屏切换
+            return;
         //屏幕转为竖屏
         if (mIsFullScreenLocked) {
             return;
@@ -826,6 +838,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnScreenModeClickListener(new ControlView.OnScreenModeClickListener() {
             @Override
             public void onClick() {
+                if (videoRecord)
+                    return;
                 AliyunScreenMode targetMode;
                 if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     targetMode = AliyunScreenMode.Full;
