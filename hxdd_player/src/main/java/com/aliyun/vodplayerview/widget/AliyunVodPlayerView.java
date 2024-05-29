@@ -64,6 +64,7 @@ import com.aliyun.vodplayerview.view.thumbnail.ThumbnailView;
 import com.aliyun.vodplayerview.view.tipsview.TipsView;
 import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.utils.StartPlayerUtils;
+import com.edu.hxdd_player.utils.ToastUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -838,8 +839,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         mControlView.setOnScreenModeClickListener(new ControlView.OnScreenModeClickListener() {
             @Override
             public void onClick() {
-                if (videoRecord)
+                if (videoRecord) {
+                    ToastUtils.showLong(getContext(), "视频录制中禁止切换全屏");
                     return;
+                }
                 AliyunScreenMode targetMode;
                 if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     targetMode = AliyunScreenMode.Full;

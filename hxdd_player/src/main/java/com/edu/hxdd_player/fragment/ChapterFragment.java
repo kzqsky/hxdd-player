@@ -36,6 +36,12 @@ public class ChapterFragment extends Fragment {
     ChapterAdapter chapterAdapter;
     GetChapter getChapter;
     ClientConfigBean clientConfigBean;
+
+    /**
+     * 是否正在录制视频
+     */
+    public boolean videoRecord = false;
+
     public static ChapterFragment newInstance(GetChapter getChapter, ClientConfigBean clientConfigBean) {
         ChapterFragment fragment = new ChapterFragment();
         Bundle args = new Bundle();
@@ -74,16 +80,21 @@ public class ChapterFragment extends Fragment {
         recyclerView = view.findViewById(R.id.hxdd_player_recycler_view);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        chapterAdapter = new ChapterAdapter(null,clientConfigBean);
+        chapterAdapter = new ChapterAdapter(null, clientConfigBean);
         recyclerView.setLayoutManager(llm);
         recyclerView.setAdapter(chapterAdapter);
         chapterAdapter.setOnItemClickListener((adapter, view1, position) -> {
+
             if (chapterAdapter.isMedia(position)) {
                 ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
                 if (chapterAdapter.downloadMode) {//下载模式 废弃了
                     getChapter.id = chapterBean.id;
                     LiveDataBus.get().with("download").setValue(getChapter);
                 } else {
+                    if (videoRecord) {
+                        ToastUtils.showLong(getContext(), "视频录制中禁止切换章节");
+                        return;
+                    }
                     chapterAdapter.checked(position);//播放模式
                     getMedia(chapterBean.id);
                 }
@@ -144,7 +155,7 @@ public class ChapterFragment extends Fragment {
             @Override
             public void onApiFailure(String message) {
                 super.onApiFailure(message);
-                ToastUtils.showLong(getContext(),message);
+                ToastUtils.showLong(getContext(), message);
                 if (getActivity() != null)
                     getActivity().finish();
             }

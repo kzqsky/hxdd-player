@@ -116,6 +116,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     private boolean videoRecord = false;
 
+    private ChapterFragment chapterFragment = null;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -315,8 +317,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             if (StartPlayerUtils.getHasDownload())
                 tabTitles.add(getString(R.string.tab_3));
 
-
-            fragments.add(ChapterFragment.newInstance(getChapter, clientConfigBean));
+            chapterFragment = ChapterFragment.newInstance(getChapter, clientConfigBean);
+            fragments.add(chapterFragment);
 
             if (courseInfoBean != null && (courseInfoBean.teacherList != null && courseInfoBean.teacherList.size() > 0 ||
                     courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) //有教师或者教程 就显示介绍
@@ -508,6 +510,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
         this.videoRecord = videoRecord;
         mAliyunVodPlayerView.videoRecord = videoRecord;
+        chapterFragment.videoRecord = videoRecord;
     }
 
     private void updatePlayerViewMode() {
