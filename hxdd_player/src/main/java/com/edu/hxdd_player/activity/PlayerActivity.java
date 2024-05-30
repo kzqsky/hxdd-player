@@ -1,84 +1,3 @@
-package com.edu.hxdd_player.activity;
-
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.viewpager.widget.ViewPager;
-
-import com.aliyun.player.IPlayer;
-import com.aliyun.player.nativeclass.PlayerConfig;
-import com.aliyun.player.source.UrlSource;
-import com.aliyun.player.source.VidAuth;
-import com.aliyun.vodplayerview.utils.FixedToastUtils;
-import com.aliyun.vodplayerview.utils.ScreenUtils;
-import com.aliyun.vodplayerview.view.choice.AlivcShowMoreDialog;
-import com.aliyun.vodplayerview.view.gesturedialog.BrightnessDialog;
-import com.aliyun.vodplayerview.view.more.AliyunShowMoreValue;
-import com.aliyun.vodplayerview.view.more.ShowMoreView;
-import com.aliyun.vodplayerview.view.more.SpeedValue;
-import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
-import com.bumptech.glide.Glide;
-import com.edu.hxdd_player.R;
-import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
-import com.edu.hxdd_player.api.ApiUtils;
-import com.edu.hxdd_player.api.net.ApiCall;
-import com.edu.hxdd_player.bean.BaseBean;
-import com.edu.hxdd_player.bean.ClientConfigBean;
-import com.edu.hxdd_player.bean.CourseInfoBean;
-import com.edu.hxdd_player.bean.LearnRecordBean;
-import com.edu.hxdd_player.bean.media.Catalog;
-import com.edu.hxdd_player.bean.media.Media;
-import com.edu.hxdd_player.bean.media.Question;
-import com.edu.hxdd_player.bean.parameters.GetChapter;
-import com.edu.hxdd_player.bean.parameters.PutLearnRecords;
-import com.edu.hxdd_player.fragment.ChapterFragment;
-import com.edu.hxdd_player.fragment.CourseInfoFragment;
-import com.edu.hxdd_player.fragment.DownLoadFragment;
-import com.edu.hxdd_player.fragment.ExamFragment;
-import com.edu.hxdd_player.fragment.FileListFragment;
-import com.edu.hxdd_player.utils.ComputeUtils;
-import com.edu.hxdd_player.utils.DensityUtils;
-import com.edu.hxdd_player.utils.DialogUtils;
-import com.edu.hxdd_player.utils.LiveDataBus;
-import com.edu.hxdd_player.utils.PhoneInfo;
-import com.edu.hxdd_player.utils.StartPlayerUtils;
-import com.edu.hxdd_player.utils.TablayoutUtil;
-import com.edu.hxdd_player.utils.TimeUtil;
-import com.edu.hxdd_player.utils.ToastUtils;
-import com.google.android.material.tabs.TabLayout;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import retrofit2.Call;
-
-public class PlayerActivity extends AppCompatActivity implements ExamFragment.ExamFragmentCallback {
     AliyunVodPlayerView mAliyunVodPlayerView;
 
     TabLayout tabLayout;
@@ -413,6 +332,15 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         videoResume();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (videoRecord) {
+            ToastUtils.showLong(this, "视频录制中禁止退出");
+            return;
+        }
+        super.onBackPressed();
+    }
+
     public void videoResume() {
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
@@ -504,6 +432,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * @param videoRecord
      */
     public void setVideoRecord(boolean videoRecord) {
+        if (mAliyunVodPlayerView == null)
+            return;
         if (videoRecord) {
             mAliyunVodPlayerView.changedToPortrait(true);
             toPortrait();
@@ -990,4 +920,3 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
     }
 
-}
