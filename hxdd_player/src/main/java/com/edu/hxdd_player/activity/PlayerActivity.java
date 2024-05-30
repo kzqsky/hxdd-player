@@ -413,6 +413,15 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         videoResume();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (videoRecord) {
+            ToastUtils.showLong(this, "视频录制中禁止退出");
+            return;
+        }
+        super.onBackPressed();
+    }
+
     public void videoResume() {
         updatePlayerViewMode();
         if (mAliyunVodPlayerView != null) {
@@ -504,6 +513,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * @param videoRecord
      */
     public void setVideoRecord(boolean videoRecord) {
+        if (mAliyunVodPlayerView == null)
+            return;
         if (videoRecord) {
             mAliyunVodPlayerView.changedToPortrait(true);
             toPortrait();
