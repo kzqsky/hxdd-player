@@ -26,6 +26,7 @@ public class PutLearnRecords extends BaseParameters {
 
     public long md5Timestamp;
     public String md5;
+    public String classNum;
 
     public void Md5() {
         md5Timestamp = System.currentTimeMillis();
@@ -72,6 +73,7 @@ public class PutLearnRecords extends BaseParameters {
         records.userId = getChapter.userId;
         records.userName = getChapter.userName;
         records.backUrl = getChapter.backUrl;
+        records.classNum = getChapter.classNum;
         return records;
     }
 }
