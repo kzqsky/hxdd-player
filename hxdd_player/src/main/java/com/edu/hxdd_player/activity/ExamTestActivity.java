@@ -112,12 +112,10 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                             if (time == 10) {
                                 activity.setVideoRecord(true);
                             }
-                            if (time == 20) {
-
-                            }
-                            if (time == 30) {
+                            if (time >= 20) {
                                 activity.setVideoRecord(false);
                             }
+                            
                         }
                     })
                     .play();
@@ -145,7 +143,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         getChapter.serverUrl = "https://cws.edu-edu.com/";
         getChapter.isQuestion = true;
         getChapter.hintPoint = 1;
-        getChapter.drag = 0;
+        getChapter.drag = 1;
         getChapter.logoUrl = "https://edu-apps.oss-cn-beijing.aliyuncs.com/test/123.jpg";
         getChapter.logoPosition = 1;
         getChapter.logoAlpha = 0.6f;

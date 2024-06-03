@@ -28,6 +28,7 @@ import com.aliyun.vodplayerview.view.quality.QualityItem;
 import com.aliyun.vodplayerview.widget.AliyunScreenMode;
 import com.aliyun.vodplayerview.widget.AliyunVodPlayerView;
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.utils.StartPlayerUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -471,6 +472,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
             mTitleMore.setVisibility(GONE);
             mTitleDownload.setVisibility(VISIBLE);
         }
+        if (!StartPlayerUtils.canSeek()) {
+            hideMoreButton();
+        }
     }
 
     /**
@@ -510,6 +514,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 
     public void showMoreButton() {
         mTitleMore.setVisibility(VISIBLE);
+        if (!StartPlayerUtils.canSeek()) {
+            hideMoreButton();
+        }
     }
 
     public void hideMoreButton() {
@@ -756,6 +763,9 @@ public class ControlView extends RelativeLayout implements ViewAction, ITheme {
 //            mScreenRecorder.setVisibility(GONE);
 //            mScreenShot.setVisibility(GONE);
             mTitleMore.setVisibility(GONE);
+        }
+        if (!StartPlayerUtils.canSeek()) {
+            hideMoreButton();
         }
     }
 

@@ -856,6 +856,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     mControlView.hideMoreButton();
                 }
+                if (!StartPlayerUtils.canSeek()) {
+                    mControlView.hideMoreButton();
+                }
             }
         });
         //点击了标题栏的返回按钮
@@ -868,6 +871,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                     changeScreenMode(AliyunScreenMode.Small, false);
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     //小屏状态下，就结束活动
+                    if (StartPlayerUtils.isVideoRecord) {
+                        ToastUtils.showLong(getContext(), "视频录制中禁止退出");
+                        return;
+                    }
                     Context context = getContext();
                     if (context instanceof AppCompatActivity) {
                         ((AppCompatActivity) context).finish();

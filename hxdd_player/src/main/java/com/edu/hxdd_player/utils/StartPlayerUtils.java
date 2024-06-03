@@ -55,7 +55,10 @@ public class StartPlayerUtils {
     public static TimeCallBack timeCallBack;
     Context context;
     static GetChapter getChapter;
-
+    /**
+     * 是否在视频录制中
+     */
+    public static boolean isVideoRecord =false;
     public StartPlayerUtils(Context context, GetChapter getChapter) {
         this.context = context;
         this.getChapter = getChapter;

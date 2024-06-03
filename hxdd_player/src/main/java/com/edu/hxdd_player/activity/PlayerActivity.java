@@ -522,6 +522,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         this.videoRecord = videoRecord;
         mAliyunVodPlayerView.videoRecord = videoRecord;
         chapterFragment.videoRecord = videoRecord;
+        StartPlayerUtils.isVideoRecord = videoRecord;
     }
 
     private void updatePlayerViewMode() {
@@ -595,6 +596,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 更多设置内容
      */
     private void showMore(final PlayerActivity activity) {
+        if (!StartPlayerUtils.canSeek()) {
+            ToastUtils.showLong(this,"");
+            return;
+        }
+
         AlivcShowMoreDialog showMoreDialog = new AlivcShowMoreDialog(activity);
         AliyunShowMoreValue moreValue = new AliyunShowMoreValue();
         moreValue.setSpeed(mAliyunVodPlayerView.getCurrentSpeed());
