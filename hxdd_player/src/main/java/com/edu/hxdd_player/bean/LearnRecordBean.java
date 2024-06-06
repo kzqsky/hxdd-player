@@ -33,4 +33,6 @@ public class LearnRecordBean {
     public String questionId;
     public String total;
     public String finishwatching;
+
+    public String accumulativeTimesofar;
 }

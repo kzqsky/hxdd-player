@@ -177,4 +177,8 @@ public class ChapterFragment extends Fragment {
         });
     }
 
+    public void updateLearning(String id, long accumulativeTime) {
+        if (chapterAdapter != null)
+            chapterAdapter.updateLearning(id, accumulativeTime);
+    }
 }

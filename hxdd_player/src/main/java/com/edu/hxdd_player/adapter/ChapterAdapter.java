@@ -107,6 +107,21 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         notifyDataSetChanged();
     }
 
+    public void updateLearning(String id,long accumulativeTime) {
+        int index = 0;
+        for (MultiItemEntity itemEntity : getData()) {
+            ChapterBean chapterBean = (ChapterBean) itemEntity;
+            if (chapterBean.id.equals(id)) {
+                break;
+            }
+            index++;
+        }
+
+        ChapterBean chapterBean = (ChapterBean) getItem(index);
+        chapterBean.accumulativeTime = accumulativeTime;
+        notifyItemChanged(index);
+    }
+
     public int getCheckedIndex() {
         int index = 0;
         for (MultiItemEntity itemEntity : getData()) {

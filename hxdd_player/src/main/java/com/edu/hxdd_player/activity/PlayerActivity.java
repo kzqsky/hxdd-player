@@ -117,6 +117,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private boolean videoRecord = false;
 
     private ChapterFragment chapterFragment = null;
+    /**
+     * 上次学习记录action
+     */
+    String lastAction;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -597,7 +601,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     private void showMore(final PlayerActivity activity) {
         if (!StartPlayerUtils.canSeek()) {
-            ToastUtils.showLong(this,"");
+            ToastUtils.showLong(this, "");
             return;
         }
 
@@ -870,7 +874,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if (mCatalog == null) {
             return;
         }
-
+        //防止连发两次end 导致报错
+        if ("end".equals(lastAction) && "end".equals(action)) {
+            return;
+        }
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         PutLearnRecords putLearnRecords =
@@ -880,6 +887,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         if ("end".equals(action)) {
             recordTime = 0;
         }
+        lastAction = action;
     }
 
     /**
@@ -893,6 +901,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).newLearnRecord(putLearnRecords, action, new ApiCall<Object>() {
             @Override
             protected void onResult(Object object) {
+
                 LearnRecordBean data;
                 String jsonString = "";
                 try {
@@ -909,6 +918,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     }).create();
                     jsonString = gson.toJson(object);
                     data = new Gson().fromJson(jsonString, LearnRecordBean.class);
+
+                    if ("end".equals(action) || "timing".equals(action)) { //刷新已学进度
+                        if (chapterFragment != null)
+                            chapterFragment.updateLearning(data.catalogId, Long.parseLong(data.accumulativeTimesofar));
+                    }
                 } catch (Exception e) {
                     return;
                 }
