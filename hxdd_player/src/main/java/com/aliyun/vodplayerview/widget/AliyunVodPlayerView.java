@@ -871,7 +871,7 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
                     changeScreenMode(AliyunScreenMode.Small, false);
                 } else if (mCurrentScreenMode == AliyunScreenMode.Small) {
                     //小屏状态下，就结束活动
-                    if (StartPlayerUtils.isVideoRecord) {
+                    if (videoRecord) {
                         ToastUtils.showLong(getContext(), "视频录制中禁止退出");
                         return;
                     }
