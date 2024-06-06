@@ -414,6 +414,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     @Override
     protected void onResume() {
         super.onResume();
+        if (videoRecord) {
+            return;
+        }
         videoResume();
     }
 
