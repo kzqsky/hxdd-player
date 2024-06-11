@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 
@@ -19,6 +20,34 @@ public class DialogUtils {
             normalDialog.setPositiveButton("确定",
                     (dialog, which) -> {
 
+                    });
+            normalDialog.setNegativeButton("",
+                    (dialog, which) -> {
+                        //...To-do
+
+                    });
+            // 显示
+            ThreadUtils.runOnUiThread(() -> {
+                normalDialog.show();
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void showDialogActivity(Activity activity, String message) {
+        try {
+            LiveDataBus.get().with("stop").setValue("stop");
+            if (activity == null)
+                return;
+            final AlertDialog.Builder normalDialog =
+                    new AlertDialog.Builder(activity);
+            normalDialog.setTitle("提示");
+            normalDialog.setMessage(message);
+            normalDialog.setCancelable(false);
+            normalDialog.setPositiveButton("确定",
+                    (dialog, which) -> {
+                        activity.finish();
                     });
             normalDialog.setNegativeButton("",
                     (dialog, which) -> {

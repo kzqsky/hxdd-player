@@ -28,6 +28,10 @@ public class PutLearnRecords extends BaseParameters {
     public String md5;
     public String classNum;
 
+
+    public int maxTimePerDay = 0; //按照每天来限制学时时长，单位是秒
+    public int maxTimePerTime = 0; //按照单次打开窗口限制学时时长，单位是秒
+
     public void Md5() {
         md5Timestamp = System.currentTimeMillis();
         md5 = MD5Utils.encodeMD5String(clientCode + userId + coursewareCode + catalogId + accumulativeTime + "14daab0a-4aff-4f6e-b303-c85f09c39f42" + md5Timestamp);
@@ -74,6 +78,8 @@ public class PutLearnRecords extends BaseParameters {
         records.userName = getChapter.userName;
         records.backUrl = getChapter.backUrl;
         records.classNum = getChapter.classNum;
+        records.maxTimePerDay = getChapter.maxTimePerDay;
+        records.maxTimePerTime = getChapter.maxTimePerTime;
         return records;
     }
 }

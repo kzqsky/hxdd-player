@@ -28,17 +28,17 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
         try {
             baseBean = (BaseBean) response.body();
         } catch (Exception e) {
-            onApiFailure("数据解析失败");
+            onApiFailure("数据解析失败", 0);
             return;
         }
         if (baseBean != null) {
             if (baseBean.success == true) {
                 onResult((T) baseBean.data);
             } else {
-                onApiFailure(baseBean.message);
+                onApiFailure(baseBean.message, baseBean.code);
             }
         } else {
-            onApiFailure("服务器错误");
+            onApiFailure("服务器错误", 0);
         }
     }
 
@@ -57,6 +57,6 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
     /**
      * 调用接口成功，但接口返回错误
      */
-    public void onApiFailure(String message) {
+    public void onApiFailure(String message, int code) {
     }
 }

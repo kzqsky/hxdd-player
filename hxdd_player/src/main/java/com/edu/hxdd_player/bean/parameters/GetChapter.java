@@ -43,9 +43,21 @@ public class GetChapter extends BaseParameters {
 
     public String backUrl; //回调业务系统
     public String defaultQuality = "LD";  //指定播放的清晰度  LD标清   FD流畅
-
+    /**
+     * 顺序播放，播放完毕才能播放下一个，默认false 可以随便播放
+     */
+    public boolean playByOrder = false;
+    /**
+     * 能否重复播放已播完的，默认false 可以重复播放
+     */
+    public boolean playCanRepeat = false;
+    /**
+     * 超出学习时长限制后不能继续学习，直接退出播放页面，默认false 不受限制
+     */
+    public boolean overMaxLearnHoursStop = false;
 
     public int maxTimePerDay = 0; //按照每天来限制学时时长，单位是秒
     public int maxTimePerTime = 0; //按照单次打开窗口限制学时时长，单位是秒
     public String classNum; //培训平台使用的参数
+
 }

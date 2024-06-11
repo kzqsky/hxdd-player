@@ -62,7 +62,6 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     helper.setGone(R.id.view_line, false);
                     textView.setPadding(0, DensityUtils.dp2px(getContext(), 5), 0, DensityUtils.dp2px(getContext(), 5));
                     helper.setBackgroundColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.F4F6FA));
-
                 } else {
                     helper.setVisible(R.id.hxdd_player_txt_time, true);
                     helper.setVisible(R.id.hxdd_player_imageView, true);
@@ -84,13 +83,22 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                             imageView.setImageResource(R.drawable.ic_play_p);
                             imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                         } else { //没选中
-                            helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                            imageView.setImageResource(R.drawable.ic_play_n);
-                            imageView.setColorFilter(null);
+                            //显示标题和图标
+                            //启用顺序学习且顺序在选中之后的 和 禁止重复播放的加锁
+                            if (StartPlayerUtils.nextLearning() && getItemPosition(item) > selectIndex && baseItem.getRatio() < 100 || StartPlayerUtils.getChapter.playCanRepeat) {
+                                helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.text_gary));
+                                imageView.setImageResource(R.drawable.ic_play_lock);
+                                imageView.setColorFilter(null);
+                            } else {
+                                helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                                imageView.setImageResource(R.drawable.ic_play_n);
+                                imageView.setColorFilter(null);
+                            }
                         }
-                        if (baseItem.getRatio() >= 100) {
+                        //显示进度
+                        if (baseItem.getRatio() >= 100) { //已经学完
                             helper.setTextColor(R.id.hxdd_player_txt_ratio, StartPlayerUtils.getColorLearned());
-                        } else {
+                        } else {//未学完
                             helper.setTextColor(R.id.hxdd_player_txt_ratio, getContext().getResources().getColor(R.color.text_gary));
                         }
                     }
@@ -107,7 +115,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         notifyDataSetChanged();
     }
 
-    public void updateLearning(String id,long accumulativeTime) {
+    public void updateLearning(String id, long accumulativeTime) {
         int index = 0;
         for (MultiItemEntity itemEntity : getData()) {
             ChapterBean chapterBean = (ChapterBean) itemEntity;
@@ -151,6 +159,35 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             return (ChapterBean) getItem(selectIndex);
         } else {
             return checkNext();
+        }
+    }
+
+    public int getNextMediaIndex(int nextIndex) {
+        int index = nextIndex;
+        if (index == getItemCount() - 1) {
+            index = 0;
+        } else {
+            index++;
+        }
+        ChapterBean baseItem = (ChapterBean) getData().get(index);
+        if (isMedia(index) && baseItem.getRatio() < 100) {//是媒体并且 未学完
+            return index;
+        } else {
+            return getNextMediaIndex(index);
+        }
+    }
+
+    /**
+     * 当前选中章节是否学习完成
+     *
+     * @return
+     */
+    public boolean learnEnd() {
+        ChapterBean baseItem = (ChapterBean) getItem(selectIndex);
+        if (baseItem.getRatio() >= 99) {
+            return true;
+        } else {
+            return false;
         }
     }
 

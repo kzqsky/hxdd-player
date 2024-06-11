@@ -54,11 +54,12 @@ public class StartPlayerUtils {
 
     public static TimeCallBack timeCallBack;
     Context context;
-    static GetChapter getChapter;
+    public static GetChapter getChapter;
     /**
      * 是否在视频录制中
      */
-    public static boolean isVideoRecord =false;
+    public static boolean isVideoRecord = false;
+
     public StartPlayerUtils(Context context, GetChapter getChapter) {
         this.context = context;
         this.getChapter = getChapter;
@@ -203,6 +204,15 @@ public class StartPlayerUtils {
 
     public static boolean canSeek() {
         return getChapter.drag == 0;
+    }
+
+    /**
+     * 是否启用顺序学习，顺序学习只能按顺序切换章节
+     *
+     * @return
+     */
+    public static boolean nextLearning() {
+        return getChapter.playByOrder;
     }
 
     public static int getCallBackTime() {

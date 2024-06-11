@@ -51,7 +51,7 @@ public class ChapterBean implements com.chad.library.adapter.base.entity.MultiIt
             if (accumulativeTime >= mediaDuration) {
                 return 100;
             }
-            BigDecimal at = new BigDecimal(accumulativeTime);
+            BigDecimal at = new BigDecimal(accumulativeTime + 20);//加20秒冗余
             BigDecimal md = new BigDecimal(mediaDuration);
             double ra = at.divide(md, 3, BigDecimal.ROUND_HALF_UP).doubleValue() * 100;
             // 使用Math.round进行四舍五入

@@ -941,8 +941,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             }
 
             @Override
-            public void onApiFailure(String message) {
-                super.onApiFailure(message);
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
+                if (code == -1 && getChapter != null && getChapter.overMaxLearnHoursStop) {//超出学习时长限制后不能继续学习，直接退出播放页面
+//                    ToastUtils.showLong(PlayerActivity.this, message);
+//                    PlayerActivity.this.finish();
+                    DialogUtils.showDialogActivity(PlayerActivity.this, message);
+                    return;
+                }
                 if (!message.equals(showErrorMessage)) {//相同的错误信息只提示一次。
                     showErrorMessage = message;
                     DialogUtils.showDialog(PlayerActivity.this, message);
@@ -983,8 +989,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             }
 
             @Override
-            public void onApiFailure(String message) {
-                super.onApiFailure(message);
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
                 if (!message.equals(showErrorMessage)) {
                     showErrorMessage = message;
                     DialogUtils.showDialog(PlayerActivity.this, message);

@@ -95,6 +95,28 @@ public class ChapterFragment extends Fragment {
                         ToastUtils.showLong(getContext(), "视频录制中禁止切换章节");
                         return;
                     }
+
+                    //禁止重复播放判断
+                    if (StartPlayerUtils.getChapter.playCanRepeat && chapterBean.getRatio() >= 100) {
+                        ToastUtils.showLong(getContext(), "视频已学完不能重复播放");
+                        return;
+                    }
+
+                    if (StartPlayerUtils.nextLearning()) { //开启了顺序学习
+                        if (chapterBean.getRatio() >= 100 && !StartPlayerUtils.getChapter.playCanRepeat) {//播完并且可以重复播的时候不受限制
+                        } else {
+                            if (!chapterAdapter.learnEnd()) {
+                                ToastUtils.showLong(getContext(), "请学完当前章节再切换");
+                                return;
+                            }
+                            if (position != chapterAdapter.getNextMediaIndex(chapterAdapter.selectIndex)) {
+                                ToastUtils.showLong(getContext(), "请按顺序切换章节");
+                                return;
+                            }
+                        }
+                    }
+
+
                     chapterAdapter.checked(position);//播放模式
                     getMedia(chapterBean.id);
                 }
@@ -153,8 +175,8 @@ public class ChapterFragment extends Fragment {
             }
 
             @Override
-            public void onApiFailure(String message) {
-                super.onApiFailure(message);
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
                 ToastUtils.showLong(getContext(), message);
                 if (getActivity() != null)
                     getActivity().finish();
@@ -170,8 +192,8 @@ public class ChapterFragment extends Fragment {
             }
 
             @Override
-            public void onApiFailure(String message) {
-                super.onApiFailure(message);
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
                 DialogUtils.showDialog(getContext(), message);
             }
         });
