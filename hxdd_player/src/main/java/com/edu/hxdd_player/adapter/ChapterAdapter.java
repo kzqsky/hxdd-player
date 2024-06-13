@@ -50,9 +50,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
             case 5:
             case 6:
 
-                helper.setText(R.id.hxdd_player_txt_title, "  " + baseItem.title)
-                        .setText(R.id.hxdd_player_txt_time, "  " + baseItem.getMediaDuration())
-                        .setText(R.id.hxdd_player_txt_ratio, baseItem.getRatioString());
+                helper.setText(R.id.hxdd_player_txt_title, "  " + baseItem.title).setText(R.id.hxdd_player_txt_time, "  " + baseItem.getMediaDuration()).setText(R.id.hxdd_player_txt_ratio, baseItem.getRatioString());
 
                 TextView textView = helper.getView(R.id.hxdd_player_txt_title);
                 if (baseItem.isMedia == 0) { //代表沒有媒体
@@ -83,16 +81,28 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                             imageView.setImageResource(R.drawable.ic_play_p);
                             imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                         } else { //没选中
-                            //显示标题和图标
-                            //启用顺序学习且顺序在选中之后的 和 禁止重复播放的加锁
-                            if (StartPlayerUtils.nextLearning() && getItemPosition(item) > selectIndex && baseItem.getRatio() < 100 || StartPlayerUtils.getChapter.playCanRepeat) {
-                                helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.text_gary));
-                                imageView.setImageResource(R.drawable.ic_play_lock);
-                                imageView.setColorFilter(null);
-                            } else {
-                                helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
-                                imageView.setImageResource(R.drawable.ic_play_n);
-                                imageView.setColorFilter(null);
+                            if (StartPlayerUtils.nextLearning()) {   //启用顺序学习
+                                // 1.在选中项之后 并且进度小于100 加锁   2.禁止重复播放且学完了 加锁
+                                if (getItemPosition(item) > selectIndex && baseItem.getRatio() < 100 || StartPlayerUtils.getChapter.playCanRepeat && baseItem.getRatio() >= 100) {
+                                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.text_gary));
+                                    imageView.setImageResource(R.drawable.ic_play_lock);
+                                    imageView.setColorFilter(null);
+                                } else {
+                                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                                    imageView.setImageResource(R.drawable.ic_play_n);
+                                    imageView.setColorFilter(null);
+                                }
+                            } else {//未启用顺序学习
+                                if (StartPlayerUtils.getChapter.playCanRepeat && baseItem.getRatio() >= 100) { //不可重复播放并且学完了  加锁
+                                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.text_gary));
+                                    imageView.setImageResource(R.drawable.ic_play_lock);
+                                    imageView.setColorFilter(null);
+                                } else {
+                                    //不可重复播放
+                                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                                    imageView.setImageResource(R.drawable.ic_play_n);
+                                    imageView.setColorFilter(null);
+                                }
                             }
                         }
                         //显示进度
@@ -192,8 +202,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     }
 
     public boolean isMedia(int index) {
-        if (getData() == null || getData().size() == 0)
-            return false;
+        if (getData() == null || getData().size() == 0) return false;
         ChapterBean baseItem = (ChapterBean) getData().get(index);
         if (baseItem.isMedia == 0) { //代表沒有媒体
             return false;

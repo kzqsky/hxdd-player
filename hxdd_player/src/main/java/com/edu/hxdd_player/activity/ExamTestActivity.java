@@ -101,7 +101,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.playByOrder = true;
             getChapter.playCanRepeat = true;
             getChapter.overMaxLearnHoursStop = true;
-            getChapter.maxTimePerDay = 10;
+            getChapter.maxTimePerDay = 1000;
 
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(getResources().getColor(R.color.alivc_green))
@@ -170,7 +170,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                         "\"clientCode\":\"123456\",\n" +
                         "\"userId\":\"123456654321\",\n" +
                         "\"userName\":\"李亚飞测试2\",\n" +
-                        "\"maxTimePerDay\":\"10\",\n" +
+                        "\"maxTimePerDay\":\"1000\",\n" +
                         "\"lastTime\":10,\n" +
                         "\"validTime\":0}"))
                 .build();
