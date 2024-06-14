@@ -61,7 +61,9 @@ public class ChapterBean implements com.chad.library.adapter.base.entity.MultiIt
             // 使用Math.round进行四舍五入
             ratio = (int) Math.round(ra);
         }
-
+        if (ratio > 100) {
+            ratio = 100;
+        }
         return ratio;
     }
 
