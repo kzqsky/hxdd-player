@@ -122,6 +122,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     String lastAction;
 
+    //累计学习时长--补时长用,数值小于等于两秒，补上
+    long accumulativeTimesofar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -812,7 +815,6 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 timeUtil_question.pause();
                 if (timeUtil_face != null)
                     timeUtil_face.pause();
-                Log.e("test", "setOnStateChangedListener  IPlayer.paused");
                 videoRecord(recordTime, "end");
             } else if (newState == IPlayer.started) {//开始
                 timeUtil_record.start();
@@ -883,6 +885,12 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         }
         long videoTime = mCatalog.mediaDuration;
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
+        //补时长用，如果视频播放时长-累计时长在两秒内 补上差值
+        if ("end".equals(lastAction) || "timing".equals(lastAction)) {
+            if (lastTime - accumulativeTimesofar - accumulativeTime < 3) {
+                accumulativeTime += lastTime - accumulativeTimesofar - accumulativeTime;
+            }
+        }
         PutLearnRecords putLearnRecords =
                 PutLearnRecords.getRecord(learnRecordId, getChapter, mCatalog.id, videoTime, lastTime, accumulativeTime);
         uploadRecord(putLearnRecords, action);
@@ -926,6 +934,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                         if (chapterFragment != null)
                             chapterFragment.updateLearning(data.catalogId, Long.parseLong(data.accumulativeTimesofar));
                     }
+                    //补时长用，记录累计时长
+                    accumulativeTimesofar = Long.parseLong(data.accumulativeTimesofar);
                 } catch (Exception e) {
                     return;
                 }
