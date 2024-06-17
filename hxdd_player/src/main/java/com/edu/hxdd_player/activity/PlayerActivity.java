@@ -508,7 +508,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             timeUtil_face.setCallback(time -> {
                 if (time % StartPlayerUtils.getCallBackTime() == 0) {
                     if (StartPlayerUtils.timeCallBack != null)
-                        runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime());
+                        runOnUiThread(() -> StartPlayerUtils.timeCallBack.onTime(mCatalog.id, mCatalog.coursewareCode));
                 }
             });
         }
