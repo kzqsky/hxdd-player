@@ -101,7 +101,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
             getChapter.playByOrder = true;
             getChapter.playCanRepeat = true;
             getChapter.overMaxLearnHoursStop = true;
-            getChapter.maxTimePerDay = 1000;
+            getChapter.maxTimePerDay = 0;
 
             new StartPlayerUtils(this, getChapter)
                     .colorPrimary(getResources().getColor(R.color.alivc_green))
@@ -136,14 +136,14 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         getChapter.publicKey = "bea4fdfc732adbea8bbae096bbe3f492";
         getChapter.timestamp = "1700012389974";
         getChapter.businessLineCode = "ld_gk";
-        getChapter.coursewareCode = "sd00403_cj";
-        getChapter.courseCode = "sd00403";
-        getChapter.catalogId = "371929866104209408";
-        getChapter.clientCode = "123456";
-        getChapter.userId = "123456654321";
-        getChapter.userName = "李亚飞测试2";
+        getChapter.coursewareCode = "xzk_14658_jj";
+        getChapter.courseCode = "00009";
+        getChapter.catalogId = "";
+        getChapter.clientCode = "202404";
+        getChapter.userId = "681fbe7a992c42b88bc61d37d3d3c3ab";
+        getChapter.userName = "18810561000";
         getChapter.validTime = "0";
-        getChapter.lastTime = "10";
+        getChapter.lastTime = "0";
         getChapter.serverUrl = "https://cwstest.edu-edu.com:7443";
         getChapter.isQuestion = true;
         getChapter.hintPoint = 1;
@@ -164,14 +164,14 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                 .url("https://cwstest.edu-edu.com:7443/client/clientKey")
                 .get()
                 .post(RequestBody.create(mediaType, "{\"businessLineCode\":\"ld_gk\",\n" +
-                        "\"coursewareCode\":\"sd00403_cj\",\n" +
-                        "\"courseCode\":\"sd00403\",\n" +
-                        "\"catalogId\":\"371929866104209408\",\n" +
-                        "\"clientCode\":\"123456\",\n" +
-                        "\"userId\":\"123456654321\",\n" +
-                        "\"userName\":\"李亚飞测试2\",\n" +
-                        "\"maxTimePerDay\":\"1000\",\n" +
-                        "\"lastTime\":10,\n" +
+                        "\"coursewareCode\":\"xzk_14658_jj\",\n" +
+                        "\"courseCode\":\"00009\",\n" +
+                        "\"catalogId\":\"\",\n" +
+                        "\"clientCode\":\"202404\",\n" +
+                        "\"userId\":\"681fbe7a992c42b88bc61d37d3d3c3ab\",\n" +
+                        "\"userName\":\"18810561000\",\n" +
+                        "\"maxTimePerDay\":\"0\",\n" +
+                        "\"lastTime\":0,\n" +
                         "\"validTime\":0}"))
                 .build();
         Call call = okHttpClient.newCall(request);

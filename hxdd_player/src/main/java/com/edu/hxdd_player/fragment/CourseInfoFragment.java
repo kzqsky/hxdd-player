@@ -11,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.edu.hxdd_player.R;
-import com.edu.hxdd_player.bean.parameters.GetChapter;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.DefaultWebClient;
 
@@ -21,12 +20,12 @@ import com.just.agentweb.DefaultWebClient;
 public class CourseInfoFragment extends Fragment {
     AgentWeb mAgentWeb;
     LinearLayout layout;
-    GetChapter getChapter;
+    String url;
 
-    public static CourseInfoFragment newInstance(GetChapter getChapter) {
+    public static CourseInfoFragment newInstance(String url) {
         CourseInfoFragment fragment = new CourseInfoFragment();
         Bundle args = new Bundle();
-        args.putSerializable("getChapter", getChapter);
+        args.putString("url", url);
         fragment.setArguments(args);
         return fragment;
     }
@@ -36,7 +35,7 @@ public class CourseInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            getChapter = (GetChapter) args.getSerializable("getChapter");
+            url =  args.getString("url");
         }
     }
 
@@ -50,10 +49,7 @@ public class CourseInfoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        String url = "https://www.edu-edu.com/b2c-static/APP/courseware/courseInfo.html?coursewareCode=" + getChapter.coursewareCode
-                + "&userId=" + getChapter.userId
-                + "&clientCode=" + getChapter.clientCode
-                + "&requestUrl=" + getChapter.serverUrl;
+
         //加载网页
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(layout, new LinearLayout.LayoutParams(-1, -1))

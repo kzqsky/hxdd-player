@@ -173,7 +173,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             protected void onResult(ClientConfigBean data) {
                 clientConfigBean = data;
                 initFloatingActionButton(data);
-                initTab();
+                initTab(data);
             }
 
             @Override
@@ -186,6 +186,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void initFloatingActionButton(ClientConfigBean data) {
         if (data == null)
             return;
+        if (tabLayout != null && tabLayout.getSelectedTabPosition() != 0) {
+            return;
+        }
         if (data.assessment == 1 || data.correction == 1) {
             findViewById(R.id.multiple_actions).setVisibility(View.VISIBLE);
             if (data.assessment == 1) {//评课
@@ -303,7 +306,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         mAliyunVodPlayerView.setPlayerConfig(playerConfig);
     }
 
-    private void initTab() {
+    private void initTab(ClientConfigBean clientConfigBean) {
         tabLayout = findViewById(R.id.hxdd_player_tabs);
         viewPager = findViewById(R.id.hxdd_player_viewpager);
 
@@ -319,7 +322,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
 
             if (courseInfoBean != null && courseInfoBean.uploadedFiles != null && courseInfoBean.uploadedFiles.size() > 0) //有文件就显示讲义
                 tabTitles.add(getString(R.string.tab_2));
-
+            //ai智能助手
+            if (clientConfigBean.aIAssistant) {
+                tabTitles.add(getString(R.string.tab_5));
+            }
 
             if (StartPlayerUtils.getHasDownload())
                 tabTitles.add(getString(R.string.tab_3));
@@ -328,12 +334,23 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             fragments.add(chapterFragment);
 
             if (courseInfoBean != null && (courseInfoBean.teacherList != null && courseInfoBean.teacherList.size() > 0 ||
-                    courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) //有教师或者教程 就显示介绍
-                fragments.add(CourseInfoFragment.newInstance(getChapter));
+                    courseInfoBean.textbookList != null && courseInfoBean.textbookList.size() > 0)) { //有教师或者教程 就显示介绍
+                String url = "https://www.edu-edu.com/b2c-static/APP/courseware/courseInfo.html?coursewareCode=" + getChapter.coursewareCode
+                        + "&userId=" + getChapter.userId
+                        + "&clientCode=" + getChapter.clientCode
+                        + "&requestUrl=" + getChapter.serverUrl;
+                fragments.add(CourseInfoFragment.newInstance(url));
+            }
 
             if (courseInfoBean != null && courseInfoBean.uploadedFiles != null && courseInfoBean.uploadedFiles.size() > 0)//有文件就显示讲义
                 fragments.add(FileListFragment.newInstance(courseInfoBean.uploadedFiles, clientConfigBean));
 
+            if (clientConfigBean.aIAssistant) {
+                String url = "https://www.edu-edu.com/b2c-static/ly/2024-06-25/index_m.html?code=AI&category=" + getChapter.businessLineCode
+                        + "&coursewareCode=" + getChapter.coursewareCode
+                        + "&userName=" + getChapter.userName;
+                fragments.add(CourseInfoFragment.newInstance(url));
+            }
             if (StartPlayerUtils.getHasDownload())
                 fragments.add(DownLoadFragment.newInstance(getChapter));
         }
@@ -344,6 +361,26 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setSelectedTabIndicatorColor(StartPlayerUtils.getColorPrimary());
         tabLayout.setTabTextColors(getResources().getColor(R.color.text), StartPlayerUtils.getColorPrimary());
+        tabLayout.setOnTabSelectedListener(new TabLayout.BaseOnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    initFloatingActionButton(clientConfigBean);
+                } else {
+                    findViewById(R.id.multiple_actions).setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     private void initLiveData() {
@@ -887,7 +924,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         long lastTime = mAliyunVodPlayerView.getCurrentPosition() / 1000;
         //补时长用，如果视频播放时长-累计时长在两秒内 补上差值
         if ("end".equals(lastAction) || "timing".equals(lastAction)) {
-            if (lastTime - accumulativeTimesofar - accumulativeTime < 3) {
+            if (lastTime - accumulativeTimesofar - accumulativeTime > 0 && lastTime - accumulativeTimesofar - accumulativeTime < 3) {
                 accumulativeTime += lastTime - accumulativeTimesofar - accumulativeTime;
             }
         }

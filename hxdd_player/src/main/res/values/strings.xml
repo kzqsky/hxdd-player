@@ -4,7 +4,7 @@
     <string name="tab_2">讲义</string>
     <string name="tab_3">下载</string>
     <string name="tab_4">介绍</string>
-
+    <string name="tab_5">AI助教</string>
 	 
     <string name="alivc_player_settings_title">Player Settings</string>
     <string name="alivc_error_msg">Error message</string>

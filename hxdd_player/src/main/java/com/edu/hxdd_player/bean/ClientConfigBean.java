@@ -9,4 +9,6 @@ public class ClientConfigBean  implements Serializable {
     public Boolean preview = false;  // 讲义文件预览功能开关 是否启用1 为启用，0 为禁用 默认0
     public Boolean download = false;  // 讲义文件下载功能开关 是否启用1 为启用，0 为禁用 默认0
     public Boolean learningProgress = false;  // 学习进度功能开关 是否启用1 为启用，0 为禁用 默认0
+
+    public Boolean aIAssistant = false; //ai开关
 }
