@@ -53,7 +53,7 @@ public class ChapterBean implements com.chad.library.adapter.base.entity.MultiIt
             }
             long time = accumulativeTime;
             if (accumulativeTime > 0) {//0秒
-                time += 20;//加20秒冗余
+                time += 10;//加10秒冗余
             }
             BigDecimal at = new BigDecimal(time);
             BigDecimal md = new BigDecimal(mediaDuration);

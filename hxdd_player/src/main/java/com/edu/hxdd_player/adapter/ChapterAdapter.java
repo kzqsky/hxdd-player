@@ -194,7 +194,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
      */
     public boolean learnEnd() {
         ChapterBean baseItem = (ChapterBean) getItem(selectIndex);
-        if (baseItem.getRatio() >= 99) {
+        if (baseItem.getRatio() >= 100) {
             return true;
         } else {
             return false;

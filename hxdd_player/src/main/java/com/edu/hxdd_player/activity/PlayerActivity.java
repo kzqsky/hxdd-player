@@ -389,7 +389,6 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 .observe(PlayerActivity.this, catalog -> {
                     if (timeUtil_record != null)
                         timeUtil_record.stop();
-                    Log.e("test", "LiveDataBus ");
                     videoRecord(recordTime, "end");
                     recordTime = 0;
                     if (timeUtil_record != null)
@@ -801,8 +800,6 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
             timeUtil_record.stop();
-//            Log.e("test","setOnCompletionListener");
-//            videoRecord(recordTime, "end");
             LiveDataBus.get().with("playNext").setValue(null);
         });
         //播放错误
@@ -814,13 +811,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         });
         //开始播放
         mAliyunVodPlayerView.setOnFirstFrameStartListener(() -> {
-//            timeUtil_record.start();
-//            videoRecord(0, "start");
-//            timeUtil_question.start();
-//            if (timeUtil_face != null && !timeUtil_face.isStart())
-//                timeUtil_face.start();
-            if (mCatalog != null && mCatalog.learnRecord != null && mCatalog.learnRecord.lastTime > 0) {
-                mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
+            if (mCatalog != null && mCatalog.learnRecord != null) {
+                //如果距离播放结束小于3秒，则从头开始播放
+                if (mCatalog.learnRecord.lastTime >= mCatalog.learnRecord.videoTime || mCatalog.learnRecord.videoTime - mCatalog.learnRecord.lastTime < 3) {
+                    mAliyunVodPlayerView.seekTo(0);
+                } else {
+                    mAliyunVodPlayerView.seekTo((int) (mCatalog.learnRecord.lastTime * 1000));
+                }
             }
         });
         mAliyunVodPlayerView.setOnSeekCompleteListener(() -> {
@@ -864,18 +861,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     }
 
     public void videoPause() {
-//        timeUtil_question.pause();
-//        timeUtil_record.stop();
-//        if (timeUtil_face != null)
-//            timeUtil_face.pause();
         runOnUiThread(() -> mAliyunVodPlayerView.pause());
     }
 
     public void videoStart() {
-//        timeUtil_question.resume();
-//        timeUtil_record.start();
-//        if (timeUtil_face != null)
-//            timeUtil_face.resume();
         mAliyunVodPlayerView.start();
     }
 
@@ -1000,6 +989,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     showErrorMessage = message;
                     DialogUtils.showDialog(PlayerActivity.this, message);
                 }
+
             }
         });
 

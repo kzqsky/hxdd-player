@@ -140,8 +140,18 @@ public class ChapterFragment extends Fragment {
                 });
 
         LiveDataBus.get().with("playNext").observe(this, catalog -> {
-            ChapterBean chapterBean = chapterAdapter.checkNext();
-            getMedia(chapterBean.id);
+            if (StartPlayerUtils.nextLearning()) { //启用顺序学习
+                if (chapterAdapter.learnEnd()) { //学完了再自动播放下一节
+                    ChapterBean chapterBean = chapterAdapter.checkNext();
+                    getMedia(chapterBean.id);
+                } else { //没学完继续播放当前章节
+                    ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
+                    getMedia(chapterBean.id);
+                }
+            } else { //未启用顺序学习
+                ChapterBean chapterBean = chapterAdapter.checkNext();
+                getMedia(chapterBean.id);
+            }
         });
         LiveDataBus.get().with("refreshVid").observe(this, catalog -> {
             if (chapterAdapter.getData() != null && chapterAdapter.getData().size() > 0 && chapterAdapter.selectIndex >= 0) {
