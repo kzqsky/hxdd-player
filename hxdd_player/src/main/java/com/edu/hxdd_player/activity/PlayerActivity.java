@@ -800,11 +800,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
             timeUtil_record.stop();
-            LiveDataBus.get().with("playNext").setValue(null);
+            LiveDataBus.get().with("playNext").setValue(System.currentTimeMillis() + "");
         });
         //播放错误
         mAliyunVodPlayerView.setOnErrorListener(errorInfo -> {
-            LiveDataBus.get().with("refreshVid").setValue(null);
+            LiveDataBus.get().with("refreshVid").setValue(System.currentTimeMillis() + "");
         });
         //播放停止
         mAliyunVodPlayerView.setOnStoppedListener(() -> {
