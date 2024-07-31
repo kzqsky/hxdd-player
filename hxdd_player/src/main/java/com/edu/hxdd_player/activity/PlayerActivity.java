@@ -168,6 +168,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 获取课件配置
      */
     private void getClientConfig() {
+        if (getChapter == null)
+            return;
         ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
             @Override
             protected void onResult(ClientConfigBean data) {
@@ -561,6 +563,7 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     public void setVideoRecord(boolean videoRecord) {
         if (mAliyunVodPlayerView == null)
             return;
+        mAliyunVodPlayerView.lockScreen(false);
         if (videoRecord) {
             mAliyunVodPlayerView.changedToPortrait(true);
             toPortrait();

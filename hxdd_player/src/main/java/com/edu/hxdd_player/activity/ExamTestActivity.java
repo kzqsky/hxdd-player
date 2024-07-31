@@ -3,6 +3,7 @@ package com.edu.hxdd_player.activity;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -112,7 +113,7 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
                     .callBackTime(1, new TimeCallBack() {
                         @Override
                         public void oneSecondCallback(PlayerActivity activity, long time, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
-//                            Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
+                            Log.e("test", time + "." + currentTime + ":" + duration + "--currentCatalogID:" + currentCatalogID + "--coursewareCode:" + coursewareCode);
 //                            if (time == 10) {
 //                                activity.setVideoRecord(true);
 //                            }

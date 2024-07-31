@@ -21,7 +21,7 @@ public class Catalog {
     public String updatedBy;          // 更新人
     public String createdAt;          // 创建时间
     public String updatedAt;          // 更新时间
-    public Long mediaDuration;      // 媒体时长,单位为秒,冗余字段
+    public Long mediaDuration = 0L;      // 媒体时长,单位为秒,冗余字段
 
 
     public List<Media> mediaList;   // 章节绑定的媒体集合(已废弃)
