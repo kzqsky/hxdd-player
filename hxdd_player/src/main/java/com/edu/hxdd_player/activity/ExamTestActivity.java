@@ -1,7 +1,13 @@
 package com.edu.hxdd_player.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
@@ -96,11 +102,22 @@ public class ExamTestActivity extends AppCompatActivity implements ExamFragment.
         //获取播放参数
         findViewById(R.id.hxdd_player_button12).setOnClickListener(v -> {
             getParameters();
+            //
+            PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                String packageName = getPackageName();
+                if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    startActivity(intent);
+                }
+            }
         });
         findViewById(R.id.hxdd_player_button11).setOnClickListener(v -> {
 
-            getChapter.playByOrder = true;
-            getChapter.playCanRepeat = true;
+            getChapter.playByOrder = false;
+            getChapter.playCanRepeat = false;
             getChapter.overMaxLearnHoursStop = true;
             getChapter.maxTimePerDay = 0;
 

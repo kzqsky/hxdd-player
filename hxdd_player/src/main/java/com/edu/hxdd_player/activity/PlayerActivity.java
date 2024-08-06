@@ -125,6 +125,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     //累计学习时长--补时长用,数值小于等于两秒，补上
     long accumulativeTimesofar;
 
+    /**
+     * 是否是视频播放完成时
+     */
+    boolean videoComplete = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -388,10 +393,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void initLiveData() {
         LiveDataBus.get()
                 .with("Catalog", Catalog.class)
-                .observe(PlayerActivity.this, catalog -> {
+                .observe(PlayerActivity.this, catalog -> { //切换章节时调用
                     if (timeUtil_record != null)
                         timeUtil_record.stop();
-                    videoRecord(recordTime, "end");
+                    if (recordTime > 0)
+                        videoRecord(recordTime, "end");
                     recordTime = 0;
                     if (timeUtil_record != null)
                         timeUtil_record.start();
@@ -803,7 +809,16 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         //播放完成
         mAliyunVodPlayerView.setOnCompletionListener(() -> {
             timeUtil_record.stop();
-            LiveDataBus.get().with("playNext").setValue(System.currentTimeMillis() + "");
+            videoComplete = true;
+            videoRecord(recordTime, "end");
+            if (StartPlayerUtils.nextLearning()) {
+                //启用顺序播放，执行回调
+                runOnUiThread(() -> StartPlayerUtils.timeCallBack.onOnCompletion(PlayerActivity.this,
+                        mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
+            } else {
+                //未启用顺序播放，则自动播放下一节
+                LiveDataBus.get().with("playNext").setValue(System.currentTimeMillis() + "");//自动播放下一节
+            }
         });
         //播放错误
         mAliyunVodPlayerView.setOnErrorListener(errorInfo -> {

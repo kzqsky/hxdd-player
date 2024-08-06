@@ -82,8 +82,13 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                             imageView.setColorFilter(StartPlayerUtils.getColorPrimary());
                         } else { //没选中
                             if (StartPlayerUtils.nextLearning()) {   //启用顺序学习
-                                // 1.在选中项之后 并且进度小于100 加锁   2.禁止重复播放且学完了 加锁
-                                if (getItemPosition(item) > selectIndex && baseItem.getRatio() < 100 || StartPlayerUtils.getChapter.playCanRepeat && baseItem.getRatio() >= 100) {
+                                //当前章节已学完，下一节改为解锁状态
+                                if (getItemPosition(item) == (getNextMediaIndex(selectIndex)) && learnEnd()) {
+                                    helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.black));
+                                    imageView.setImageResource(R.drawable.ic_play_n);
+                                    imageView.setColorFilter(null);
+                                } else if (getItemPosition(item) > selectIndex && baseItem.getRatio() < 100 || StartPlayerUtils.getChapter.playCanRepeat && baseItem.getRatio() >= 100) {
+                                    // 1.在选中项之后 并且进度小于100 加锁   2.禁止重复播放且学完了 加锁
                                     helper.setTextColor(R.id.hxdd_player_txt_title, getContext().getResources().getColor(R.color.text_gary));
                                     imageView.setImageResource(R.drawable.ic_play_lock);
                                     imageView.setColorFilter(null);
@@ -118,6 +123,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                 break;
 
         }
+
     }
 
     public void checked(int index) {
@@ -125,6 +131,12 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         notifyDataSetChanged();
     }
 
+    /**
+     * 刷新进度展示
+     *
+     * @param id
+     * @param accumulativeTime
+     */
     public void updateLearning(String id, long accumulativeTime) {
         int index = 0;
         for (MultiItemEntity itemEntity : getData()) {
@@ -138,6 +150,12 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
         ChapterBean chapterBean = (ChapterBean) getItem(index);
         chapterBean.accumulativeTime = accumulativeTime;
         notifyItemChanged(index);
+        if (StartPlayerUtils.nextLearning()) {   //启用顺序学习
+            if (chapterBean.getRatio() >= 100) { //当前已学完
+                //解锁下一节
+                notifyItemChanged(getNextMediaIndex(index));
+            }
+        }
     }
 
     public int getCheckedIndex() {

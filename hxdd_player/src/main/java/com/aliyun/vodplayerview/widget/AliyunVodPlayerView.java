@@ -2767,8 +2767,8 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      */
     private void sourceVideoPlayerCompletion() {
         inSeek = false;
-        //如果当前播放资源是本地资源时, 再显示replay
-        if (mTipsView != null && isLocalSource()) {
+        //如果当前播放资源是本地资源时, 再显示replay  启用顺序播放显示重播按钮
+        if (mTipsView != null && StartPlayerUtils.nextLearning()) {
             //隐藏其他的动作,防止点击界面去进行其他操作
             mGestureView.hide(ViewAction.HideType.End);
             mControlView.hide(ViewAction.HideType.End);

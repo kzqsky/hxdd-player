@@ -30,6 +30,17 @@ public interface TimeCallBack {
      */
     default void oneSecondCallback(PlayerActivity activity, long studyTime, long currentTime, long duration, String currentCatalogID, String coursewareCode) {
     }
+
+    /**
+     * 视频播放完成回调
+     * @param activity
+     * @param duration
+     * @param currentCatalogID
+     * @param coursewareCode
+     */
+    default void onOnCompletion(PlayerActivity activity,long duration, String currentCatalogID, String coursewareCode){
+
+    }
 //
 //    /**
 //     * 识别结束的回调
