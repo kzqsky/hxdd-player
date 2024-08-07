@@ -32,7 +32,7 @@ public interface TimeCallBack {
     }
 
     /**
-     * 视频播放完成回调
+     * 视频播放完成回调 - 目前逻辑是：启用顺序学习 并且视频学习时长大于等于视频时长 才执行OnCompletion回调
      * @param activity
      * @param duration
      * @param currentCatalogID

@@ -812,9 +812,9 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
             videoComplete = true;
             videoRecord(recordTime, "end");
             if (StartPlayerUtils.nextLearning()) {
-                //启用顺序播放，执行回调
-                runOnUiThread(() -> StartPlayerUtils.timeCallBack.onOnCompletion(PlayerActivity.this,
-                        mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
+                //启用顺序播放，回调需要等学习记录接口返回后
+//                runOnUiThread(() -> StartPlayerUtils.timeCallBack.onOnCompletion(PlayerActivity.this,
+//                        mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
             } else {
                 //未启用顺序播放，则自动播放下一节
                 LiveDataBus.get().with("playNext").setValue(System.currentTimeMillis() + "");//自动播放下一节
@@ -977,6 +977,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     if ("end".equals(action) || "timing".equals(action)) { //刷新已学进度
                         if (chapterFragment != null)
                             chapterFragment.updateLearning(data.catalogId, Long.parseLong(data.accumulativeTimesofar));
+                    }
+                    if (videoComplete) {
+                        //启用顺序学习 并且视频学习时长大于等于视频时长 才执行OnCompletion回调
+                        if (StartPlayerUtils.nextLearning() && Long.parseLong(data.accumulativeTimesofar) >= Long.parseLong(data.videoTime)) {
+                            runOnUiThread(() -> StartPlayerUtils.timeCallBack.onOnCompletion(PlayerActivity.this,
+                                    mCatalog.mediaDuration, mCatalog.id, mCatalog.coursewareCode));
+                        }
+                        videoComplete = false;
                     }
                     //补时长用，记录累计时长
                     accumulativeTimesofar = Long.parseLong(data.accumulativeTimesofar);
