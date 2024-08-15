@@ -2984,10 +2984,10 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
         }
 
         @Override
-        public void onSeiData(int var1, byte[] var2) {
+        public void onSeiData(int i, byte[] bytes, byte[] bytes1) {
             AliyunVodPlayerView aliyunVodPlayerView = weakReference.get();
             if (aliyunVodPlayerView != null) {
-                aliyunVodPlayerView.sourceVideoPlayerSeiData(var1, var2);
+                aliyunVodPlayerView.sourceVideoPlayerSeiData(i, bytes, bytes1);
             }
         }
     }
@@ -2998,9 +2998,9 @@ public class AliyunVodPlayerView extends RelativeLayout implements ITheme {
      * @param i 类型
      * @param s 内容
      */
-    private void sourceVideoPlayerSeiData(int i, byte[] s) {
+    private void sourceVideoPlayerSeiData(int i, byte[] b, byte[] s) {
         if (mOutSeiDataListener != null) {
-            mOutSeiDataListener.onSeiData(i, s);
+            mOutSeiDataListener.onSeiData(i, b, s);
         }
     }
 
