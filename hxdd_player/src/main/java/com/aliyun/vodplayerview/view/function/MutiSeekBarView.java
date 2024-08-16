@@ -3,8 +3,9 @@ package com.aliyun.vodplayerview.view.function;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import androidx.annotation.Nullable;
 import android.util.AttributeSet;
+
+import androidx.annotation.Nullable;
 
 import com.aliyun.vodplayerview.utils.DensityUtil;
 import com.edu.hxdd_player.R;
