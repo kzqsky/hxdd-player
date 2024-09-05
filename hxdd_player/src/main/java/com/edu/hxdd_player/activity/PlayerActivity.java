@@ -431,9 +431,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void setMedia(Catalog catalog) {
         Media media = catalog.media;
         if (media.serverType != null && media.serverType.toLowerCase().contains("aliyuncode")) {
-            if (TextUtils.isEmpty(catalog.savePath)) { //是否本地缓存
+            if (TextUtils.isEmpty(catalog.savePath)) { //阿里云视频
                 VidAuth vidAuth = new VidAuth();
-//                vidAuth.setAuthTimeout(600);超时时间
+                // 播放地址的有效时长，单位：秒。该时长会覆盖在视频点播控制台设置的URL鉴权的有效时长。
+                // 如果不传，则取默认值3600。如需设置此参数，请确保该时间大于视频的实际时长，防止播放地址在播放完成前过期。
+                vidAuth.setAuthTimeout(86400L);
                 vidAuth.setVid(media.mediaSource);
                 vidAuth.setPlayAuth(media.playAuth);
                 if (!TextUtils.isEmpty(getChapter.defaultQuality))
