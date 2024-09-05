@@ -353,9 +353,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 fragments.add(FileListFragment.newInstance(courseInfoBean.uploadedFiles, clientConfigBean));
 
             if (clientConfigBean.aIAssistant) {
-                String url = "https://www.edu-edu.com/b2c-static/ly/2024-06-25/index_m.html?code=AI&category=" + getChapter.businessLineCode
+                String url = "https://www.edu-edu.com/b2c-static/aiMind/index_m.html?code=AI&category=" + getChapter.businessLineCode
                         + "&coursewareCode=" + getChapter.coursewareCode
-                        + "&userName=" + getChapter.userName;
+                        + "&userName=" + getChapter.userName
+                        + "&isApp=true"  ;
                 fragments.add(CourseInfoFragment.newInstance(url));
             }
             if (StartPlayerUtils.getHasDownload())

@@ -1,9 +1,11 @@
 package com.edu.hxdd_player.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.edu.hxdd_player.R;
+import com.edu.hxdd_player.activity.PlayerActivity;
 import com.just.agentweb.AgentWeb;
 import com.just.agentweb.DefaultWebClient;
 
@@ -35,7 +38,7 @@ public class CourseInfoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            url =  args.getString("url");
+            url = args.getString("url");
         }
     }
 
@@ -57,6 +60,7 @@ public class CourseInfoFragment extends Fragment {
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)
                 .createAgentWeb()
                 .ready().go(url);
+        mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(mAgentWeb, getContext()));
     }
 
     @Override
@@ -78,5 +82,40 @@ public class CourseInfoFragment extends Fragment {
         if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
             mAgentWeb.getWebLifeCycle().onDestroy();
         super.onDestroy();
+    }
+
+    class AndroidInterface {
+        public AndroidInterface(AgentWeb agentWeb, Context context) {
+
+        }
+
+        /**
+         * 恢复播放
+         */
+        @JavascriptInterface
+        public void appResumePlayVideo() {
+            try {
+                getActivity().runOnUiThread(() -> {
+                    PlayerActivity playerActivity = (PlayerActivity) getActivity();
+                    playerActivity.videoStart();
+                });
+
+            } catch (Exception e) {
+            }
+        }
+
+        /**
+         * 暂停播放
+         */
+        @JavascriptInterface
+        public void appPauseVideo() {
+            try {
+                getActivity().runOnUiThread(() -> {
+                    PlayerActivity playerActivity = (PlayerActivity) getActivity();
+                    playerActivity.videoPause();
+                });
+            } catch (Exception e) {
+            }
+        }
     }
 }
