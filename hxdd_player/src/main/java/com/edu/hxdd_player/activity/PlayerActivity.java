@@ -166,6 +166,11 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 getClientConfig();
             }
 
+            @Override
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
+                DialogUtils.showDialog(PlayerActivity.this, message);
+            }
         });
     }
 
@@ -175,17 +180,22 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void getClientConfig() {
         if (getChapter == null)
             return;
-        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, new ApiCall<ClientConfigBean>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode,getChapter.coursewareCode, new ApiCall<ClientConfigBean>() {
             @Override
             protected void onResult(ClientConfigBean data) {
                 clientConfigBean = data;
                 initFloatingActionButton(data);
                 initTab(data);
             }
-
             @Override
             public void onFailure(Call<BaseBean<ClientConfigBean>> call, Throwable t) {
                 super.onFailure(call, t);
+            }
+
+            @Override
+            public void onApiFailure(String message, int code) {
+                super.onApiFailure(message, code);
+                DialogUtils.showDialog(PlayerActivity.this, message);
             }
         });
     }

@@ -77,8 +77,8 @@ public class ApiUtils {
      * @param clientCode
      * @param apiCall
      */
-    public void getClientConfig(String clientCode, ApiCall apiCall) {
-        api.getClientConfig(clientCode).enqueue(apiCall);
+    public void getClientConfig(String clientCode,String coursewareCode, ApiCall apiCall) {
+        api.getClientConfig(clientCode,coursewareCode).enqueue(apiCall);
     }
 
     /**

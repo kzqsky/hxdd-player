@@ -28,7 +28,7 @@ public interface Api {
     Call<BaseBean<Catalog>> catalogInfo(@Body RequestBody body, @Path("catalogId") String catalogId);
 
     @GET("/appApi/client")
-    Call<BaseBean<ClientConfigBean>> getClientConfig(@Query("clientCode") String clientCode);
+    Call<BaseBean<ClientConfigBean>> getClientConfig(@Query("clientCode") String clientCode,@Query("coursewareCode") String coursewareCode);
 
     @PUT("/client/learnRecords/{action}")
     Call<BaseBean<Object>> newLearnRecords(@Body RequestBody body, @Path("action") String action);
