@@ -66,7 +66,7 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
                     if (clientConfigBean != null && clientConfigBean.learningProgress) {
                         helper.setVisible(R.id.hxdd_player_txt_ratio, true);
                     } else {
-                        helper.setGone(R.id.hxdd_player_txt_ratio, false);
+                        helper.setGone(R.id.hxdd_player_txt_ratio, true);
                     }
                     helper.setVisible(R.id.view_line, true);
                     textView.setPadding(0, 0, 0, 0);
@@ -193,7 +193,8 @@ public class ChapterAdapter extends BaseMultiItemQuickAdapter<MultiItemEntity, B
     public int getNextMediaIndex(int nextIndex) {
         int index = nextIndex;
         if (index == getItemCount() - 1) {
-            index = 0;
+//            index = 0;
+            return 0;
         } else {
             index++;
         }
