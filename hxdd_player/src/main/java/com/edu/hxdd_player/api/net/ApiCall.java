@@ -38,7 +38,7 @@ public abstract class ApiCall<T> implements Callback<BaseBean<T>> {
                 onApiFailure(baseBean.message, baseBean.code);
             }
         } else {
-            onApiFailure("服务器错误", 0);
+            onApiFailure("网络超时，请检查网络", 0);
         }
     }
 

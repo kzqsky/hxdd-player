@@ -36,7 +36,7 @@ public class ChapterFragment extends Fragment {
     ChapterAdapter chapterAdapter;
     GetChapter getChapter;
     ClientConfigBean clientConfigBean;
-
+    public ChapterBean chapterBean;
     /**
      * 是否正在录制视频
      */
@@ -86,7 +86,7 @@ public class ChapterFragment extends Fragment {
         chapterAdapter.setOnItemClickListener((adapter, view1, position) -> {
 
             if (chapterAdapter.isMedia(position)) {
-                ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(position);
+                chapterBean = (ChapterBean) chapterAdapter.getItem(position);
                 if (chapterAdapter.downloadMode) {//下载模式 废弃了
                     getChapter.id = chapterBean.id;
                     LiveDataBus.get().with("download").setValue(getChapter);
@@ -142,20 +142,20 @@ public class ChapterFragment extends Fragment {
         LiveDataBus.get().with("playNext").observe(this, catalog -> {
             if (StartPlayerUtils.nextLearning()) { //启用顺序学习
                 if (chapterAdapter.learnEnd()) { //学完了再自动播放下一节
-                    ChapterBean chapterBean = chapterAdapter.checkNext();
+                     chapterBean = chapterAdapter.checkNext();
                     getMedia(chapterBean.id);
                 } else { //没学完继续播放当前章节
-                    ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
+                     chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
                     getMedia(chapterBean.id);
                 }
             } else { //未启用顺序学习
-                ChapterBean chapterBean = chapterAdapter.checkNext();
+                 chapterBean = chapterAdapter.checkNext();
                 getMedia(chapterBean.id);
             }
         });
         LiveDataBus.get().with("refreshVid").observe(this, catalog -> {
             if (chapterAdapter.getData() != null && chapterAdapter.getData().size() > 0 && chapterAdapter.selectIndex >= 0) {
-                ChapterBean chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
+                 chapterBean = (ChapterBean) chapterAdapter.getData().get(chapterAdapter.selectIndex);
                 getMedia(chapterBean.id);
             }
         });
@@ -164,10 +164,10 @@ public class ChapterFragment extends Fragment {
     private void setLast(int index) {
         if (chapterAdapter.isMedia(index)) {
             chapterAdapter.selectIndex = index;
-            ChapterBean chapterBean = (ChapterBean) chapterAdapter.getItem(index);
+             chapterBean = (ChapterBean) chapterAdapter.getItem(index);
             getMedia(chapterBean.id);
         } else {
-            ChapterBean chapterBean = chapterAdapter.checkNext();
+             chapterBean = chapterAdapter.checkNext();
             getMedia(chapterBean.id);
         }
     }

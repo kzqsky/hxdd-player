@@ -56,7 +56,7 @@ public class GetChapter extends BaseParameters {
      */
     public boolean overMaxLearnHoursStop = false;
 
-    public int maxTimePerDay = 0; //按照每天来限制学时时长，单位是秒
+    public int maxTimePerDay = 0; //按照单次打开窗口限制学时时长，单位是秒
     public int maxTimePerTime = 0; //按照单次打开窗口限制学时时长，单位是秒
     public String classNum; //培训平台使用的参数
 

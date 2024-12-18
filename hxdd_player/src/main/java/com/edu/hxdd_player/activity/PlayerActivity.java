@@ -366,6 +366,13 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 String url = "https://www.edu-edu.com/b2c-static/aiMind/index_m.html?code=AI&category=" + getChapter.businessLineCode
                         + "&coursewareCode=" + getChapter.coursewareCode
                         + "&userName=" + getChapter.userName
+                        + "&userId=" + getChapter.userId
+                        + "&clientId=" + getChapter.clientCode
+                        + "&chapterCode=" + chapterFragment.chapterBean.id
+                        + "&chapterTitle=" +chapterFragment.chapterBean.title
+                        + "&businessLineCode=" + getChapter.businessLineCode
+                        + "&parentId=" + chapterFragment.chapterBean.parentId
+                        + "&parentName=" + chapterFragment.chapterBean.parentName
                         + "&isApp=true"  ;
                 fragments.add(CourseInfoFragment.newInstance(url));
             }

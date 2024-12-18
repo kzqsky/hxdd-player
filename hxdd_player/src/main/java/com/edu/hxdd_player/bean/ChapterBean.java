@@ -12,9 +12,10 @@ import java.util.List;
 public class ChapterBean implements com.chad.library.adapter.base.entity.MultiItemEntity {
     public String updatedBy;
     public long pId;
-    public Object media;
+    //    public Object media;
     public String name;
     public long parentId;
+    public String parentName;
     public String title;
     public long sequenceNum;
     public List<Object> lectures;
