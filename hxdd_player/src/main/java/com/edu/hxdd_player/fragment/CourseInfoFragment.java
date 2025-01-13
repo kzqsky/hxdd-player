@@ -65,27 +65,27 @@ public class CourseInfoFragment extends Fragment {
         //加载网页
        mAgentWeb.getUrlLoader().loadUrl(url);
     }
-
-    @Override
-    public void onPause() {
-        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
-            mAgentWeb.getWebLifeCycle().onPause();
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
-            mAgentWeb.getWebLifeCycle().onResume();
-        super.onResume();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
-            mAgentWeb.getWebLifeCycle().onDestroy();
-        super.onDestroy();
-    }
+//   需要删除，否则导致评课纠错无法显示
+//    @Override
+//    public void onPause() {
+//        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+//            mAgentWeb.getWebLifeCycle().onPause();
+//        super.onPause();
+//    }
+//
+//    @Override
+//    public void onResume() {
+//        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+//            mAgentWeb.getWebLifeCycle().onResume();
+//        super.onResume();
+//    }
+//
+//    @Override
+//    public void onDestroy() {
+//        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+//            mAgentWeb.getWebLifeCycle().onDestroy();
+//        super.onDestroy();
+//    }
 
     class AndroidInterface {
         public AndroidInterface(AgentWeb agentWeb, Context context) {
