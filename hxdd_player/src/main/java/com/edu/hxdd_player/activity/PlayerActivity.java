@@ -129,6 +129,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * 是否是视频播放完成时
      */
     boolean videoComplete = false;
+    /**
+     * ai问答 fragment
+     */
+    CourseInfoFragment aiFragment;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -180,13 +184,14 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
     private void getClientConfig() {
         if (getChapter == null)
             return;
-        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode,getChapter.coursewareCode, new ApiCall<ClientConfigBean>() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getClientConfig(getChapter.clientCode, getChapter.coursewareCode, new ApiCall<ClientConfigBean>() {
             @Override
             protected void onResult(ClientConfigBean data) {
                 clientConfigBean = data;
                 initFloatingActionButton(data);
                 initTab(data);
             }
+
             @Override
             public void onFailure(Call<BaseBean<ClientConfigBean>> call, Throwable t) {
                 super.onFailure(call, t);
@@ -363,18 +368,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                 fragments.add(FileListFragment.newInstance(courseInfoBean.uploadedFiles, clientConfigBean));
 
             if (clientConfigBean.aIAssistant) {
-                String url = "https://www.edu-edu.com/b2c-static/aiMind/ce/index_m.html?code=AI&category=" + getChapter.businessLineCode
-                        + "&coursewareCode=" + getChapter.coursewareCode
-                        + "&userName=" + getChapter.userName
-                        + "&userId=" + getChapter.userId
-                        + "&clientId=" + getChapter.clientCode
-                        + "&chapterCode=" + chapterFragment.chapterBean.id
-                        + "&chapterTitle=" +chapterFragment.chapterBean.title
-                        + "&businessLineCode=" + getChapter.businessLineCode
-                        + "&parentId=" + chapterFragment.chapterBean.parentId
-                        + "&parentName=" + chapterFragment.chapterBean.parentName
-                        + "&isApp=true"  ;
-                fragments.add(CourseInfoFragment.newInstance(url));
+                aiFragment = CourseInfoFragment.newInstance("");
+                fragments.add(aiFragment);
             }
             if (StartPlayerUtils.getHasDownload())
                 fragments.add(DownLoadFragment.newInstance(getChapter));
@@ -423,6 +418,8 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
                     mCatalog = catalog;
                     setMedia(catalog);
                     getQuestionMap();
+                    //更新ai的url
+                    updateAiUrl();
                 });
         LiveDataBus.get().with("CacheMode", String.class).observe(PlayerActivity.this, s -> {
             UrlSource urlSource = new UrlSource();
@@ -433,6 +430,26 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
         LiveDataBus.get().with("stop", String.class).observe(PlayerActivity.this, s -> {
             videoPause();
         });
+    }
+
+    /**
+     * 更新ai的url
+     */
+    private void updateAiUrl() {
+        if (aiFragment != null) {
+            String url = "https://www.edu-edu.com/b2c-static/aiMind/ce/index_m.html?code=AI&category=" + getChapter.businessLineCode
+                    + "&coursewareCode=" + getChapter.coursewareCode
+                    + "&userName=" + getChapter.userName
+                    + "&userId=" + getChapter.userId
+                    + "&clientId=" + getChapter.clientCode
+                    + "&chapterCode=" + chapterFragment.chapterBean.id
+                    + "&chapterTitle=" + chapterFragment.chapterBean.title
+                    + "&businessLineCode=" + getChapter.businessLineCode
+                    + "&parentId=" + chapterFragment.chapterBean.parentId
+                    + "&parentName=" + chapterFragment.chapterBean.parentName
+                    + "&isApp=true&platformId=cws";
+            aiFragment.toUrl(url);
+        }
     }
 
     private void getQuestionMap() {

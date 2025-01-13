@@ -52,8 +52,6 @@ public class CourseInfoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        //加载网页
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(layout, new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator()
@@ -61,6 +59,11 @@ public class CourseInfoFragment extends Fragment {
                 .createAgentWeb()
                 .ready().go(url);
         mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new AndroidInterface(mAgentWeb, getContext()));
+    }
+
+    public void toUrl(String url) {
+        //加载网页
+       mAgentWeb.getUrlLoader().loadUrl(url);
     }
 
     @Override
