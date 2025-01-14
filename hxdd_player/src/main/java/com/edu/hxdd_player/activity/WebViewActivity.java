@@ -44,6 +44,19 @@ public class WebViewActivity extends AppCompatActivity {
         mAgentWeb.getJsInterfaceHolder().addJavaObject("android", new  AndroidInterface(mAgentWeb, this));
     }
 
+    @Override
+    protected void onPause() {
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        if (mAgentWeb != null && mAgentWeb.getWebLifeCycle() != null)
+            mAgentWeb.getWebLifeCycle().onResume();
+        super.onResume();
+    }
 
     @Override
     public void onBackPressed() {
