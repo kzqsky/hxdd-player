@@ -38,6 +38,8 @@ import com.edu.hxdd_player.R;
 import com.edu.hxdd_player.adapter.BaseFragmentPagerAdapter;
 import com.edu.hxdd_player.api.ApiUtils;
 import com.edu.hxdd_player.api.net.ApiCall;
+import com.edu.hxdd_player.bean.AIBean;
+import com.edu.hxdd_player.bean.AITokenBean;
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ClientConfigBean;
 import com.edu.hxdd_player.bean.CourseInfoBean;
@@ -133,6 +135,10 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      * ai问答 fragment
      */
     CourseInfoFragment aiFragment;
+    /**
+     * ai Token
+     */
+    AITokenBean aiTokenBean;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -437,20 +443,38 @@ public class PlayerActivity extends AppCompatActivity implements ExamFragment.Ex
      */
     private void updateAiUrl() {
         if (aiFragment != null) {
-            String url = "https://www.edu-edu.com/b2c-static/aiMind/ce/index_m.html?code=AI&category=" + getChapter.businessLineCode
-                    + "&coursewareCode=" + getChapter.coursewareCode
-                    + "&userName=" + getChapter.userName
-                    + "&userId=" + getChapter.userId
-                    + "&clientId=" + getChapter.clientCode
-                    + "&chapterCode=" + chapterFragment.chapterBean.id
-                    + "&chapterTitle=" + chapterFragment.chapterBean.title
-                    + "&businessLineCode=" + getChapter.businessLineCode
-                    + "&parentId=" + chapterFragment.chapterBean.parentId
-                    + "&parentName=" + chapterFragment.chapterBean.parentName
-                    + "&isApp=true&platformId=cws";
-            aiFragment.toUrl(url);
+            if (aiTokenBean == null) {
+                getAiToken();
+            } else {
+                goAiUrl();
+            }
         }
     }
+
+    /**
+     * 获取AI Token
+     */
+    private void getAiToken() {
+        ApiUtils.getInstance(PlayerActivity.this, getChapter.serverUrl).getAiToken(getChapter, new ApiCall<AITokenBean>() {
+            @Override
+            protected void onResult(AITokenBean data) {
+                aiTokenBean = data;
+                goAiUrl();
+            }
+
+        });
+    }
+
+    private void goAiUrl() {
+        AIBean aiBean = new AIBean();
+        String url = "https://aiqa.edu-edu.com/qai/?tenantCode=cws"
+                + "&chatter=" + getChapter.userName
+                + "&digitalHumanCode=" + aiTokenBean.digitalHumanCode
+                + "&token=" + aiTokenBean.accessToken
+                + "&scenario=" + aiBean.setData(getChapter, chapterFragment.chapterBean);
+        aiFragment.toUrl(url);
+    }
+
 
     private void getQuestionMap() {
         if (mCatalog == null || mCatalog.questions == null)

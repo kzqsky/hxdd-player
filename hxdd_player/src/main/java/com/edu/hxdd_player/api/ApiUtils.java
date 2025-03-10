@@ -91,7 +91,14 @@ public class ApiUtils {
         api.getCourseInfo(coursewarecode).enqueue(apiCall);
     }
 
-
+    /**
+     * 获取ai参数
+     * @param parameters
+     * @param apiCall
+     */
+    public void getAiToken(GetChapter parameters, ApiCall apiCall) {
+        api.getAiToken(getRequestBody(parameters)).enqueue(apiCall);
+    }
     public void callBackUrl(String url, String json) {
         if (json == null || TextUtils.isEmpty(url))
             return;

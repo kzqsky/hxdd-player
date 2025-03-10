@@ -1,5 +1,6 @@
 package com.edu.hxdd_player.api;
 
+import com.edu.hxdd_player.bean.AITokenBean;
 import com.edu.hxdd_player.bean.BaseBean;
 import com.edu.hxdd_player.bean.ChapterBean;
 import com.edu.hxdd_player.bean.ClientConfigBean;
@@ -35,4 +36,12 @@ public interface Api {
 
     @GET("/client/coursewares/{coursewarecode}/findCwByCode")
     Call<BaseBean<CourseInfoBean>> getCourseInfo(@Path("coursewarecode") String coursewarecode);
+
+    /**
+     * 获取AI 参数
+     * @param body
+     * @return
+     */
+    @POST("/client/ai/app/gettoken")
+    Call<BaseBean<AITokenBean>> getAiToken(@Body RequestBody body);
 }
